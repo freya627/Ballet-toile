@@ -54,7 +54,6 @@ body.mobile-mode main{padding:14px 12px 32px}body.mobile-mode header{padding:20p
 <nav>
   <button class="active" data-tab="home">今日課程</button>
   <button data-tab="search">動作查詢</button>
-  <button data-tab="glossary">動作辭典 📖</button>
   <button data-tab="library">動作圖鑑</button>
   <button data-tab="records">學習紀錄</button>
   <button data-tab="calendar">月曆安排 📅</button>
@@ -84,22 +83,6 @@ body.mobile-mode main{padding:14px 12px 32px}body.mobile-mode header{padding:20p
   <div class="searchrow"><input id="searchInput" placeholder="輸入動作，例如 Tendu、腳位、Rond de jambe…"><select id="difficultyFilter"><option value="">所有難度</option><option>入門</option><option>基礎</option><option>進階概念</option></select><select id="statusFilter" aria-label="學習狀態篩選"><option value="">所有學習狀態</option><option value="未學習">尚未學習</option><option value="練習中">練習中</option><option value="已學會">已經學過／已學會</option></select></div>
   <div class="card" style="margin-bottom:14px"><h3>➕ 把動作加入週末課程</h3><p>在下方動作卡片按「加入課程」，就會加入選定日期的課程；平日仍然是休息日，不會因此安排平日練習。</p><div class="searchrow"><label for="lessonDateSelect" style="align-self:center;color:var(--muted)">加入哪一天：</label><select id="lessonDateSelect" aria-label="選擇週末課程日期"></select></div><div id="lessonAddStatus" class="small" aria-live="polite"></div></div>
   <div id="searchResults" class="grid"></div>
-</section>
-<section id="glossary" class="panel">
-  <div class="hero">
-    <div class="eyebrow">BALLET VOCABULARY</div>
-    <h2>📖 芭蕾動作辭典</h2>
-    <p>遇到不熟悉的芭蕾法文或英文術語時，可以打開 Ballet Glossary 查詢名稱與意思。這是外部參考網站，會在新分頁開啟，星芭蕾的學習紀錄不會受到影響。</p>
-    <p><a class="btn primary" href="https://balletglossary.com/" target="_blank" rel="noopener noreferrer">打開 Ballet Glossary 芭蕾辭典 ↗</a></p>
-  </div>
-  <div class="card">
-    <h3>✨ 查詢小提示</h3>
-    <ul class="step-list">
-      <li>先試著輸入動作的法文或英文名稱，例如 <em>Arabesque</em>、<em>Plié</em> 或 <em>Tendu</em>。</li>
-      <li>如果辭典裡的解釋和老師教的做法有差異，以芭蕾老師的指導為準。</li>
-      <li>查到新術語後，可以回到「動作查詢」或「動作圖鑑」繼續整理自己的學習紀錄。</li>
-    </ul>
-  </div>
 </section>
 <section id="library" class="panel">
   <div class="section-title"><h2>動作圖鑑</h2><span class="small">依難度分類</span></div>
@@ -179,6 +162,43 @@ const moves=[
 {id:'portdebras',name:'Port de bras（手臂運行）',en:'Port de bras',level:'入門',category:'手臂與姿態',time:'2 分鐘',beats:'每個方向 4 拍，慢慢轉換',desc:'練習手臂在準備位與低位之間柔和轉換，肩膀放鬆，動作不需要抬高。',steps:['站在舒適站姿，肩膀自然下沉，手肘保持柔和。','雙手在身體前方形成自然弧線，不聳肩。','緩慢把手臂打開到低位，再回到準備位。','配合均勻呼吸重複 3–4 次。'],safety:'若手肘或手部仍有活動限制，先遵照復健師建議；不要拉扯手腕、手肘或強迫伸直。'},
 {id:'grandbattement',name:'Grand battement（大踢腿概念）',en:'Grand battement',level:'進階概念',category:'腿部控制',time:'1 分鐘',beats:'準備 2 拍、低幅度抬腿 2 拍、收回 2 拍',desc:'先學習控制腿部向前延伸的概念，居家自學只做低幅度，不追求高踢腿。',steps:['扶穩支撐，站姿自然且骨盆保持水平。','工作腳向前低低抬起，速度慢且可控制。','停一拍後慢慢收回，不甩腿。','每側 2 次即可，保持呼吸順暢。'],safety:'不追求高度、不用彈震方式拉腿；若腿後側緊繃或有疼痛就停止，最好先由合格老師指導。'}
 ];
+const glossaryTerms=[
+{name:'Arabesque',zh:'阿拉貝斯克：單腳支撐，另一腿向後伸展的姿態。'},
+{name:'Attitude',zh:'阿提蒂德：一腿支撐，另一腿抬起並彎曲膝蓋的姿態。'},
+{name:'Assemblé',zh:'雙腳從分開的位置收合，最後落在一起的跳步。'},
+{name:'Balancé',zh:'左右交替重心、帶有搖擺感的舞步。'},
+{name:'Battement',zh:'腿部有控制地做出伸展或擺動的動作總稱。'},
+{name:'Chaînés',zh:'連續快速的小轉圈，通常沿著一條路線移動。'},
+{name:'Chassé',zh:'一腳追隨另一腳滑行，像追步一樣移動。'},
+{name:'Échappé',zh:'雙腳從合攏的位置打開，再回到合攏位置的動作。'},
+{name:'En dehors',zh:'向外的方向；轉圈時通常指向外轉。'},
+{name:'En dedans',zh:'向內的方向；轉圈時通常指向內轉。'},
+{name:'En croix',zh:'以十字方向練習：前、旁、後，再回到旁或起始位置。'},
+{name:'Fondu',zh:'柔和地屈膝，再控制伸直的動作。'},
+{name:'Frappé',zh:'工作腳從腳踝附近快速伸出，帶有俐落感的動作。'},
+{name:'Glissade',zh:'貼近地面滑行的連接步，常用來銜接跳步。'},
+{name:'Jeté',zh:'帶有拋出或跳出的意思，常指一類跳步。'},
+{name:'Pas de bourrée',zh:'由連續小步組成的連接舞步。'},
+{name:'Pas de chat',zh:'「貓步」跳躍，雙腿依序彎曲抬起並落地。'},
+{name:'Pirouette',zh:'以單腳為軸心完成的旋轉。'},
+{name:'Piqué',zh:'以伸直的腳直接踏上支撐點的動作方式。'},
+{name:'Retiré',zh:'工作腳沿支撐腿收起，腳尖靠近膝部的姿勢。'},
+{name:'Sissonne',zh:'由雙腳起跳、落地時通常由單腳承接的一類跳步。'},
+{name:'Temps levé',zh:'由單腳起跳，再以同一隻腳落地的跳步。'},
+{name:'Tour en l’air',zh:'舞者起跳後在空中旋轉的跳躍動作。'},
+{name:'À terre',zh:'在地面上完成，不離開地板。'},
+{name:'En l’air',zh:'在空中完成或離開地面的動作。'},
+{name:'À la seconde',zh:'向旁側方向伸展或抬起腿。'},
+{name:'Adagio',zh:'慢速、流暢並重視控制與延伸的舞段。'},
+{name:'Allegro',zh:'較快的舞段，常包含跳躍與敏捷步伐。'},
+{name:'Barre',zh:'把桿練習；舞者扶著把桿練習基本功。'},
+{name:'Corps de ballet',zh:'芭蕾舞團中的群舞舞者，也可指群舞整體。'},
+{name:'Demi-pointe',zh:'以前腳掌承重、腳跟抬起的半腳尖位置。'},
+{name:'En pointe',zh:'穿足尖鞋以鞋尖支撐的足尖位置，需經老師評估與訓練。'},
+{name:'Épaulement',zh:'肩膀與頭部配合身體方向的協調姿態。'},
+{name:'Pas de deux',zh:'雙人舞，通常由兩位舞者共同表演。'},
+{name:'Petit battement',zh:'工作腳在支撐腳踝附近做小幅、快速的動作。'}
+];
 const todayIds=['positions','tendu','plie','releve','rond'];
 const statusLabels={'未學習':'尚未學習','練習中':'練習中','已學會':'已學會'};
 let state=load('balletState',{});
@@ -257,7 +277,7 @@ function getNextWeekendDates(){const now=getLocalDate();const out=[];for(let off
 function fmtDate(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
 function setupLessonDateSelect(){const sel=document.getElementById('lessonDateSelect');if(!sel)return;const previous=sel.value;const dates=getNextWeekendDates();sel.innerHTML=dates.map(d=>`<option value="${fmtDate(d)}">${d.getDay()===6?'星期六':'星期日'}（${d.getMonth()+1}/${d.getDate()}）${fmtDate(d)===dateKey()?'・今天':''}</option>`).join('');if(dates.some(d=>fmtDate(d)===previous))sel.value=previous;else if(dates.length)sel.value=fmtDate(dates[0]);}
 function addMoveToLesson(id){const date=document.getElementById('lessonDateSelect').value;if(!date)return;lessonAdds[date]=lessonAdds[date]||[];if(!lessonAdds[date].includes(id)){lessonAdds[date].push(id);save('balletLessonAdds',lessonAdds);document.getElementById('lessonAddStatus').textContent=`已把「${moves.find(m=>m.id===id)?.name}」加入 ${date} 的週末課程！`;renderSearch();if(date===dateKey())renderToday();}else{document.getElementById('lessonAddStatus').textContent='這個動作已經在所選課程裡了。';}}
-function renderSearch(){setupLessonDateSelect();const q=document.getElementById('searchInput').value.toLowerCase().trim(),level=document.getElementById('difficultyFilter').value,status=document.getElementById('statusFilter').value;const list=moves.filter(m=>(!level||m.level===level)&&(!status||getStatus(m.id)===status)&&(!q||[m.name,m.en,m.category,m.desc,m.level].join(' ').toLowerCase().includes(q)));document.getElementById('searchResults').innerHTML=list.length?list.map(moveCard).join(''):'<div class="empty">找不到符合條件的動作。可以切換「所有學習狀態」或清除搜尋文字。</div>'}
+function renderSearch(){setupLessonDateSelect();const q=document.getElementById('searchInput').value.toLowerCase().trim(),level=document.getElementById('difficultyFilter').value,status=document.getElementById('statusFilter').value;const list=moves.filter(m=>(!level||m.level===level)&&(!status||getStatus(m.id)===status)&&(!q||[m.name,m.en,m.category,m.desc,m.level].join(' ').toLowerCase().includes(q)));const terms=q&&!level&&!status?glossaryTerms.filter(t=>(t.name+' '+t.zh).toLowerCase().includes(q)):[];const moveHtml=list.map(moveCard).join('');const termHtml=terms.map(t=>'<article class="card"><h3>'+escapeHtml(t.name)+'</h3><p>'+escapeHtml(t.zh)+'</p></article>').join('');const combined=moveHtml+termHtml;document.getElementById('searchResults').innerHTML=combined||'<div class="empty">找不到符合條件的動作或術語。可以試試法文、英文或中文名稱。</div>'}
 function renderLibrary(){const levels=['入門','基礎','進階概念'];document.getElementById('libraryGroups').innerHTML=levels.map(l=>`<div class="section-title"><h2>${l}</h2><span class="small">${moves.filter(m=>m.level===l).length} 個動作</span></div><div class="grid">${moves.filter(m=>m.level===l).map(moveCard).join('')}</div>`).join('')}
 function renderRecords(){document.getElementById('recordList').innerHTML=moves.map(m=>`<div class="checkline"><div style="flex:1"><strong>${m.name}</strong><div class="small">${m.level} · ${m.category}</div></div><select aria-label="${m.name}學習狀態" onchange="setStatus('${m.id}',this.value)"><option ${getStatus(m.id)==='未學習'?'selected':''}>未學習</option><option ${getStatus(m.id)==='練習中'?'selected':''}>練習中</option><option ${getStatus(m.id)==='已學會'?'selected':''}>已學會</option></select></div>`).join('');const d=getLocalDate();document.getElementById('practiceDate').value=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;renderNotes()}
 function renderStats(){document.getElementById('learnedCount').textContent=moves.filter(m=>getStatus(m.id)==='已學會').length;document.getElementById('practiceCount').textContent=moves.filter(m=>getStatus(m.id)==='練習中').length;const pct=Math.round(moves.filter(m=>getStatus(m.id)==='已學會').length/moves.length*100);document.getElementById('progressText').textContent=pct+'%';document.getElementById('progressBar').style.width=pct+'%'}
