@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ballet Étoile 星芭蕾・居家自學</title>
+<style>
+:root{--cream:#fbf4e9;--cream2:#f3e5d5;--pink:#e8b9c4;--pink2:#f8e3e8;--brown:#725849;--dark:#45352e;--muted:#927d70;--white:#fffdf9;--line:#ead9ca;--rose:#b96d83}
+*{box-sizing:border-box} body{margin:0;background:linear-gradient(135deg,#fffaf4,#f8e8e9 55%,#f4e6d5);font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;color:var(--dark)}
+header{padding:28px 18px 22px;text-align:center;background:rgba(255,253,249,.78);border-bottom:1px solid var(--line)}
+.eyebrow{letter-spacing:3px;color:var(--rose);font-size:12px;font-weight:700}.brand{font-family:Georgia,serif;font-size:clamp(26px,5vw,40px);margin:8px 0 5px;color:var(--brown)}.subtitle{font-size:14px;color:var(--muted)}
+nav{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;padding:14px 12px;position:sticky;top:0;background:rgba(251,244,233,.94);backdrop-filter:blur(8px);z-index:5;border-bottom:1px solid var(--line)}
+nav button,.btn{border:1px solid var(--line);border-radius:999px;padding:10px 15px;background:var(--white);color:var(--brown);font-weight:700;cursor:pointer}nav button.active,.btn.primary{background:var(--rose);color:white;border-color:var(--rose)}button:hover{filter:brightness(.98)}
+main{max-width:1050px;margin:auto;padding:20px 16px 50px}.panel{display:none}.panel.active{display:block}.hero{background:linear-gradient(120deg,#fffaf4,#f5dce2);border:1px solid var(--line);border-radius:24px;padding:22px;margin-bottom:18px}.hero h2{margin:0 0 7px;font-size:23px}.hero p{margin:0;color:var(--muted);line-height:1.7}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:16px 0}.stat,.card{background:var(--white);border:1px solid var(--line);border-radius:18px;padding:16px}.stat strong{display:block;font-size:24px;color:var(--rose)}.stat span{font-size:12px;color:var(--muted)}
+.section-title{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:20px 0 12px}.section-title h2{font-size:20px;margin:0}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.card h3{margin:0 0 6px;font-size:17px}.card p{color:var(--muted);font-size:14px;line-height:1.65;margin:7px 0}.tag{display:inline-block;font-size:11px;background:var(--pink2);color:#97586b;padding:4px 9px;border-radius:999px;margin:0 4px 5px 0}.difficulty{background:#f4e8d8;color:#826449}.searchrow{display:flex;gap:9px;flex-wrap:wrap;margin:12px 0}.searchrow input,.searchrow select,.field input,.field select{flex:1;min-width:160px;padding:12px 13px;border:1px solid var(--line);border-radius:12px;background:var(--white);font:inherit;color:var(--dark)}
+.step-list{padding-left:21px;line-height:1.8}.step-list li{padding:3px 0}.small{font-size:12px;color:var(--muted)}.empty{padding:25px;text-align:center;color:var(--muted)}
+.lesson{display:flex;gap:12px;align-items:flex-start}.lesson .time{font-weight:800;color:var(--rose);min-width:52px}.checkline{display:flex;gap:10px;align-items:flex-start;margin:10px 0;line-height:1.5}.checkline input{accent-color:var(--rose);margin-top:4px;transform:scale(1.15)}.progress{height:9px;border-radius:99px;background:#f0e4da;overflow:hidden;margin:10px 0}.progress div{height:100%;width:0;background:linear-gradient(90deg,#d995aa,#b98269);transition:width .2s}
+.calendar-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}.calendar-weekday{text-align:center;font-size:12px;color:var(--muted);padding:8px 0;font-weight:700}.calendar-day{min-height:82px;border:1px solid var(--line);border-radius:12px;background:var(--white);padding:7px 5px;text-align:left;color:var(--dark);cursor:pointer;overflow-wrap:anywhere}.calendar-day .day-num{font-weight:800;display:block;margin-bottom:5px}.calendar-day .day-mark{display:block;font-size:10px;line-height:1.4;color:var(--muted)}.calendar-day.weekend{background:#fff7f8}.calendar-day.selected{outline:2px solid var(--rose);border-color:var(--rose)}.calendar-day.cancelled{background:#f5eeee;border-color:#d8b9bf}.calendar-day.outside{opacity:.45}.calendar-day.today{box-shadow:inset 0 0 0 2px #d6a3b1}.calendar-event{border-top:1px solid var(--line);padding:10px 0}.calendar-event:first-child{border-top:0}@media(max-width:560px){.calendar-grid{gap:3px}.calendar-day{min-height:66px;padding:5px 3px;border-radius:8px}.calendar-day .day-mark{font-size:9px}.calendar-day .day-num{font-size:12px}}
+.detail{position:fixed;inset:0;background:#382a2a66;display:none;align-items:center;justify-content:center;padding:16px;z-index:10}.detail.open{display:flex}.modal{background:var(--white);border-radius:22px;padding:23px;max-width:600px;width:100%;max-height:85vh;overflow:auto;box-shadow:0 20px 70px #4c302633}.modalhead{display:flex;justify-content:space-between;gap:10px;align-items:start}.modalhead h2{margin:0}.close{border:0;background:var(--pink2);border-radius:50%;width:34px;height:34px;cursor:pointer;color:var(--brown);font-size:18px}
+.field{margin:12px 0}.field label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}.field input,.field select{width:100%}textarea{width:100%;min-height:90px;border:1px solid var(--line);border-radius:12px;padding:12px;font:inherit;background:var(--white)}
+footer{text-align:center;color:var(--muted);font-size:12px;padding:22px}
+
+.practice-inspiration{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(180px,.8fr);gap:16px;align-items:center;background:linear-gradient(125deg,#fffaf4,#f5dce5);border:1px solid var(--line);border-radius:22px;padding:15px;margin:0 0 18px;overflow:hidden}.inspiration-copy{padding:8px 10px}.inspiration-copy h2{font-size:19px;line-height:1.45;margin:7px 0;color:var(--brown)}.inspiration-copy p{line-height:1.8;color:var(--muted);margin:7px 0}.inspiration-signoff{font-family:Georgia,serif;letter-spacing:1px;color:var(--rose);font-size:12px;margin-top:10px}.inspiration-photo-wrap{min-width:0}.inspiration-photo{display:block;width:100%;height:190px;object-fit:cover;object-position:center 45%;border-radius:15px;background:#211f24}.photo-caption{font-size:10px;color:var(--muted);margin:5px 2px 0;line-height:1.4}
+@media(max-width:560px){.practice-inspiration{grid-template-columns:1fr;gap:10px;padding:13px}.inspiration-copy{padding:5px 5px 0}.inspiration-copy h2{font-size:18px}.inspiration-photo{height:185px}}
+
+/* 裝置選擇首頁 */
+.device-overlay{position:fixed;inset:0;z-index:30;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(69,53,46,.45);backdrop-filter:blur(5px)}
+.device-overlay.open{display:flex}.device-dialog{width:min(520px,100%);background:var(--white);border:1px solid var(--line);border-radius:26px;padding:25px;box-shadow:0 20px 70px #4c302633;text-align:center}.device-dialog h2{color:var(--brown);margin:8px 0}.device-dialog p{color:var(--muted);line-height:1.7}.device-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:18px}.device-option{min-height:120px;border:1px solid var(--line);border-radius:18px;background:#fff8f8;color:var(--brown);font:inherit;font-weight:700;padding:16px;cursor:pointer}.device-option .device-icon{display:block;font-size:32px;margin-bottom:8px}.device-option:focus-visible{outline:3px solid var(--rose);outline-offset:2px}#changeDevice{margin-top:10px;font-size:12px;padding:7px 12px}
+body.mobile-mode main{padding:14px 12px 32px}body.mobile-mode header{padding:20px 12px 16px}body.mobile-mode nav{justify-content:flex-start;flex-wrap:nowrap;overflow-x:auto;white-space:nowrap;scrollbar-width:thin;padding:10px;gap:6px}body.mobile-mode nav button{flex:0 0 auto;padding:10px 13px}body.mobile-mode .grid{grid-template-columns:1fr}body.mobile-mode .stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}body.mobile-mode .stat{padding:12px}body.mobile-mode .stat:last-child{grid-column:span 2}body.mobile-mode .hero{padding:17px;border-radius:18px}body.mobile-mode .card{padding:13px}body.mobile-mode .searchrow{display:grid;grid-template-columns:1fr;gap:8px}body.mobile-mode .searchrow input,body.mobile-mode .searchrow select{width:100%;min-width:0}body.mobile-mode .btn{min-height:42px}body.mobile-mode .calendar-day{min-height:58px}body.mobile-mode .device-dialog{padding:20px 16px}
+@media(max-width:560px){.device-options{gap:8px}.device-option{padding:12px 8px;min-height:112px}.brand{font-size:30px}.calendar-day{min-height:58px}.calendar-weekday{font-size:11px}}
+@media(max-width:560px){.stats{grid-template-columns:1fr 1fr}.stat:last-child{grid-column:span 2}nav{justify-content:flex-start}.lesson{gap:8px}}
+</style>
+</head>
+<body>
+<div class="device-overlay" id="deviceChooser" role="dialog" aria-modal="true" aria-labelledby="deviceChooserTitle">
+  <div class="device-dialog">
+    <div class="eyebrow">WELCOME TO YOUR BALLET JOURNAL</div>
+    <h2 id="deviceChooserTitle">妳現在使用哪一種裝置？</h2>
+    <p>選擇後會調整版面，讓課程、月曆和動作查詢更好操作。之後也可以隨時切換。</p>
+    <div class="device-options">
+      <button class="device-option" type="button" data-device="mobile"><span class="device-icon">📱</span>我用手機<br><span class="small">大按鈕・單欄版面</span></button>
+      <button class="device-option" type="button" data-device="desktop"><span class="device-icon">💻</span>我用電腦<br><span class="small">寬版・多欄顯示</span></button>
+    </div>
+  </div>
+</div>
+<header>
+  <div class="eyebrow">DREAM BIG · BALLET JOURNAL</div>
+  <div class="brand">Ballet Étoile</div><div class="subtitle" style="font-family:serif;letter-spacing:1px;margin-top:2px">星芭蕾</div>
+  <div class="subtitle">居家自學・課程快速查詢</div>
+  <button class="btn" id="changeDevice" type="button">📱／💻 切換裝置版面</button>
+</header>
+<nav>
+  <button class="active" data-tab="home">今日課程</button>
+  <button data-tab="search">動作查詢</button>
+  <button data-tab="library">動作圖鑑</button>
+  <button data-tab="records">學習紀錄</button>
+  <button data-tab="calendar">月曆安排 📅</button>
+  <button data-tab="rest">休息區 🎧</button>
+</nav>
+<main>
+<section id="home" class="panel active">
+  <div class="hero"><h2>今天也向夢想靠近一點 ✨</h2><p>照自己的節奏練習，動作穩定比做得快更重要。開始前先確認周圍有足夠空間，並以不痛、不勉強為原則。</p></div>
+  <div id="practiceInspiration" class="practice-inspiration" style="display:none" aria-live="polite">
+    <div class="inspiration-copy"><div class="eyebrow">YOUR PRACTICE DAY</div><h2>給今天的妳，一張小小鼓勵卡 ✨</h2><p id="encouragementText">每一次專心練習，都在替夢想添上一顆星。</p><div class="inspiration-signoff">Ballet Étoile · Dream Big</div></div>
+    <div class="inspiration-photo-wrap"><img class="inspiration-photo" src="https://upload.wikimedia.org/wikipedia/commons/d/da/BALLERINA_DANCING_%28Unsplash%29.jpg" alt="舞者在舞台上練習芭蕾姿態的真實攝影照片" loading="lazy"><div class="photo-caption">芭蕾攝影｜Hudson Hintze（Unsplash，CC0）</div></div>
+  </div>
+  <div class="stats">
+    <div class="stat"><strong id="learnedCount">0</strong><span>已標記學會</span></div>
+    <div class="stat"><strong id="practiceCount">0</strong><span>練習中</span></div>
+    <div class="stat"><strong id="pointCount">0</strong><span>追夢點數 ⭐</span></div>
+  </div>
+  <div class="hero" id="weekPlan"><h2>本週練習安排</h2><p>平日不安排芭蕾；只在週六、週日練習。</p></div>
+  <div class="section-title"><h2 id="lessonHeading">今日課程</h2><button class="btn" id="resetToday">重設勾選</button></div>
+  <div class="card" id="todayLessons"></div>
+  <div class="section-title"><h2>⭐ 週末追夢集點</h2><span class="small">每項每個週末最多一次</span></div>
+  <div class="card" id="pointsTasks"></div>
+  <div class="card" style="margin-top:12px"><h3>🎵 音樂與拍數小提示</h3><p>可選節奏清楚、速度舒適的古典芭蕾音樂。初學時每個動作先用慢速數拍；沒有音樂也可以自己均勻地數「1、2、3、4」。不要為了跟上音樂而急著做動作。</p><p class="small">本程式不會自動播放音樂；可用你已熟悉且適合練習的音樂。</p></div>
+</section>
+<section id="search" class="panel">
+  <div class="section-title"><h2>動作快速查詢 🔎</h2></div>
+  <div class="searchrow"><input id="searchInput" placeholder="輸入動作，例如 Tendu、腳位、Rond de jambe…"><select id="difficultyFilter"><option value="">所有難度</option><option>入門</option><option>基礎</option><option>進階概念</option></select><select id="statusFilter" aria-label="學習狀態篩選"><option value="">所有學習狀態</option><option value="未學習">尚未學習</option><option value="練習中">練習中</option><option value="已學會">已經學過／已學會</option></select></div>
+  <div class="card" style="margin-bottom:14px"><h3>➕ 把動作加入週末課程</h3><p>在下方動作卡片按「加入課程」，就會加入選定日期的課程；平日仍然是休息日，不會因此安排平日練習。</p><div class="searchrow"><label for="lessonDateSelect" style="align-self:center;color:var(--muted)">加入哪一天：</label><select id="lessonDateSelect" aria-label="選擇週末課程日期"></select></div><div id="lessonAddStatus" class="small" aria-live="polite"></div></div>
+  <div id="searchResults" class="grid"></div>
+</section>
+<section id="library" class="panel">
+  <div class="section-title"><h2>動作圖鑑</h2><span class="small">依難度分類</span></div>
+  <div id="libraryGroups"></div>
+</section>
+<section id="calendar" class="panel">
+  <div class="hero"><h2>月曆安排 📅</h2><p>把國定假日、颱風假、家庭活動、作業或其他行程記在這裡。你可以選日期、寫原因並取消當天課程；被取消的課程不會要求補練，也不會扣點。提醒：國定假日或颱風假需要你自行標註，本程式不會自動判定政府公告。</p></div>
+  <div class="card">
+    <div class="section-title"><button class="btn" id="prevMonth">← 上個月</button><h2 id="calendarMonthTitle">月曆</h2><button class="btn" id="nextMonth">下個月 →</button></div>
+    <div class="calendar-grid" id="calendarGrid"></div>
+    <p class="small">圖例：🩰 週末預定課程　🎌 假日／颱風假　📝 個人行程　🚫 已取消課程。點日期即可編輯。</p>
+  </div>
+  <div class="card" style="margin-top:14px">
+    <div class="section-title"><h2 id="calendarEditTitle">編輯日期</h2><span id="calendarDayKind" class="small"></span></div>
+    <div class="field"><label for="calendarDate">日期</label><input type="date" id="calendarDate"></div>
+    <div class="field"><label for="calendarType">事項類型</label><select id="calendarType"><option value="none">一般日期／無事項</option><option value="holiday">國定假日／學校放假</option><option value="typhoon">颱風假／停班停課</option><option value="personal">個人行程／有事</option><option value="other">其他備註</option></select></div>
+    <div class="field"><label for="calendarNote">事項或原因</label><textarea id="calendarNote" placeholder="例如：家人有活動、要出門、學校活動……"></textarea></div>
+    <label class="checkline"><input type="checkbox" id="cancelCalendarLesson" checked><span><strong>取消這一天的芭蕾課程</strong><br><span class="small">勾選後，若這天原本有週末課程，系統會顯示已取消；不扣點。</span></span></label>
+    <label class="checkline"><input type="checkbox" id="scheduleMakeupLesson"><span><strong>加強訓練</strong><br><span class="small">勾選後可指定任何日期安排一堂額外課程，包括平日；這是妳主動選擇的例外，不會改變平常週一至週五不排課的規則。</span></span></label>
+    <div class="field"><label for="makeupLessonDate">加強訓練日期（可選任何日期）</label><input type="date" id="makeupLessonDate"><p class="small">選定日期後，當天會出現加強訓練課程。平日只有妳主動勾選此項時才安排。</p></div>
+    <button class="btn primary" id="saveCalendarEntry">儲存日期安排</button> <button class="btn" id="clearCalendarEntry">清除此日期事項</button> <span id="calendarSaveStatus" class="small" aria-live="polite"></span>
+  </div>
+  <div class="card" style="margin-top:14px">
+    <h3>💾 資料備份與還原</h3>
+    <p>日期安排、學習紀錄等資料通常會存在目前瀏覽器中。若用不同裝置、不同瀏覽器，或瀏覽器清除網站資料，請用備份檔帶走資料。</p>
+    <button class="btn primary" id="exportData">下載我的資料備份</button>
+    <button class="btn" id="importDataButton">匯入備份</button>
+    <input id="importDataFile" type="file" accept="application/json,.json" hidden>
+    <span id="backupStatus" class="small" aria-live="polite"></span>
+  </div>
+  <div class="card" style="margin-top:14px"><h3>🗓️ 已標註的日期</h3><div id="calendarEventList"></div></div>
+</section>
+<section id="rest" class="panel">
+  <div class="hero">
+    <h2>🫖 芭蕾休息區 · BALLET REIGN</h2>
+    <p>這裡是純休息區，不是練習任務。影片都來自 Ballet Reign 官方 YouTube 頻道，想看就慢慢看，不需要記筆記，也不會影響集點。</p>
+    <p><a class="btn primary" href="https://www.youtube.com/@balletreign/videos" target="_blank" rel="noopener noreferrer">打開 Ballet Reign 全部影片 ↗</a> <a class="btn" href="https://www.youtube.com/@balletreign/shorts" target="_blank" rel="noopener noreferrer">看 Shorts 短片 ↗</a></p>
+  </div>
+  <div class="section-title"><h2>🎬 精選影片</h2><span class="small">英文芭蕾內容 · 可開啟字幕</span></div>
+  <div class="grid">
+    <article class="card">
+      <h3>5 More Addictive Ballet Moments That Will Steal Your Breath</h3>
+      <p>一起欣賞令人驚嘆的芭蕾片段，聽兩位主持人用英文聊舞者的技巧與表現。</p>
+      <div style="position:relative;width:100%;padding-top:56.25%;border-radius:12px;overflow:hidden;background:#f4e8d8"><iframe src="https://www.youtube-nocookie.com/embed/pv1XOZWg3xg" title="Ballet Reign - 5 More Addictive Ballet Moments" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;border:0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>
+      <p class="small">Ballet Reign · 約 23 分鐘</p>
+      <a href="https://www.youtube.com/watch?v=pv1XOZWg3xg" target="_blank" rel="noopener noreferrer">在 YouTube 開啟 ↗</a>
+    </article>
+    <article class="card">
+      <h3>Addictive Ballet Moments to Alter Your Brain Chemistry</h3>
+      <p>更多經典舞劇片段：天鵝湖、吉賽兒、The Dying Swan 等，適合當作芭蕾欣賞時間。</p>
+      <div style="position:relative;width:100%;padding-top:56.25%;border-radius:12px;overflow:hidden;background:#f4e8d8"><iframe src="https://www.youtube-nocookie.com/embed/HMCFWvQqlv8" title="Ballet Reign - Addictive Ballet Moments" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;border:0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>
+      <p class="small">Ballet Reign · 英文解說</p>
+      <a href="https://www.youtube.com/watch?v=HMCFWvQqlv8" target="_blank" rel="noopener noreferrer">在 YouTube 開啟 ↗</a>
+    </article>
+  </div>
+  <div class="card" style="margin-top:14px"><h3>🌷 休息區小約定</h3><p>今天想休息就安心休息；不需要把影片看完，也不用把看影片當成練習。若影片無法內嵌播放，請用上方官方頻道連結開啟。</p></div>
+</section>
+<section id="records" class="panel">
+  <div class="hero"><h2>我的學習紀錄 📖</h2><p>把每個動作標記成「尚未學習」、「練習中」或「已學會」。紀錄會保存在這個瀏覽器的本機儲存空間。</p></div>
+  <div class="card"><div class="section-title"><h2>學習進度</h2><span id="progressText">0%</span></div><div class="progress"><div id="progressBar"></div></div><div id="recordList"></div></div>
+  <div class="card" style="margin-top:12px"><h3>📝 練習筆記</h3><div class="field"><label for="practiceDate">日期</label><input id="practiceDate" type="date"></div><div class="field"><label for="practiceNote">今天的感想／想加強的地方</label><textarea id="practiceNote" placeholder="例如：腳尖延伸時要更穩定……"></textarea></div><button class="btn primary" id="saveNote">儲存筆記</button> <span id="noteStatus" class="small"></span><div id="savedNotes"></div></div>
+</section>
+</main>
+<footer>Ballet Étoile 星芭蕾 · Dream Big 🩰　｜　安全、穩定、慢慢進步</footer>
+<div class="detail" id="detail"><div class="modal"><div class="modalhead"><h2 id="detailTitle"></h2><button class="close" id="closeDetail" aria-label="關閉">×</button></div><div id="detailBody"></div></div></div>
+<script>
+const moves=[
+{id:'positions',name:'五個基本腳位',en:'Five Positions',level:'入門',category:'基本功',time:'2 分鐘',beats:'每個腳位停 4 拍',desc:'認識雙腳的基本擺放位置，先以舒適、自然的外開程度練習。',steps:['站直，肩膀放鬆，雙腳自然站立。','依序認識第一至第五腳位；第五腳位暫時只需了解概念，不必硬把雙腳交叉到極限。','膝蓋朝向腳尖方向，不要扭轉膝蓋來追求外開。','每個位置穩定停留 4 拍，再放鬆回到自然站姿。'],safety:'不要強迫腳掌外開，也不要把腳硬壓到理想角度。'},
+{id:'tendu',name:'Tendu（擦地）',en:'Battement Tendu',level:'入門',category:'腳部基本功',time:'2 分鐘',beats:'伸出 2 拍、收回 2 拍',desc:'腳尖沿地板向外擦出，再沿原路收回，腳掌不離地或只在結尾自然延伸。',steps:['從舒適的基本腳位開始，身體直立、雙腿放鬆。','工作腳沿地板慢慢向前擦出，腳背延伸、腳尖輕點地面。','停 1–2 拍，保持骨盆和上半身穩定。','沿地板收回起始位置，左右各做 4 次。'],safety:'不要把重心突然壓到工作腳；腳踝或膝蓋不舒服就停止。'},
+{id:'releve',name:'Relevé（踮腳）',en:'Relevé',level:'入門',category:'基本功',time:'1 分鐘',beats:'上 2 拍、停 2 拍、下 2 拍',desc:'在穩定支撐下慢慢抬起腳跟，再控制地放下。',steps:['雙腳平行或在舒適的基本腳位站好，必要時扶穩固椅背。','慢慢抬起腳跟，重量平均落在前腳掌。','停 2 拍，保持腳踝直立，不向外或內倒。','慢慢放下腳跟，做 4–6 次。'],safety:'不要在不穩固的家具旁練習；若腳踝疼痛或失去平衡就停止。'},
+{id:'plie',name:'Plié（屈膝）',en:'Plié',level:'入門',category:'基本功',time:'2 分鐘',beats:'下 2 拍、上 2 拍',desc:'在舒服的腳位中柔和屈膝，再伸直站回來。',steps:['選擇舒服的平行站姿或自然小外開站姿。','膝蓋沿著腳尖方向彎曲，腳跟留在地面。','只下到能保持姿勢穩定的深度。','慢慢站直，做 4–6 次。'],safety:'膝蓋不要內夾，也不必追求深蹲幅度。'},
+{id:'rond',name:'Rond de jambe（畫圓）',en:'Rond de jambe à terre',level:'基礎',category:'腳部控制',time:'2 分鐘',beats:'前 2 拍、側 2 拍、後 2 拍、收回 2 拍',desc:'工作腳在地面上畫出平順的半圓路線，軀幹保持安定。',steps:['從已熟悉、舒服的基本腳位開始，雙手可扶穩固椅背。','工作腳尖向前延伸，沿地板慢慢滑向側邊。','再沿地面移向後方；只做到髖部能自然控制的範圍。','沿原路收回，先練小幅度，每側 2–4 次。'],safety:'不要扭腰或硬轉髖部；有髖、膝、腳踝不適就停止。'},
+{id:'developpe',name:'Développé（控制抬腿）',en:'Développé',level:'進階概念',category:'腿部控制',time:'1 分鐘',beats:'準備 2 拍、慢慢伸展 2–4 拍、收回 2 拍',desc:'先理解從屈膝準備到慢慢伸展的動作概念；練習時只做低高度。',steps:['站在穩固支撐旁，先把重心放穩。','工作腳輕輕經過 passé 的準備位置，不要把膝蓋拉高。','以慢速向前低低伸展小腿，保持骨盆不歪斜。','收回後放下，左右各 2 次即可。'],safety:'不要追求高抬腿或強行拉開髖部；若手肘仍有限制，不要用受傷的手臂承重。'},
+{id:'saute',name:'Sauté（小跳概念）',en:'Sauté',level:'進階概念',category:'跳躍',time:'1 分鐘',beats:'預備 2 拍、輕跳 1 拍、落地 1 拍',desc:'僅在地面不滑、頭頂空間足夠時，練習很小、很輕的雙腳跳與安靜落地。',steps:['確認周圍沒有家具、地毯翹起或其他障礙。','先做幾次柔和屈膝，感覺雙腳平均承重。','若完全沒有疼痛且已熟悉基本功，做 2–3 次很小的雙腳跳。','輕柔落地，膝蓋朝腳尖方向，休息後再評估。'],safety:'若仍有骨折復健限制、疼痛、腫脹或醫師禁止跳躍，請略過跳躍並詢問家長或復健專業人員。'},
+{id:'passe',name:'Passé／Retiré（經過屈膝位）',en:'Passé / Retiré',level:'基礎',category:'腿部控制',time:'1–2 分鐘',beats:'抬起 2 拍、停 2 拍、放下 2 拍',desc:'認識工作腳從地面經過小腿旁的準備位置；先低高度、扶穩支撐練習。',steps:['雙腳自然站好，必要時只用舒服的一側手扶穩固支撐。','工作腳尖輕輕沿支撐腿移到腳踝附近，不必抬高膝蓋。','停 1–2 拍，骨盆保持水平、站立膝不鎖死。','慢慢沿原路放下，左右各 2–4 次。'],safety:'不要用手把膝蓋拉高或硬轉髖部；若支撐手臂仍受傷或受限，請勿用它承重。'},
+{id:'degage',name:'Dégagé（離地擦出）',en:'Battement Dégagé',level:'基礎',category:'腳部控制',time:'1–2 分鐘',beats:'擦出 2 拍、收回 2 拍',desc:'由 Tendu 延伸而來，腳尖輕快離地一點點，再控制收回；先理解概念，不追求高度。',steps:['從舒適的平行或小外開站姿開始。','工作腳沿地面擦出，腳尖自然延伸。','腳尖只離地少許，立刻控制收回起始位置。','每側先做 2–4 次，保持上身穩定。'],safety:'不要甩腿或追求高度；地板必須不滑，膝蓋與腳尖方向保持一致。'},
+{id:'portdebras',name:'Port de bras（手臂運行）',en:'Port de bras',level:'入門',category:'手臂與姿態',time:'2 分鐘',beats:'每個方向 4 拍，慢慢轉換',desc:'練習手臂在準備位與低位之間柔和轉換，肩膀放鬆，動作不需要抬高。',steps:['站在舒適站姿，肩膀自然下沉，手肘保持柔和。','雙手在身體前方形成自然弧線，不聳肩。','緩慢把手臂打開到低位，再回到準備位。','配合均勻呼吸重複 3–4 次。'],safety:'若手肘或手部仍有活動限制，先遵照復健師建議；不要拉扯手腕、手肘或強迫伸直。'},
+{id:'grandbattement',name:'Grand battement（大踢腿概念）',en:'Grand battement',level:'進階概念',category:'腿部控制',time:'1 分鐘',beats:'準備 2 拍、低幅度抬腿 2 拍、收回 2 拍',desc:'先學習控制腿部向前延伸的概念，居家自學只做低幅度，不追求高踢腿。',steps:['扶穩支撐，站姿自然且骨盆保持水平。','工作腳向前低低抬起，速度慢且可控制。','停一拍後慢慢收回，不甩腿。','每側 2 次即可，保持呼吸順暢。'],safety:'不追求高度、不用彈震方式拉腿；若腿後側緊繃或有疼痛就停止，最好先由合格老師指導。'}
+];
+const todayIds=['positions','tendu','plie','releve','rond'];
+const statusLabels={'未學習':'尚未學習','練習中':'練習中','已學會':'已學會'};
+let state=load('balletState',{});
+let todayDone=load('balletToday',[]);
+let notes=load('balletNotes',[]);
+let pointData=load('balletPoints',{total:0,claims:{}});
+let lessonAdds=load('balletLessonAdds',{});
+let calendarEvents=load('balletCalendarEvents',{});
+let calendarCursor=new Date(new Date().getFullYear(),new Date().getMonth(),1);
+let selectedCalendarDate=dateKey();
+// 依照小優已經學過的內容，先標記熟悉動作，避免當成新課重教。
+['positions','tendu','rond','developpe','saute','plie','releve'].forEach(id=>{if(!state[id])state[id]='已學會'});
+save('balletState',state);
+function load(k,f){try{return JSON.parse(localStorage.getItem(k))??f}catch(e){return f}}
+function save(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true}catch(e){console.warn('資料儲存失敗：',k,e);return false}}
+const APP_STORAGE_KEYS=['balletState','balletToday','balletNotes','balletPoints','balletLessonAdds','balletCalendarEvents','balletDeviceMode'];
+function exportAppData(){const payload={app:'Ballet Étoile 星芭蕾',version:1,exportedAt:new Date().toISOString(),data:{}};APP_STORAGE_KEYS.forEach(k=>{try{const raw=localStorage.getItem(k);if(raw!==null)payload.data[k]=JSON.parse(raw)}catch(e){}});payload.data.balletCalendarEvents=calendarEvents;payload.data.balletLessonAdds=lessonAdds;payload.data.balletState=state;payload.data.balletToday=todayDone;payload.data.balletNotes=notes;payload.data.balletPoints=pointData;const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json;charset=utf-8'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='Ballet-Etoile-星芭蕾資料備份.json';document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);document.getElementById('backupStatus').textContent='已準備下載備份檔；請把檔案保存在容易找到的位置。'}
+function importAppData(file){const status=document.getElementById('backupStatus');const reader=new FileReader();reader.onload=()=>{try{const payload=JSON.parse(reader.result);if(!payload||!payload.data||typeof payload.data!=='object')throw new Error('格式不符');APP_STORAGE_KEYS.forEach(k=>{if(Object.prototype.hasOwnProperty.call(payload.data,k))save(k,payload.data[k])});state=load('balletState',{});todayDone=load('balletToday',[]);notes=load('balletNotes',[]);pointData=load('balletPoints',{total:0,claims:{}});lessonAdds=load('balletLessonAdds',{});calendarEvents=load('balletCalendarEvents',{});status.textContent='備份已匯入！頁面即將重新整理，請確認月曆日期。';setTimeout(()=>location.reload(),500)}catch(e){status.textContent='無法讀取這個備份檔，請選擇「Ballet-Etoile-星芭蕾資料備份.json」。'}};reader.onerror=()=>{status.textContent='讀取檔案失敗，請再試一次。'};reader.readAsText(file)}
+function getStatus(id){return state[id]||'未學習'}
+function setStatus(id,s){state[id]=s;save('balletState',state);renderAll()}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function moveCard(m){const addedDate=document.getElementById('lessonDateSelect')?.value;const already=addedDate&&(lessonAdds[addedDate]||[]).includes(m.id);return `<article class="card"><div><span class="tag">${m.category}</span><span class="tag difficulty">${m.level}</span><span class="tag">${getStatus(m.id)==='已學會'?'已經學過':getStatus(m.id)==='練習中'?'練習中':'尚未學習'}</span></div><h3>${m.name}</h3><p>${m.desc}</p><p class="small">⏱ ${m.time}　🎵 ${m.beats}</p><button class="btn primary" onclick="openMove('${m.id}')">查看教學</button> <button class="btn" onclick="cycleStatus('${m.id}')">選擇狀態</button> <button class="btn" ${already?'disabled':''} onclick="addMoveToLesson('${m.id}')">${already?'已加入所選課程':'＋加入課程'}</button></article>`}
+function openMove(id){const m=moves.find(x=>x.id===id);if(!m)return;document.getElementById('detailTitle').textContent=m.name+' · '+m.en;document.getElementById('detailBody').innerHTML=`<p>${m.desc}</p><span class="tag">${m.level}</span><span class="tag">${m.category}</span><p><strong>🎵 拍數：</strong>${m.beats}</p><p><strong>🩰 教學步驟</strong></p><ol class="step-list">${m.steps.map(x=>`<li>${x}</li>`).join('')}</ol><p><strong>🎬 影片與視覺參考</strong></p><p><a href="https://vimeo.com/662741669" target="_blank" rel="noopener noreferrer">Ballet Basics：基本腳位與多種舞步示範 ↗</a></p><p><a href="https://watch.ballet.org.uk/videos/ballet-with-lucy-lowndes-1-absolute-beginner" target="_blank" rel="noopener noreferrer">English National Ballet：初學課程示範 ↗</a></p><p><a href="https://brocheballet.com/videos/absolute-beginner-ballet-warmup-pli-tendu-rond-de-jambe/" target="_blank" rel="noopener noreferrer">Broche Ballet：Plié、Tendu、Rond de jambe ↗</a></p><p class="small">這些是外部教學資源，影片可能需要網路或帳號；目前不是嵌入式播放器。</p><p><strong>⚠️ 安全提醒</strong><br>${m.safety}</p><div class="field"><label>我的學習狀態</label><select id="modalStatus"><option ${getStatus(id)==='未學習'?'selected':''}>未學習</option><option ${getStatus(id)==='練習中'?'selected':''}>練習中</option><option ${getStatus(id)==='已學會'?'selected':''}>已學會</option></select></div><button class="btn primary" onclick="setStatus('${id}',document.getElementById('modalStatus').value);closeMove()">儲存學習狀態</button>`;document.getElementById('detail').classList.add('open')}
+function closeMove(){document.getElementById('detail').classList.remove('open')}
+function cycleStatus(id){const arr=['未學習','練習中','已學會'];setStatus(id,arr[(arr.indexOf(getStatus(id))+1)%arr.length])}
+function getLocalDate(){const d=new Date();return new Date(d.getFullYear(),d.getMonth(),d.getDate())}
+function dayIndex(){return getLocalDate().getDay()} // Sunday=0, Saturday=6
+function dateKey(){const d=getLocalDate();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
+function weekendKey(){const d=getLocalDate();const sat=new Date(d);sat.setDate(d.getDate()-(d.getDay()===0?1:d.getDay()===6?0:d.getDay()-6));return `${sat.getFullYear()}-${String(sat.getMonth()+1).padStart(2,'0')}-${String(sat.getDate()).padStart(2,'0')}`}
+function dateFromKey(key){const [y,m,d]=key.split('-').map(Number);return new Date(y,m-1,d)}
+function dateKeyFromDate(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
+function isWeekendKey(key){return [0,6].includes(dateFromKey(key).getDay())}
+function calendarEventFor(key){return calendarEvents[key]||null}
+function isLessonCancelled(key){const e=calendarEventFor(key);return !!(e&&e.cancel)}
+function renderCalendar(){
+ const grid=document.getElementById('calendarGrid');if(!grid)return;
+ const year=calendarCursor.getFullYear(),month=calendarCursor.getMonth();
+ document.getElementById('calendarMonthTitle').textContent=`${year} 年 ${month+1} 月`;
+ const heads=['日','一','二','三','四','五','六'];
+ let html=heads.map(x=>`<div class="calendar-weekday">${x}</div>`).join('');
+ const first=new Date(year,month,1),start=new Date(year,month,1-first.getDay());
+ for(let i=0;i<42;i++){
+  const d=new Date(start);d.setDate(start.getDate()+i);const key=dateKeyFromDate(d),ev=calendarEventFor(key),isCurrent=d.getMonth()===month,isToday=key===dateKey(),weekend=[0,6].includes(d.getDay()),cancelled=isLessonCancelled(key);
+  let marks='';if(weekend)marks+='<span class="day-mark">🩰 預定課程</span>';
+  if(ev){const icon=ev.type==='holiday'?'🎌':ev.type==='typhoon'?'🌪️':ev.type==='personal'?'📝':'📌';marks+=`<span class="day-mark">${icon} ${escapeHtml(ev.note||calendarTypeLabel(ev.type))}</span>`;}
+  const makeupSources=Object.entries(calendarEvents).filter(([source,e])=>e.makeupDate===key);if(makeupSources.length)marks+='<span class="day-mark">➕ 補課／加課</span>';
+  if(cancelled)marks+='<span class="day-mark">🚫 已取消</span>';
+  html+=`<button class="calendar-day ${weekend?'weekend':''} ${cancelled?'cancelled':''} ${isCurrent?'':'outside'} ${isToday?'today':''} ${key===selectedCalendarDate?'selected':''}" data-date="${key}" aria-label="${key}${cancelled?'，課程已取消':''}"><span class="day-num">${d.getDate()}</span>${marks}</button>`;
+ }
+ grid.innerHTML=html;
+ grid.querySelectorAll('[data-date]').forEach(b=>b.addEventListener('click',()=>selectCalendarDate(b.dataset.date)));
+ renderCalendarEventList();
+}
+function calendarTypeLabel(type){return ({holiday:'國定假日／學校放假',typhoon:'颱風假／停班停課',personal:'個人行程／有事',other:'其他備註'})[type]||'一般日期'}
+function selectCalendarDate(key){selectedCalendarDate=key;const d=dateFromKey(key);calendarCursor=new Date(d.getFullYear(),d.getMonth(),1);document.getElementById('calendarDate').value=key;const ev=calendarEventFor(key);document.getElementById('calendarEditTitle').textContent=`編輯 ${key}`;document.getElementById('calendarDayKind').textContent=isWeekendKey(key)?'週末預定練習日':'平日原本不安排芭蕾';document.getElementById('calendarType').value=ev?.type||'none';document.getElementById('calendarNote').value=ev?.note||'';document.getElementById('cancelCalendarLesson').checked=ev?!!ev.cancel:isWeekendKey(key);document.getElementById('scheduleMakeupLesson').checked=!!ev?.makeupDate;document.getElementById('makeupLessonDate').value=ev?.makeupDate||'';document.getElementById('calendarSaveStatus').textContent='';renderCalendar();}
+function saveCalendarEntry(){const key=document.getElementById('calendarDate').value;if(!key){document.getElementById('calendarSaveStatus').textContent='請先選日期。';return}const type=document.getElementById('calendarType').value,note=document.getElementById('calendarNote').value.trim(),cancel=document.getElementById('cancelCalendarLesson').checked,wantsMakeup=document.getElementById('scheduleMakeupLesson').checked,makeupDate=document.getElementById('makeupLessonDate').value;if(wantsMakeup&&!makeupDate){document.getElementById('calendarSaveStatus').textContent='請選擇補課／加課日期。';return}if(type==='none'&&!note&&!cancel&&!wantsMakeup){delete calendarEvents[key]}else{calendarEvents[key]={type:type==='none'?(note?'other':'none'):type,note,cancel,makeupDate:wantsMakeup?makeupDate:''};}selectedCalendarDate=key;const d=dateFromKey(key);calendarCursor=new Date(d.getFullYear(),d.getMonth(),1);const persisted=save('balletCalendarEvents',calendarEvents);document.getElementById('calendarSaveStatus').textContent=persisted?((isLessonCancelled(key)?'已儲存，原日期課程已取消；不扣點。 ':'已儲存日期安排！ ')+(wantsMakeup?`加強訓練已安排在 ${makeupDate}。`:'')+' 建議下載備份，避免瀏覽器資料遺失。'):'瀏覽器沒有成功儲存資料！請立即下載資料備份，並確認瀏覽器允許儲存網站資料。';renderCalendar();renderToday();renderPoints();}
+function clearCalendarEntry(){const key=document.getElementById('calendarDate').value;if(!key)return;delete calendarEvents[key];save('balletCalendarEvents',calendarEvents);selectedCalendarDate=key;document.getElementById('calendarType').value='none';document.getElementById('calendarNote').value='';document.getElementById('cancelCalendarLesson').checked=isWeekendKey(key);document.getElementById('scheduleMakeupLesson').checked=false;document.getElementById('makeupLessonDate').value='';document.getElementById('calendarSaveStatus').textContent='已清除此日期事項。';renderCalendar();renderToday();renderPoints();}
+function renderCalendarEventList(){const el=document.getElementById('calendarEventList');if(!el)return;const entries=Object.entries(calendarEvents).sort((a,b)=>a[0].localeCompare(b[0]));el.innerHTML=entries.length?entries.map(([key,e])=>`<div class="calendar-event"><strong>${escapeHtml(key)} · ${calendarTypeLabel(e.type)}</strong>${e.cancel?' <span class="tag">課程已取消</span>':''}${e.makeupDate?` <span class="tag">加強訓練：${escapeHtml(e.makeupDate)}</span>`:''}<p>${escapeHtml(e.note||'（沒有補充說明）')}</p><button class="btn" onclick="selectCalendarDate('${key}')">編輯</button></div>`).join(''):'<p class="small">目前沒有標註的日期。點上方月曆日期即可新增。</p>'}
+function renderPoints(){
+ const isWeekend=[0,6].includes(dayIndex()); const cancelledToday=isLessonCancelled(dateKey());
+ const tasks=[{id:'warmup',label:'完成安全暖身',pts:1},{id:'newskill',label:'認真練習技巧',pts:2},{id:'music',label:'配合音樂練習小組合',pts:1},{id:'journal',label:'記錄今天的成果',pts:1}];
+ const key=weekendKey(); const claimed=pointData.claims[key]||[];
+ document.getElementById('pointCount').textContent=pointData.total;
+ document.getElementById('pointsTasks').innerHTML=`<p>${cancelledToday?'今天的課程已取消，安心休息，不扣點。':isWeekend?'今天是週末練習日！完成後再勾選，點數會保存在這個瀏覽器。':'今天是平日，不安排芭蕾，也沒有集點任務。週末再來累積點數吧！'}</p>`+tasks.map(t=>`<label class="checkline"><input type="checkbox" ${claimed.includes(t.id)?'checked':''} ${!isWeekend||cancelledToday||claimed.includes(t.id)?'disabled':''} onchange="claimPoint('${t.id}',${t.pts},this.checked)"><span>${t.label}（+${t.pts} 點）</span></label>`).join('')+`<p class="small">集點只在週六、週日開放；不因休息或漏做任務扣點。每項每週末只計一次。</p>`;
+}
+function claimPoint(id,pts,yes){if(![0,6].includes(dayIndex())||isLessonCancelled(dateKey()))return;const key=weekendKey();pointData.claims[key]=pointData.claims[key]||[];const arr=pointData.claims[key];if(yes&&!arr.includes(id)){arr.push(id);pointData.total+=pts}else if(!yes&&arr.includes(id)){pointData.claims[key]=arr.filter(x=>x!==id);pointData.total=Math.max(0,pointData.total-pts)}save('balletPoints',pointData);renderPoints()}
+function renderToday(){
+ const day=dayIndex(), isWeekend=[0,6].includes(day); const plan=document.getElementById('weekPlan'); const dayNameAll=['星期日','星期一','星期二','星期三','星期四','星期五','星期六'][day];const makeupToday=Object.entries(calendarEvents).filter(([source,e])=>e.makeupDate===dateKey());const inspiration=document.getElementById('practiceInspiration');const showInspiration=!isLessonCancelled(dateKey())&&(isWeekend||makeupToday.length>0);inspiration.style.display=showInspiration?'grid':'none';if(showInspiration){const cards=['每一次專心練習，都在替夢想添上一顆星。','不必一次做到完美；穩定、耐心，就是今天的進步。','把注意力放回呼吸、音樂和自己的節奏。妳正在累積實力。','今天練習一小步，也是在向夢想靠近一小步。'];document.getElementById('encouragementText').textContent=cards[(new Date(dateKey()+'T12:00:00').getDate()+day)%cards.length];}
+ if(isLessonCancelled(dateKey())){const ev=calendarEventFor(dateKey());plan.innerHTML=`<h2>${dayNameAll}・今日課程已取消 🌷</h2><p>${escapeHtml(ev?.note||calendarTypeLabel(ev?.type))}。今天安心處理其他事情，不需要補課，也不會扣點。可以到「月曆安排」修改或清除標註。</p>`;document.getElementById('lessonHeading').textContent='今日課程｜已取消';document.getElementById('todayLessons').innerHTML='<div class="empty">📅 這一天已在月曆標註為取消課程。休息不扣點，也不用補練。</div>';document.getElementById('resetToday').style.display='none';}
+ else if(!isWeekend&&!makeupToday.length){const dayName=dayNameAll;plan.innerHTML=`<h2>今天是${dayName}・平日休息日 🌷</h2><p>今天不安排芭蕾練習，也不需要看影片或做任務。下一次練習是週六。平日太忙了，就安心處理學校和自己的事吧！${makeupToday.length?'（月曆裡有補課／加課標記；依妳的規則，平日仍不安排練習。）':''}</p>`;document.getElementById('lessonHeading').textContent='今日課程｜今天沒有課程';document.getElementById('todayLessons').innerHTML='<div class="empty">🩰 平日完全不安排芭蕾。沒有練習任務、不扣點！週六見。</div>';document.getElementById('resetToday').style.display='none';}
+ else {const dayName=dayNameAll;const isBoostDay=makeupToday.length>0;plan.innerHTML=`<h2>${dayName}・${isBoostDay?'加強訓練日 💪':'週末練習日 🩰'}</h2><p>${isBoostDay?'這是妳在月曆主動安排的加強訓練。':' '+(day===6?'技巧複習＋新技巧學習。':'複習技巧＋配合音樂練習小組合。')} ${isBoostDay?'📅 今天是妳安排的加強訓練日！':''}建議 15–20 分鐘，依身體狀況調整。</p>`;document.getElementById('lessonHeading').textContent=isBoostDay?'今日課程｜加強訓練':(day===6?'週六課程｜技巧學習':'週日課程｜組合練習');document.getElementById('resetToday').style.display='';const baseIds=isBoostDay&&!isWeekend?['plie','tendu','releve']:(day===6?['plie','releve','developpe']:['tendu','rond','saute']);const extraIds=lessonAdds[dateKey()]||[];const planIds=[...baseIds,...extraIds.filter(id=>!baseIds.includes(id))];document.getElementById('todayLessons').innerHTML=planIds.map((id,i)=>{const m=moves.find(x=>x.id===id);if(!m)return '';return `<div class="lesson"><div class="time">${i<3?['3 分','5 分','5 分'][i]:'加選'}</div><div style="flex:1"><strong>${m.name} <span class="tag">${i<3?(isBoostDay?'加強訓練':'課程安排'):'妳加入的動作'}</span></strong><p>${m.desc}</p><button class="btn" onclick="openMove('${id}')">看步驟／影片</button></div></div>${i<planIds.length-1?'<hr style="border:0;border-top:1px solid var(--line);margin:13px 0">':''}`}).join('');}
+ renderPoints();
+}
+function toggleToday(id,yes){todayDone=yes?[...new Set([...todayDone,id])]:todayDone.filter(x=>x!==id);save('balletToday',todayDone);renderToday();renderStats()}
+function getNextWeekendDates(){const now=getLocalDate();const out=[];for(let offset=0;offset<=7;offset++){const d=new Date(now);d.setDate(now.getDate()+offset);if([0,6].includes(d.getDay()))out.push(d);if(out.length===2)break;}return out;}
+function fmtDate(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
+function setupLessonDateSelect(){const sel=document.getElementById('lessonDateSelect');if(!sel)return;const previous=sel.value;const dates=getNextWeekendDates();sel.innerHTML=dates.map(d=>`<option value="${fmtDate(d)}">${d.getDay()===6?'星期六':'星期日'}（${d.getMonth()+1}/${d.getDate()}）${fmtDate(d)===dateKey()?'・今天':''}</option>`).join('');if(dates.some(d=>fmtDate(d)===previous))sel.value=previous;else if(dates.length)sel.value=fmtDate(dates[0]);}
+function addMoveToLesson(id){const date=document.getElementById('lessonDateSelect').value;if(!date)return;lessonAdds[date]=lessonAdds[date]||[];if(!lessonAdds[date].includes(id)){lessonAdds[date].push(id);save('balletLessonAdds',lessonAdds);document.getElementById('lessonAddStatus').textContent=`已把「${moves.find(m=>m.id===id)?.name}」加入 ${date} 的週末課程！`;renderSearch();if(date===dateKey())renderToday();}else{document.getElementById('lessonAddStatus').textContent='這個動作已經在所選課程裡了。';}}
+function renderSearch(){setupLessonDateSelect();const q=document.getElementById('searchInput').value.toLowerCase().trim(),level=document.getElementById('difficultyFilter').value,status=document.getElementById('statusFilter').value;const list=moves.filter(m=>(!level||m.level===level)&&(!status||getStatus(m.id)===status)&&(!q||[m.name,m.en,m.category,m.desc,m.level].join(' ').toLowerCase().includes(q)));document.getElementById('searchResults').innerHTML=list.length?list.map(moveCard).join(''):'<div class="empty">找不到符合條件的動作。可以切換「所有學習狀態」或清除搜尋文字。</div>'}
+function renderLibrary(){const levels=['入門','基礎','進階概念'];document.getElementById('libraryGroups').innerHTML=levels.map(l=>`<div class="section-title"><h2>${l}</h2><span class="small">${moves.filter(m=>m.level===l).length} 個動作</span></div><div class="grid">${moves.filter(m=>m.level===l).map(moveCard).join('')}</div>`).join('')}
+function renderRecords(){document.getElementById('recordList').innerHTML=moves.map(m=>`<div class="checkline"><div style="flex:1"><strong>${m.name}</strong><div class="small">${m.level} · ${m.category}</div></div><select aria-label="${m.name}學習狀態" onchange="setStatus('${m.id}',this.value)"><option ${getStatus(m.id)==='未學習'?'selected':''}>未學習</option><option ${getStatus(m.id)==='練習中'?'selected':''}>練習中</option><option ${getStatus(m.id)==='已學會'?'selected':''}>已學會</option></select></div>`).join('');const d=getLocalDate();document.getElementById('practiceDate').value=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;renderNotes()}
+function renderStats(){document.getElementById('learnedCount').textContent=moves.filter(m=>getStatus(m.id)==='已學會').length;document.getElementById('practiceCount').textContent=moves.filter(m=>getStatus(m.id)==='練習中').length;const pct=Math.round(moves.filter(m=>getStatus(m.id)==='已學會').length/moves.length*100);document.getElementById('progressText').textContent=pct+'%';document.getElementById('progressBar').style.width=pct+'%'}
+function renderNotes(){document.getElementById('savedNotes').innerHTML=notes.slice().reverse().map(n=>`<div style="border-top:1px solid var(--line);margin-top:12px;padding-top:12px"><strong>${escapeHtml(n.date)}</strong><p style="white-space:pre-wrap">${escapeHtml(n.text)}</p><button class="btn" onclick="deleteNote('${n.date}')">刪除此筆記</button></div>`).join('')||'<p class="small">還沒有練習筆記。</p>'}
+function deleteNote(date){notes=notes.filter(n=>n.date!==date);save('balletNotes',notes);renderNotes()}
+function renderAll(){renderToday();renderSearch();renderLibrary();renderRecords();renderStats();renderCalendar();selectCalendarDate(selectedCalendarDate)}
+document.querySelectorAll('nav button').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active',p.id===b.dataset.tab));}));
+function setDeviceMode(mode){document.body.classList.toggle('mobile-mode',mode==='mobile');try{localStorage.setItem('balletDeviceMode',mode)}catch(e){}document.getElementById('deviceChooser').classList.remove('open')}
+function openDeviceChooser(){document.getElementById('deviceChooser').classList.add('open')}
+document.querySelectorAll('[data-device]').forEach(b=>b.addEventListener('click',()=>setDeviceMode(b.dataset.device)));
+document.getElementById('changeDevice').addEventListener('click',openDeviceChooser);
+let savedDevice='';try{savedDevice=localStorage.getItem('balletDeviceMode')||''}catch(e){}
+if(savedDevice){setDeviceMode(savedDevice)}else{openDeviceChooser()}
+
+document.getElementById('exportData').addEventListener('click',exportAppData);document.getElementById('importDataButton').addEventListener('click',()=>document.getElementById('importDataFile').click());document.getElementById('importDataFile').addEventListener('change',e=>{if(e.target.files&&e.target.files[0])importAppData(e.target.files[0])});
+document.getElementById('prevMonth').addEventListener('click',()=>{calendarCursor=new Date(calendarCursor.getFullYear(),calendarCursor.getMonth()-1,1);renderCalendar()});document.getElementById('nextMonth').addEventListener('click',()=>{calendarCursor=new Date(calendarCursor.getFullYear(),calendarCursor.getMonth()+1,1);renderCalendar()});document.getElementById('calendarDate').addEventListener('change',e=>{if(e.target.value)selectCalendarDate(e.target.value)});document.getElementById('saveCalendarEntry').addEventListener('click',saveCalendarEntry);document.getElementById('clearCalendarEntry').addEventListener('click',clearCalendarEntry);
+document.getElementById('searchInput').addEventListener('input',renderSearch);document.getElementById('difficultyFilter').addEventListener('change',renderSearch);document.getElementById('statusFilter').addEventListener('change',renderSearch);document.getElementById('lessonDateSelect').addEventListener('change',()=>{document.getElementById('lessonAddStatus').textContent='';renderSearch()});
+document.getElementById('closeDetail').addEventListener('click',closeMove);document.getElementById('detail').addEventListener('click',e=>{if(e.target.id==='detail')closeMove()});
+document.getElementById('resetToday').addEventListener('click',()=>{todayDone=[];save('balletToday',todayDone);renderToday();renderStats()});
+document.getElementById('saveNote').addEventListener('click',()=>{const date=document.getElementById('practiceDate').value,text=document.getElementById('practiceNote').value.trim();if(!date||!text){document.getElementById('noteStatus').textContent='請填寫日期和筆記內容。';return}notes=notes.filter(n=>n.date!==date);notes.push({date,text});save('balletNotes',notes);document.getElementById('practiceNote').value='';document.getElementById('noteStatus').textContent='已儲存！';renderNotes()});
+renderAll();
+</script>
+</body>
+</html>
