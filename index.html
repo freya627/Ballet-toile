@@ -58,6 +58,7 @@ body.mobile-mode main{padding:14px 12px 32px}body.mobile-mode header{padding:20p
   <button data-tab="records">學習紀錄</button>
   <button data-tab="calendar">月曆安排 📅</button>
   <button data-tab="rest">休息區 🎧</button>
+  <button data-tab="points">🎁 夢想集點卡</button>
   <button data-tab="rewards">🎁 我的芭蕾藏寶箱</button>
 </nav>
 <main>
@@ -77,12 +78,16 @@ body.mobile-mode main{padding:14px 12px 32px}body.mobile-mode header{padding:20p
   <div class="hero" id="weekPlan"><h2>本週練習安排</h2><p>平日不安排芭蕾；只在週六、週日練習。</p></div>
   <div class="section-title"><h2 id="lessonHeading">今日課程</h2><button class="btn" id="resetToday">重設勾選</button></div>
   <div class="card" id="todayLessons"></div>
-  <div class="section-title"><h2>⭐ 週末追夢集點</h2><span class="small">每項每個週末最多一次</span></div>
-  <div class="card" id="pointsTasks"></div>
   <div class="card" style="margin-top:12px"><h3>🎵 音樂與拍數小提示</h3><p>可選節奏清楚、速度舒適的古典芭蕾音樂。初學時每個動作先用慢速數拍；沒有音樂也可以自己均勻地數「1、2、3、4」。不要為了跟上音樂而急著做動作。</p><p class="small">本程式不會自動播放音樂；可用你已熟悉且適合練習的音樂。</p></div>
 </section>
+<section id="points" class="panel">
+  <div class="hero"><h2>夢想集點卡 🎁</h2><p>週末完成練習任務就能累積追夢點數。平日是休息日，不安排練習，也不會扣點。</p></div>
+  <div class="stats"><div class="stat"><strong id="pointCountCard">0</strong><span>目前追夢點數 ⭐</span></div></div>
+  <div class="section-title"><h2>⭐ 週末追夢集點</h2><span class="small">每項每個週末最多一次</span></div>
+  <div class="card" id="pointsTasks"></div>
+</section>
 <section id="rewards" class="panel">
-  <div class="hero"><h2>夢想集點卡 🎁</h2><p>這裡的所有獎勵都是網站裡的虛擬圖片與稱號，不是實體商品！用點數兌換後即可收藏在你的夢想衣櫥裡，稱號則依累積點數自動解鎖。</p></div>
+  <div class="hero"><h2>我的芭蕾藏寶箱 🎁</h2><p>收藏你用追夢點數兌換的虛擬小物，打造自己的夢想衣櫥。藏寶箱專門管理收藏，集點任務請到「夢想集點卡」。</p></div>
   <div class="stats">
     <div class="stat"><strong id="rewardBalance">0</strong><span>可用點數 ⭐</span></div>
     <div class="stat"><strong id="rewardLifetime">0</strong><span>累積獲得點數</span></div>
@@ -293,7 +298,7 @@ function renderPoints(){
  const isWeekend=[0,6].includes(dayIndex()); const cancelledToday=isLessonCancelled(dateKey());
  const tasks=[{id:'warmup',label:'完成安全暖身',pts:1},{id:'newskill',label:'認真練習技巧',pts:2},{id:'music',label:'配合音樂練習小組合',pts:1},{id:'journal',label:'記錄今天的成果',pts:1}];
  const key=weekendKey(); const claimed=pointData.claims[key]||[];
- document.getElementById('pointCount').textContent=pointData.total;
+ document.getElementById('pointCount').textContent=pointData.total;document.getElementById('pointCountCard').textContent=pointData.total;
  document.getElementById('pointsTasks').innerHTML=`<p>${cancelledToday?'今天的課程已取消，安心休息，不扣點。':isWeekend?'今天是週末練習日！完成後再勾選，點數會保存在這個瀏覽器。':'今天是平日，不安排芭蕾，也沒有集點任務。週末再來累積點數吧！'}</p>`+tasks.map(t=>`<label class="checkline"><input type="checkbox" ${claimed.includes(t.id)?'checked':''} ${!isWeekend||cancelledToday||claimed.includes(t.id)?'disabled':''} onchange="claimPoint('${t.id}',${t.pts},this.checked)"><span>${t.label}（+${t.pts} 點）</span></label>`).join('')+`<p class="small">集點只在週六、週日開放；不因休息或漏做任務扣點。每項每週末只計一次。</p>`;
 }
 function claimPoint(id,pts,yes){if(![0,6].includes(dayIndex())||isLessonCancelled(dateKey()))return;const key=weekendKey();pointData.claims[key]=pointData.claims[key]||[];const arr=pointData.claims[key];if(yes&&!arr.includes(id)){arr.push(id);pointData.total+=pts;pointData.lifetimeTotal=(pointData.lifetimeTotal||0)+pts}else if(!yes&&arr.includes(id)){pointData.claims[key]=arr.filter(x=>x!==id);pointData.total=Math.max(0,pointData.total-pts);pointData.lifetimeTotal=Math.max(0,(pointData.lifetimeTotal||0)-pts)}save('balletPoints',pointData);renderPoints();renderRewards()}
