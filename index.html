@@ -89,11 +89,12 @@ body.mobile-mode main{padding:14px 12px 32px}body.mobile-mode header{padding:20p
   </div>
   <div class="section-title"><h2>👑 成就稱號</h2><span class="small">達標自動解鎖</span></div>
   <div id="rewardTitles" class="grid"></div>
-  <div class="section-title"><h2>🎀 虛擬裝備與服裝兌換</h2><span class="small">兌換後解鎖網站內的虛擬收藏</span></div>
+  <div class="section-title"><h2>🎀 虛擬裝備與服裝兌換</h2><span class="small">小額就能收藏，慢慢集滿衣櫥</span></div>
   <div id="rewardItems" class="grid"></div>
+  <div class="section-title"><h2>👗 我的夢想衣櫥</h2><span class="small">兌換後的虛擬收藏會放在這裡</span></div>
+  <div id="rewardWardrobe" class="grid"><div class="empty">還沒有收藏，挑一個喜歡的虛擬小物開始吧！✨</div></div>
   <div class="section-title"><h2>🌟 已兌換紀錄</h2></div>
   <div class="card" id="rewardHistory"><p class="small">還沒有兌換紀錄。</p></div>
-  <p class="small">實物獎勵是兌換資格，不會自動購買商品；請先和家長確認預算與尺寸。足尖鞋需要芭蕾老師評估與合適的專業試鞋，不列入自行兌換的裝備。</p>
 </section>
 <section id="search" class="panel">
   <div class="section-title"><h2>動作快速查詢 🔎</h2></div>
@@ -293,32 +294,43 @@ function renderPoints(){
 }
 function claimPoint(id,pts,yes){if(![0,6].includes(dayIndex())||isLessonCancelled(dateKey()))return;const key=weekendKey();pointData.claims[key]=pointData.claims[key]||[];const arr=pointData.claims[key];if(yes&&!arr.includes(id)){arr.push(id);pointData.total+=pts;pointData.lifetimeTotal=(pointData.lifetimeTotal||0)+pts}else if(!yes&&arr.includes(id)){pointData.claims[key]=arr.filter(x=>x!==id);pointData.total=Math.max(0,pointData.total-pts);pointData.lifetimeTotal=Math.max(0,(pointData.lifetimeTotal||0)-pts)}save('balletPoints',pointData);renderPoints();renderRewards()}
 const rewardTitles=[
- {id:'newstar',name:'芭蕾小新星',threshold:10,desc:'踏出追夢的第一步 ✨'},
- {id:'graceful',name:'優雅練習生',threshold:30,desc:'持續累積基本功與耐心 🌷'},
- {id:'etoile',name:'星芭蕾之星',threshold:200,desc:'一步一步，讓夢想閃耀 🌟'}
+ {id:'newstar',name:'芭蕾小新星',threshold:5,desc:'踏出追夢的第一步 ✨'},
+ {id:'graceful',name:'優雅練習生',threshold:20,desc:'持續累積基本功與耐心 🌷'},
+ {id:'etoile',name:'星芭蕾之星',threshold:80,desc:'一步一步，讓夢想閃耀 🌟'}
 ];
 const rewardItems=[
- {id:'hair',name:'奶茶粉色緞帶',cost:30,icon:'🎀',desc:'解鎖虛擬髮飾收藏圖片。'},
- {id:'warmers',name:'夢幻芭蕾腿套',cost:60,icon:'🧦',desc:'解鎖虛擬腿套造型圖片。'},
- {id:'skirt',name:'奶霜芭蕾舞裙',cost:120,icon:'👗',desc:'解鎖虛擬芭蕾舞裙造型圖片。'},
- {id:'pointe',name:'粉色足尖鞋收藏圖',cost:160,icon:'🩰',desc:'解鎖網站內的虛擬舞鞋圖片收藏。'},
- {id:'tiara',name:'星光舞者皇冠',cost:240,icon:'👑',desc:'解鎖虛擬皇冠與星光舞台造型。'}
+ {id:'hair',name:'奶茶粉色緞帶',cost:5,icon:'🎀',kind:'髮飾',desc:'柔柔的奶茶粉緞帶，替舞者造型添一點甜美。',paint:'linear-gradient(135deg,#fff5f4,#e9b8c7)'},
+ {id:'flower',name:'珍珠小花髮夾',cost:8,icon:'🌸',kind:'髮飾',desc:'一枚珍珠感的小花髮夾。',paint:'linear-gradient(135deg,#fffaf1,#f6d8df)'},
+ {id:'warmers',name:'夢幻芭蕾腿套',cost:10,icon:'🧦',kind:'練習穿搭',desc:'適合想像中的粉色暖暖練習穿搭。',paint:'linear-gradient(135deg,#fff7ef,#e8d1d6)'},
+ {id:'slippers',name:'緞帶芭蕾軟鞋',cost:12,icon:'🩰',kind:'舞鞋收藏',desc:'一雙粉色緞帶舞鞋的虛擬收藏卡。',paint:'linear-gradient(135deg,#fff4f5,#eab4c5)'},
+ {id:'skirt',name:'奶霜芭蕾舞裙',cost:15,icon:'👗',kind:'舞裙',desc:'奶霜粉色的夢幻舞裙造型。',paint:'linear-gradient(135deg,#fff9f3,#e7b8cb)'},
+ {id:'rose',name:'玫瑰花束',cost:18,icon:'💐',kind:'舞台小物',desc:'演出後收到的一束夢幻玫瑰。',paint:'linear-gradient(135deg,#fff6f1,#f0c4d0)'},
+ {id:'tiara',name:'星光舞者皇冠',cost:20,icon:'👑',kind:'舞台配件',desc:'帶著星光的公主皇冠收藏。',paint:'linear-gradient(135deg,#fff8e8,#f2d5a6)'},
+ {id:'stage',name:'星夜舞台背景',cost:25,icon:'🌙',kind:'背景收藏',desc:'紫粉星夜與舞台燈光的夢想背景。',paint:'linear-gradient(135deg,#e8dff8,#f5c8d8)'},
+ {id:'musicbox',name:'芭蕾音樂盒',cost:30,icon:'🎼',kind:'夢想收藏',desc:'收藏一份專屬於星芭蕾的音樂盒小卡。',paint:'linear-gradient(135deg,#fff8f0,#e5d4bd)'},
+ {id:'star',name:'金色追夢星星',cost:35,icon:'🌟',kind:'特別收藏',desc:'一顆記錄努力與耐心的追夢星星。',paint:'linear-gradient(135deg,#fff8d9,#f0d28e)'}
 ];
 function renderRewards(){
  const balance=Math.max(0,pointData.total||0),earned=Math.max(balance,pointData.lifetimeTotal||0),redeemed=pointData.redeemed||[];
+ const owned=new Set(redeemed.map(x=>x.id));
  document.getElementById('rewardBalance').textContent=balance;
  document.getElementById('rewardLifetime').textContent=earned;
  const unlocked=rewardTitles.filter(t=>earned>=t.threshold);
  document.getElementById('rewardTitleCount').textContent=unlocked.length;
  document.getElementById('rewardTitles').innerHTML=rewardTitles.map(t=>{const ok=earned>=t.threshold;return '<article class="card"><span class="tag">'+(ok?'已解鎖 👑':'尚未解鎖')+'</span><h3>'+escapeHtml(t.name)+'</h3><p>'+escapeHtml(t.desc)+'</p><p class="small">累積 '+t.threshold+' 點'+(ok?' · 已永久解鎖':' · 還差 '+(t.threshold-earned)+' 點')+'</p></article>'}).join('');
- document.getElementById('rewardItems').innerHTML=rewardItems.map(t=>{return '<article class="card"><div style="font-size:28px">'+t.icon+'</div><h3>'+escapeHtml(t.name)+'</h3><p>'+escapeHtml(t.desc)+'</p><p><strong style="color:var(--rose)">'+t.cost+' 點</strong></p><button class="btn '+(balance>=t.cost?'primary':'')+'" '+(balance<t.cost?'disabled':'')+' onclick="redeemReward(\''+t.id+'\')">'+(balance>=t.cost?'兌換獎勵':'還差 '+(t.cost-balance)+' 點')+'</button></article>'}).join('');
+ document.getElementById('rewardItems').innerHTML=rewardItems.map(t=>{const has=owned.has(t.id);return '<article class="card"><div style="background:'+t.paint+';border-radius:14px;padding:14px;text-align:center;font-size:42px;margin-bottom:10px">'+t.icon+'</div><span class="tag">'+escapeHtml(t.kind)+'</span><h3>'+escapeHtml(t.name)+'</h3><p>'+escapeHtml(t.desc)+'</p><p><strong style="color:var(--rose)">'+t.cost+' 點</strong></p><button class="btn '+(!has&&balance>=t.cost?'primary':'')+'" '+(has||balance<t.cost?'disabled':'')+' onclick="redeemReward(\''+t.id+'\')">'+(has?'已收藏 ✓':balance>=t.cost?'兌換收藏':'還差 '+(t.cost-balance)+' 點')+'</button></article>'}).join('');
+ const wardrobe=document.getElementById('rewardWardrobe');
+ const ownedItems=rewardItems.filter(t=>owned.has(t.id));
+ wardrobe.innerHTML=ownedItems.length?ownedItems.map(t=>'<article class="card" style="background:'+t.paint+';text-align:center"><div style="font-size:54px;padding:8px">'+t.icon+'</div><span class="tag">'+escapeHtml(t.kind)+'</span><h3>'+escapeHtml(t.name)+'</h3><p>'+escapeHtml(t.desc)+'</p><p class="small">已加入夢想衣櫥 ✨</p></article>').join(''):'<div class="empty">還沒有收藏，挑一個喜歡的虛擬小物開始吧！✨</div>';
  document.getElementById('rewardHistory').innerHTML=redeemed.length?redeemed.slice().reverse().map(x=>'<div class="calendar-event"><strong>'+escapeHtml(x.name)+'</strong><p class="small">'+escapeHtml(x.date)+' · 使用 '+x.cost+' 點</p></div>').join(''):'<p class="small">還沒有兌換紀錄。</p>';
 }
 function redeemReward(id){
  const item=rewardItems.find(x=>x.id===id);if(!item)return;
+ pointData.redeemed=pointData.redeemed||[];
+ if(pointData.redeemed.some(x=>x.id===id)){renderRewards();return}
  if((pointData.total||0)<item.cost){renderRewards();return}
- if(!confirm('確定要用 '+item.cost+' 點兌換「'+item.name+'」嗎？兌換後不會自動購買實物。'))return;
- pointData.total-=item.cost;pointData.redeemed=pointData.redeemed||[];pointData.redeemed.push({id:item.id,name:item.name,cost:item.cost,date:dateKey()});
+ if(!confirm('確定要用 '+item.cost+' 點收藏「'+item.name+'」嗎？這是網站裡的虛擬收藏圖片，不是實體商品。'))return;
+ pointData.total-=item.cost;pointData.redeemed.push({id:item.id,name:item.name,cost:item.cost,date:dateKey()});
  save('balletPoints',pointData);renderPoints();renderRewards();
 }
 function renderToday(){
