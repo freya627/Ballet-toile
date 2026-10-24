@@ -12,7 +12,7 @@ header{padding:28px 18px 22px;text-align:center;background:rgba(255,253,249,.78)
 nav{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;padding:14px 12px;position:sticky;top:0;background:rgba(251,244,233,.94);backdrop-filter:blur(8px);z-index:5;border-bottom:1px solid var(--line)}
 nav button,.btn{border:1px solid var(--line);border-radius:999px;padding:10px 15px;background:var(--white);color:var(--brown);font-weight:700;cursor:pointer}nav button.active,.btn.primary{background:var(--rose);color:white;border-color:var(--rose)}button:hover{filter:brightness(.98)}
 main{max-width:1050px;margin:auto;padding:20px 16px 50px}.panel{display:none}.panel.active{display:block}.hero{background:linear-gradient(120deg,#fffaf4,#f5dce2);border:1px solid var(--line);border-radius:24px;padding:22px;margin-bottom:18px}.hero h2{margin:0 0 7px;font-size:23px}.hero p{margin:0;color:var(--muted);line-height:1.7}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:16px 0}.stat,.card{background:var(--white);border:1px solid var(--line);border-radius:18px;padding:16px}.stat strong{display:block;font-size:24px;color:var(--rose)}.stat span{font-size:12px;color:var(--muted)}
+.home-shortcuts{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start;margin:18px 0 22px}.round-shortcut{width:104px;min-height:112px;border:0;background:transparent;color:var(--brown);display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:8px;cursor:pointer;font:inherit}.round-shortcut span{width:68px;height:68px;display:grid;place-items:center;border-radius:50%;background:linear-gradient(145deg,#fffaf4,#f1d5df);border:1px solid var(--line);box-shadow:0 4px 12px #7c5c4a12;font-size:29px}.round-shortcut strong{font-size:12px;text-align:center;line-height:1.35}.round-shortcut:hover span{transform:translateY(-2px);filter:brightness(.99)}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:16px 0}.stat,.card{background:var(--white);border:1px solid var(--line);border-radius:18px;padding:16px}.stat strong{display:block;font-size:24px;color:var(--rose)}.stat span{font-size:12px;color:var(--muted)}
 .section-title{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:20px 0 12px}.section-title h2{font-size:20px;margin:0}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
 .card h3{margin:0 0 6px;font-size:17px}.card p{color:var(--muted);font-size:14px;line-height:1.65;margin:7px 0}.tag{display:inline-block;font-size:11px;background:var(--pink2);color:#97586b;padding:4px 9px;border-radius:999px;margin:0 4px 5px 0}.difficulty{background:#f4e8d8;color:#826449}.searchrow{display:flex;gap:9px;flex-wrap:wrap;margin:12px 0}.searchrow input,.searchrow select,.field input,.field select{flex:1;min-width:160px;padding:12px 13px;border:1px solid var(--line);border-radius:12px;background:var(--white);font:inherit;color:var(--dark)}
 .step-list{padding-left:21px;line-height:1.8}.step-list li{padding:3px 0}.small{font-size:12px;color:var(--muted)}.empty{padding:25px;text-align:center;color:var(--muted)}
@@ -63,6 +63,7 @@ body.mobile-mode main{padding:14px 12px 32px}body.mobile-mode header{padding:20p
 <main>
 <section id="home" class="panel active">
   <div class="hero"><h2>今天也向夢想靠近一點 ✨</h2><p>照自己的節奏練習，動作穩定比做得快更重要。開始前先確認周圍有足夠空間，並以不痛、不勉強為原則。</p></div>
+  <div class="home-shortcuts"><button class="round-shortcut" type="button" onclick="openTab('home')"><span>🩰</span><strong>今日課程</strong></button><button class="round-shortcut" type="button" onclick="openTab('rewards')"><span>🎁</span><strong>夢想集點卡</strong></button><button class="round-shortcut" type="button" onclick="openTab('search')"><span>🔎</span><strong>動作快速查詢</strong></button><button class="round-shortcut" type="button" onclick="openTab('library')"><span>📚</span><strong>動作圖鑑</strong></button></div>
   <div id="practiceInspiration" class="practice-inspiration" style="display:none" aria-live="polite">
     <div class="inspiration-copy"><div class="eyebrow">YOUR PRACTICE DAY</div><h2>給今天的妳，一張小小鼓勵卡 ✨</h2><p id="encouragementText">每一次專心練習，都在替夢想添上一顆星。</p><div class="inspiration-signoff">Ballet Étoile · Dream Big</div></div>
     <div class="inspiration-photo-wrap"><img class="inspiration-photo" src="https://upload.wikimedia.org/wikipedia/commons/d/da/BALLERINA_DANCING_%28Unsplash%29.jpg" alt="舞者在舞台上練習芭蕾姿態的真實攝影照片" loading="lazy"><div class="photo-caption">芭蕾攝影｜Hudson Hintze（Unsplash，CC0）</div></div>
@@ -80,7 +81,7 @@ body.mobile-mode main{padding:14px 12px 32px}body.mobile-mode header{padding:20p
   <div class="card" style="margin-top:12px"><h3>🎵 音樂與拍數小提示</h3><p>可選節奏清楚、速度舒適的古典芭蕾音樂。初學時每個動作先用慢速數拍；沒有音樂也可以自己均勻地數「1、2、3、4」。不要為了跟上音樂而急著做動作。</p><p class="small">本程式不會自動播放音樂；可用你已熟悉且適合練習的音樂。</p></div>
 </section>
 <section id="rewards" class="panel">
-  <div class="hero"><h2>夢想集點卡 🎁</h2><p>每一顆星星，都是妳認真練習的紀錄。累積點數可兌換練習裝備；稱號會依累積成就解鎖，不會因兌換而消失。</p></div>
+  <div class="hero"><h2>夢想集點卡 🎁</h2><p>這裡的所有獎勵都是網站裡的虛擬圖片與稱號，不是實體商品！用點數兌換後即可收藏在你的夢想衣櫥裡，稱號則依累積點數自動解鎖。</p></div>
   <div class="stats">
     <div class="stat"><strong id="rewardBalance">0</strong><span>可用點數 ⭐</span></div>
     <div class="stat"><strong id="rewardLifetime">0</strong><span>累積獲得點數</span></div>
@@ -88,7 +89,7 @@ body.mobile-mode main{padding:14px 12px 32px}body.mobile-mode header{padding:20p
   </div>
   <div class="section-title"><h2>👑 成就稱號</h2><span class="small">達標自動解鎖</span></div>
   <div id="rewardTitles" class="grid"></div>
-  <div class="section-title"><h2>🎀 裝備與服裝兌換</h2><span class="small">點數兌換後會從可用點數扣除</span></div>
+  <div class="section-title"><h2>🎀 虛擬裝備與服裝兌換</h2><span class="small">兌換後解鎖網站內的虛擬收藏</span></div>
   <div id="rewardItems" class="grid"></div>
   <div class="section-title"><h2>🌟 已兌換紀錄</h2></div>
   <div class="card" id="rewardHistory"><p class="small">還沒有兌換紀錄。</p></div>
@@ -297,9 +298,11 @@ const rewardTitles=[
  {id:'etoile',name:'星芭蕾之星',threshold:200,desc:'一步一步，讓夢想閃耀 🌟'}
 ];
 const rewardItems=[
- {id:'hair',name:'芭蕾髮飾／緞帶',cost:30,icon:'🎀',desc:'兌換一份髮飾或緞帶的選購資格。'},
- {id:'warmers',name:'芭蕾腿套',cost:60,icon:'🧦',desc:'兌換一份練習腿套的選購資格。'},
- {id:'skirt',name:'練習裙／舞衣',cost:120,icon:'🩰',desc:'兌換一份練習裙或舞衣的選購資格。'}
+ {id:'hair',name:'奶茶粉色緞帶',cost:30,icon:'🎀',desc:'解鎖虛擬髮飾收藏圖片。'},
+ {id:'warmers',name:'夢幻芭蕾腿套',cost:60,icon:'🧦',desc:'解鎖虛擬腿套造型圖片。'},
+ {id:'skirt',name:'奶霜芭蕾舞裙',cost:120,icon:'👗',desc:'解鎖虛擬芭蕾舞裙造型圖片。'},
+ {id:'pointe',name:'粉色足尖鞋收藏圖',cost:160,icon:'🩰',desc:'解鎖網站內的虛擬舞鞋圖片收藏。'},
+ {id:'tiara',name:'星光舞者皇冠',cost:240,icon:'👑',desc:'解鎖虛擬皇冠與星光舞台造型。'}
 ];
 function renderRewards(){
  const balance=Math.max(0,pointData.total||0),earned=Math.max(balance,pointData.lifetimeTotal||0),redeemed=pointData.redeemed||[];
@@ -337,7 +340,8 @@ function renderStats(){document.getElementById('learnedCount').textContent=moves
 function renderNotes(){document.getElementById('savedNotes').innerHTML=notes.slice().reverse().map(n=>`<div style="border-top:1px solid var(--line);margin-top:12px;padding-top:12px"><strong>${escapeHtml(n.date)}</strong><p style="white-space:pre-wrap">${escapeHtml(n.text)}</p><button class="btn" onclick="deleteNote('${n.date}')">刪除此筆記</button></div>`).join('')||'<p class="small">還沒有練習筆記。</p>'}
 function deleteNote(date){notes=notes.filter(n=>n.date!==date);save('balletNotes',notes);renderNotes()}
 function renderAll(){renderToday();renderSearch();renderLibrary();renderRecords();renderStats();renderCalendar();selectCalendarDate(selectedCalendarDate)}
-document.querySelectorAll('nav button').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active',p.id===b.dataset.tab));}));
+function openTab(id){document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('active',x.dataset.tab===id));document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active',p.id===id));window.scrollTo({top:0,behavior:'smooth'});}
+document.querySelectorAll('nav button').forEach(b=>b.addEventListener('click',()=>openTab(b.dataset.tab)));
 function setDeviceMode(mode){document.body.classList.toggle('mobile-mode',mode==='mobile');try{localStorage.setItem('balletDeviceMode',mode)}catch(e){}document.getElementById('deviceChooser').classList.remove('open')}
 function openDeviceChooser(){document.getElementById('deviceChooser').classList.add('open')}
 document.querySelectorAll('[data-device]').forEach(b=>b.addEventListener('click',()=>setDeviceMode(b.dataset.device)));
