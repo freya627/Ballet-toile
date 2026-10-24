@@ -54,6 +54,7 @@ body.mobile-mode main{padding:14px 12px 32px}body.mobile-mode header{padding:20p
 <nav>
   <button class="active" data-tab="home">今日課程</button>
   <button data-tab="search">動作查詢</button>
+  <button data-tab="glossary">動作辭典 📖</button>
   <button data-tab="library">動作圖鑑</button>
   <button data-tab="records">學習紀錄</button>
   <button data-tab="calendar">月曆安排 📅</button>
@@ -83,6 +84,22 @@ body.mobile-mode main{padding:14px 12px 32px}body.mobile-mode header{padding:20p
   <div class="searchrow"><input id="searchInput" placeholder="輸入動作，例如 Tendu、腳位、Rond de jambe…"><select id="difficultyFilter"><option value="">所有難度</option><option>入門</option><option>基礎</option><option>進階概念</option></select><select id="statusFilter" aria-label="學習狀態篩選"><option value="">所有學習狀態</option><option value="未學習">尚未學習</option><option value="練習中">練習中</option><option value="已學會">已經學過／已學會</option></select></div>
   <div class="card" style="margin-bottom:14px"><h3>➕ 把動作加入週末課程</h3><p>在下方動作卡片按「加入課程」，就會加入選定日期的課程；平日仍然是休息日，不會因此安排平日練習。</p><div class="searchrow"><label for="lessonDateSelect" style="align-self:center;color:var(--muted)">加入哪一天：</label><select id="lessonDateSelect" aria-label="選擇週末課程日期"></select></div><div id="lessonAddStatus" class="small" aria-live="polite"></div></div>
   <div id="searchResults" class="grid"></div>
+</section>
+<section id="glossary" class="panel">
+  <div class="hero">
+    <div class="eyebrow">BALLET VOCABULARY</div>
+    <h2>📖 芭蕾動作辭典</h2>
+    <p>遇到不熟悉的芭蕾法文或英文術語時，可以打開 Ballet Glossary 查詢名稱與意思。這是外部參考網站，會在新分頁開啟，星芭蕾的學習紀錄不會受到影響。</p>
+    <p><a class="btn primary" href="https://balletglossary.com/" target="_blank" rel="noopener noreferrer">打開 Ballet Glossary 芭蕾辭典 ↗</a></p>
+  </div>
+  <div class="card">
+    <h3>✨ 查詢小提示</h3>
+    <ul class="step-list">
+      <li>先試著輸入動作的法文或英文名稱，例如 <em>Arabesque</em>、<em>Plié</em> 或 <em>Tendu</em>。</li>
+      <li>如果辭典裡的解釋和老師教的做法有差異，以芭蕾老師的指導為準。</li>
+      <li>查到新術語後，可以回到「動作查詢」或「動作圖鑑」繼續整理自己的學習紀錄。</li>
+    </ul>
+  </div>
 </section>
 <section id="library" class="panel">
   <div class="section-title"><h2>動作圖鑑</h2><span class="small">依難度分類</span></div>
