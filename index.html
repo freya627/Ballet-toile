@@ -89,8 +89,11 @@ body.mobile-mode main{padding:14px 12px 32px}body.mobile-mode header{padding:20p
   </div>
   <div class="section-title"><h2>👑 成就稱號</h2><span class="small">達標自動解鎖</span></div>
   <div id="rewardTitles" class="grid"></div>
-  <div class="section-title"><h2>🎀 虛擬裝備與服裝兌換</h2><span class="small">小額就能收藏，慢慢集滿衣櫥</span></div>
+  <div class="section-title"><h2>🎀 300 種虛擬收藏</h2><span class="small">低點數也能常常兌換</span></div>
+  <div class="searchrow"><input id="rewardSearch" placeholder="搜尋收藏，例如花束、皇冠、舞裙…"><select id="rewardCategory" aria-label="收藏分類"><option value="">全部分類（300 種）</option></select><select id="rewardSort" aria-label="收藏排序"><option value="cheap">點數由低到高</option><option value="name">依名稱排序</option><option value="all">原始收藏順序</option></select></div>
+  <p id="rewardCatalogCount" class="small">共 300 種虛擬收藏</p>
   <div id="rewardItems" class="grid"></div>
+  <div class="row" style="justify-content:center;align-items:center;gap:12px;margin-top:14px"><button class="btn" id="rewardPrev" type="button">上一頁</button><span id="rewardPageLabel" class="small">第 1 頁</span><button class="btn" id="rewardNext" type="button">下一頁</button></div>
   <div class="section-title"><h2>👗 我的夢想衣櫥</h2><span class="small">兌換後的虛擬收藏會放在這裡</span></div>
   <div id="rewardWardrobe" class="grid"><div class="empty">還沒有收藏，挑一個喜歡的虛擬小物開始吧！✨</div></div>
   <div class="section-title"><h2>🌟 已兌換紀錄</h2></div>
@@ -298,7 +301,7 @@ const rewardTitles=[
  {id:'graceful',name:'優雅練習生',threshold:20,desc:'持續累積基本功與耐心 🌷'},
  {id:'etoile',name:'星芭蕾之星',threshold:80,desc:'一步一步，讓夢想閃耀 🌟'}
 ];
-const rewardItems=[
+const rewardLegacyItems=[
  {id:'hair',name:'奶茶粉色緞帶',cost:5,icon:'🎀',kind:'髮飾',desc:'柔柔的奶茶粉緞帶，替舞者造型添一點甜美。',paint:'linear-gradient(135deg,#fff5f4,#e9b8c7)'},
  {id:'flower',name:'珍珠小花髮夾',cost:8,icon:'🌸',kind:'髮飾',desc:'一枚珍珠感的小花髮夾。',paint:'linear-gradient(135deg,#fffaf1,#f6d8df)'},
  {id:'warmers',name:'夢幻芭蕾腿套',cost:10,icon:'🧦',kind:'練習穿搭',desc:'適合想像中的粉色暖暖練習穿搭。',paint:'linear-gradient(135deg,#fff7ef,#e8d1d6)'},
@@ -310,7 +313,34 @@ const rewardItems=[
  {id:'musicbox',name:'芭蕾音樂盒',cost:30,icon:'🎼',kind:'夢想收藏',desc:'收藏一份專屬於星芭蕾的音樂盒小卡。',paint:'linear-gradient(135deg,#fff8f0,#e5d4bd)'},
  {id:'star',name:'金色追夢星星',cost:35,icon:'🌟',kind:'特別收藏',desc:'一顆記錄努力與耐心的追夢星星。',paint:'linear-gradient(135deg,#fff8d9,#f0d28e)'}
 ];
-function renderRewards(){
+const rewardThemes=[
+ ['髮飾','珍珠髮箍','👑'],['髮飾','緞帶蝴蝶結','🎀'],['髮飾','水晶髮梳','✨'],['舞裙','蓬蓬紗裙','👗'],['舞裙','花瓣練習裙','🌸'],
+ ['練習穿搭','奶茶練習上衣','👚'],['練習穿搭','柔雲罩衫','🧥'],['練習穿搭','暖暖腿套','🧦'],['舞鞋收藏','緞帶軟鞋','🩰'],['舞鞋收藏','星星舞鞋插畫','⭐'],
+ ['舞台配件','月光皇冠','👑'],['舞台配件','水晶耳飾','💎'],['舞台小物','粉玫瑰花束','💐'],['舞台小物','珍珠手環','📿'],['背景收藏','夢幻花園背景','🌷'],
+ ['背景收藏','星空劇院背景','🌌'],['夢想收藏','芭蕾音樂盒','🎼'],['夢想收藏','芭蕾日記本','📔'],['夢想收藏','星光獎牌','🏅'],['夢想收藏','舞者剪影卡','🩰'],
+ ['動物夥伴','天鵝夥伴','🦢'],['動物夥伴','小兔舞伴','🐇'],['花園收藏','櫻花樹','🌸'],['花園收藏','月光玫瑰','🌹'],['甜點收藏','奶油蛋糕','🍰'],
+ ['甜點收藏','草莓馬卡龍','🍓'],['星空收藏','流星許願瓶','🌠'],['星空收藏','月亮吊飾','🌙'],['旅行收藏','巴黎芭蕾明信片','🗼']
+];
+const rewardPalettes=[
+ {name:'奶茶粉',paint:'linear-gradient(135deg,#fff5f1,#e8bdca)'},{name:'玫瑰粉',paint:'linear-gradient(135deg,#fff1f5,#e8a9bd)'},
+ {name:'薰衣草紫',paint:'linear-gradient(135deg,#faf2ff,#d8c4ee)'},{name:'香草奶油',paint:'linear-gradient(135deg,#fffbea,#f1dfad)'},
+ {name:'薄荷奶霜',paint:'linear-gradient(135deg,#f1fff8,#bfe4d7)'},{name:'天空藍',paint:'linear-gradient(135deg,#f2f9ff,#bddcf3)'},
+ {name:'蜜桃橘',paint:'linear-gradient(135deg,#fff4e9,#f4c7a8)'},{name:'珍珠白',paint:'linear-gradient(135deg,#ffffff,#ece5eb)'},
+ {name:'莓果紅',paint:'linear-gradient(135deg,#fff0f3,#e7a1ad)'},{name:'星夜藍紫',paint:'linear-gradient(135deg,#eeeaff,#b7addf)'}
+];
+const rewardItems=rewardLegacyItems.concat(rewardThemes.flatMap((theme,i)=>rewardPalettes.map((palette,j)=>({
+ id:'catalog_'+i+'_'+j,
+ name:palette.name+theme[1],
+ cost:5+((i*3+j*2)%8)*5,
+ icon:theme[2],kind:theme[0],
+ desc:'『'+palette.name+'』配色的'+theme[1]+'虛擬收藏卡，加入妳的星芭蕾夢想衣櫥。',
+ paint:palette.paint
+}))));
+let rewardPage=0;
+const rewardPageSize=30;
+function setRewardPage(delta){rewardPage=Math.max(0,rewardPage+delta);renderRewards(true)}
+function renderRewards(resetPage=false){
+ if(resetPage)rewardPage=0;
  const balance=Math.max(0,pointData.total||0),earned=Math.max(balance,pointData.lifetimeTotal||0),redeemed=pointData.redeemed||[];
  const owned=new Set(redeemed.map(x=>x.id));
  document.getElementById('rewardBalance').textContent=balance;
@@ -318,7 +348,19 @@ function renderRewards(){
  const unlocked=rewardTitles.filter(t=>earned>=t.threshold);
  document.getElementById('rewardTitleCount').textContent=unlocked.length;
  document.getElementById('rewardTitles').innerHTML=rewardTitles.map(t=>{const ok=earned>=t.threshold;return '<article class="card"><span class="tag">'+(ok?'已解鎖 👑':'尚未解鎖')+'</span><h3>'+escapeHtml(t.name)+'</h3><p>'+escapeHtml(t.desc)+'</p><p class="small">累積 '+t.threshold+' 點'+(ok?' · 已永久解鎖':' · 還差 '+(t.threshold-earned)+' 點')+'</p></article>'}).join('');
- document.getElementById('rewardItems').innerHTML=rewardItems.map(t=>{const has=owned.has(t.id);return '<article class="card"><div style="background:'+t.paint+';border-radius:14px;padding:14px;text-align:center;font-size:42px;margin-bottom:10px">'+t.icon+'</div><span class="tag">'+escapeHtml(t.kind)+'</span><h3>'+escapeHtml(t.name)+'</h3><p>'+escapeHtml(t.desc)+'</p><p><strong style="color:var(--rose)">'+t.cost+' 點</strong></p><button class="btn '+(!has&&balance>=t.cost?'primary':'')+'" '+(has||balance<t.cost?'disabled':'')+' onclick="redeemReward(\''+t.id+'\')">'+(has?'已收藏 ✓':balance>=t.cost?'兌換收藏':'還差 '+(t.cost-balance)+' 點')+'</button></article>'}).join('');
+ const q=(document.getElementById('rewardSearch')?.value||'').trim().toLowerCase();
+ const cat=document.getElementById('rewardCategory')?.value||'';
+ const sort=document.getElementById('rewardSort')?.value||'cheap';
+ let filtered=rewardItems.filter(t=>(!cat||t.kind===cat)&&(!q||(t.name+' '+t.kind+' '+t.desc).toLowerCase().includes(q)));
+ if(sort==='cheap')filtered.sort((a,b)=>a.cost-b.cost||a.name.localeCompare(b.name,'zh-Hant'));
+ else if(sort==='name')filtered.sort((a,b)=>a.name.localeCompare(b.name,'zh-Hant'));
+ document.getElementById('rewardCatalogCount').textContent='找到 '+filtered.length+' 種收藏 · 全部共有 '+rewardItems.length+' 種';
+ const pages=Math.max(1,Math.ceil(filtered.length/rewardPageSize));rewardPage=Math.min(rewardPage,pages-1);
+ const shown=filtered.slice(rewardPage*rewardPageSize,(rewardPage+1)*rewardPageSize);
+ document.getElementById('rewardItems').innerHTML=shown.map(t=>{const has=owned.has(t.id);return '<article class="card"><div style="background:'+t.paint+';border-radius:14px;padding:14px;text-align:center;font-size:42px;margin-bottom:10px">'+t.icon+'</div><span class="tag">'+escapeHtml(t.kind)+'</span><h3>'+escapeHtml(t.name)+'</h3><p>'+escapeHtml(t.desc)+'</p><p><strong style="color:var(--rose)">'+t.cost+' 點</strong></p><button class="btn '+(!has&&balance>=t.cost?'primary':'')+'" '+(has||balance<t.cost?'disabled':'')+' onclick="redeemReward(\''+t.id+'\')">'+(has?'已收藏 ✓':balance>=t.cost?'兌換收藏':'還差 '+(t.cost-balance)+' 點')+'</button></article>'}).join('')||'<div class="empty">沒有找到符合條件的收藏，試試別的關鍵字吧。🌷</div>';
+ document.getElementById('rewardPageLabel').textContent='第 '+(rewardPage+1)+' / '+pages+' 頁';
+ document.getElementById('rewardPrev').disabled=rewardPage===0;
+ document.getElementById('rewardNext').disabled=rewardPage>=pages-1;
  const wardrobe=document.getElementById('rewardWardrobe');
  const ownedItems=rewardItems.filter(t=>owned.has(t.id));
  wardrobe.innerHTML=ownedItems.length?ownedItems.map(t=>'<article class="card" style="background:'+t.paint+';text-align:center"><div style="font-size:54px;padding:8px">'+t.icon+'</div><span class="tag">'+escapeHtml(t.kind)+'</span><h3>'+escapeHtml(t.name)+'</h3><p>'+escapeHtml(t.desc)+'</p><p class="small">已加入夢想衣櫥 ✨</p></article>').join(''):'<div class="empty">還沒有收藏，挑一個喜歡的虛擬小物開始吧！✨</div>';
@@ -364,6 +406,12 @@ if(savedDevice){setDeviceMode(savedDevice)}else{openDeviceChooser()}
 document.getElementById('exportData').addEventListener('click',exportAppData);document.getElementById('importDataButton').addEventListener('click',()=>document.getElementById('importDataFile').click());document.getElementById('importDataFile').addEventListener('change',e=>{if(e.target.files&&e.target.files[0])importAppData(e.target.files[0])});
 document.getElementById('prevMonth').addEventListener('click',()=>{calendarCursor=new Date(calendarCursor.getFullYear(),calendarCursor.getMonth()-1,1);renderCalendar()});document.getElementById('nextMonth').addEventListener('click',()=>{calendarCursor=new Date(calendarCursor.getFullYear(),calendarCursor.getMonth()+1,1);renderCalendar()});document.getElementById('calendarDate').addEventListener('change',e=>{if(e.target.value)selectCalendarDate(e.target.value)});document.getElementById('saveCalendarEntry').addEventListener('click',saveCalendarEntry);document.getElementById('clearCalendarEntry').addEventListener('click',clearCalendarEntry);
 document.getElementById('searchInput').addEventListener('input',renderSearch);document.getElementById('difficultyFilter').addEventListener('change',renderSearch);document.getElementById('statusFilter').addEventListener('change',renderSearch);document.getElementById('lessonDateSelect').addEventListener('change',()=>{document.getElementById('lessonAddStatus').textContent='';renderSearch()});
+document.getElementById('rewardSearch').addEventListener('input',()=>renderRewards(true));
+document.getElementById('rewardCategory').innerHTML='<option value="">全部分類（300 種）</option>'+[...new Set(rewardItems.map(x=>x.kind))].map(x=>'<option value="'+escapeHtml(x)+'">'+escapeHtml(x)+'</option>').join('');
+document.getElementById('rewardCategory').addEventListener('change',()=>renderRewards(true));
+document.getElementById('rewardSort').addEventListener('change',()=>renderRewards(true));
+document.getElementById('rewardPrev').addEventListener('click',()=>setRewardPage(-1));
+document.getElementById('rewardNext').addEventListener('click',()=>setRewardPage(1));
 document.getElementById('closeDetail').addEventListener('click',closeMove);document.getElementById('detail').addEventListener('click',e=>{if(e.target.id==='detail')closeMove()});
 document.getElementById('resetToday').addEventListener('click',()=>{todayDone=[];save('balletToday',todayDone);renderToday();renderStats()});
 document.getElementById('saveNote').addEventListener('click',()=>{const date=document.getElementById('practiceDate').value,text=document.getElementById('practiceNote').value.trim();if(!date||!text){document.getElementById('noteStatus').textContent='請填寫日期和筆記內容。';return}notes=notes.filter(n=>n.date!==date);notes.push({date,text});save('balletNotes',notes);document.getElementById('practiceNote').value='';document.getElementById('noteStatus').textContent='已儲存！';renderNotes()});
