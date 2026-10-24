@@ -338,7 +338,7 @@ const rewardItems=rewardLegacyItems.concat(rewardThemes.flatMap((theme,i)=>rewar
 }))));
 let rewardPage=0;
 const rewardPageSize=30;
-function setRewardPage(delta){rewardPage=Math.max(0,rewardPage+delta);renderRewards(true)}
+function setRewardPage(delta){rewardPage=Math.max(0,rewardPage+delta);renderRewards()}
 function renderRewards(resetPage=false){
  if(resetPage)rewardPage=0;
  const balance=Math.max(0,pointData.total||0),earned=Math.max(balance,pointData.lifetimeTotal||0),redeemed=pointData.redeemed||[];
