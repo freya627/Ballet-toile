@@ -457,13 +457,31 @@ function redeemReward(id){
  pointData.total-=item.cost;pointData.redeemed.push({id:item.id,name:item.name,cost:item.cost,date:dateKey()});
  save('balletPoints',pointData);renderPoints();renderRewards();
 }
-function renderToday(){
+function renderTodayUnsafe(){
  const day=dayIndex(), isWeekend=[0,6].includes(day); const plan=document.getElementById('weekPlan'); const dayNameAll=['星期日','星期一','星期二','星期三','星期四','星期五','星期六'][day];const makeupToday=Object.entries(calendarEvents).filter(([source,e])=>e.makeupDate===dateKey());const inspiration=document.getElementById('practiceInspiration');const showInspiration=!isLessonCancelled(dateKey())&&(isWeekend||makeupToday.length>0);inspiration.style.display=showInspiration?'grid':'none';if(showInspiration){const cards=['每一次專心練習，都在替夢想添上一顆星。','不必一次做到完美；穩定、耐心，就是今天的進步。','把注意力放回呼吸、音樂和自己的節奏。妳正在累積實力。','今天練習一小步，也是在向夢想靠近一小步。'];document.getElementById('encouragementText').textContent=cards[(new Date(dateKey()+'T12:00:00').getDate()+day)%cards.length];}
  if(isLessonCancelled(dateKey())){const ev=calendarEventFor(dateKey());plan.innerHTML=`<h2>${dayNameAll}・今日課程已取消 🌷</h2><p>${escapeHtml(ev?.note||calendarTypeLabel(ev?.type))}。今天安心處理其他事情，不需要補課，也不會扣點。可以到「月曆安排」修改或清除標註。</p>`;document.getElementById('lessonHeading').textContent='今日課程｜已取消';document.getElementById('todayLessons').innerHTML='<div class="empty">📅 這一天已在月曆標註為取消課程。休息不扣點，也不用補練。</div>';document.getElementById('resetToday').style.display='none';}
  else if(!isWeekend&&!makeupToday.length){const dayName=dayNameAll;plan.innerHTML=`<h2>今天是${dayName}・平日休息日 🌷</h2><p>今天不安排芭蕾練習，也不需要看影片或做任務。下一次練習是週六。平日太忙了，就安心處理學校和自己的事吧！${makeupToday.length?'（月曆裡有補課／加課標記；依妳的規則，平日仍不安排練習。）':''}</p>`;document.getElementById('lessonHeading').textContent='今日課程｜今天沒有課程';document.getElementById('todayLessons').innerHTML='<div class="empty">🩰 平日完全不安排芭蕾。沒有練習任務、不扣點！週六見。</div>';document.getElementById('resetToday').style.display='none';}
  else {const dayName=dayNameAll;const isBoostDay=makeupToday.length>0;plan.innerHTML=`<h2>${dayName}・${isBoostDay?'加強訓練日 💪':'週末練習日 🩰'}</h2><p>${isBoostDay?'這是妳在月曆主動安排的加強訓練。':' '+(day===6?'技巧複習＋新技巧學習。':'複習技巧＋配合音樂練習小組合。')} ${isBoostDay?'📅 今天是妳安排的加強訓練日！':''}建議 15–20 分鐘，依身體狀況調整。</p>`;document.getElementById('lessonHeading').textContent=isBoostDay?'今日課程｜加強訓練':(day===6?'週六課程｜技巧學習':'週日課程｜組合練習');document.getElementById('resetToday').style.display='';const savedPlans=load('balletLessonHistory',{});const defaultIds=isBoostDay&&!isWeekend?['plie','tendu','releve']:(day===6?['plie','releve','developpe']:['tendu','rond','saute']);const rawIds=savedPlans[dateKey()]||defaultIds;const baseIds=rawIds.filter(id=>{const m=moves.find(x=>x.id===id);return m&&getStatus(id)!=='已學會'});const extraIds=(lessonAdds[dateKey()]||[]).filter(id=>getStatus(id)!=='已學會');let planIds=[...new Set([...baseIds,...extraIds.filter(id=>!baseIds.includes(id))])];if(!planIds.length){const fallback=moves.filter(m=>getStatus(m.id)!=='已學會').slice(0,3).map(m=>m.id);planIds=fallback;}document.getElementById('todayLessons').innerHTML=planIds.length?planIds.map((id,i)=>{const m=moves.find(x=>x.id===id);if(!m)return '';return `<div class="lesson"><div class="time">${i<3?['3 分','5 分','5 分'][i]:'加選'}</div><div style="flex:1"><strong>${m.name} <span class="tag">${i<3?(isBoostDay?'加強訓練':'課程安排'):'妳加入的動作'}</span></strong><p>${m.desc}</p><button class="btn" onclick="openMove('${id}')">看步驟／影片</button></div></div>${i<planIds.length-1?'<hr style="border:0;border-top:1px solid var(--line);margin:13px 0">':''}`}).join(''):'<div class="empty">🌷 今天原本安排的動作都已標記為「已學會」。若想複習，請到「學習紀錄」把想複習的動作改成「練習中」，再回到今日課程。</div>';}
  renderPoints();renderRewards();
 }
+
+function renderToday(){
+ const card=document.getElementById('todayLessons');
+ try{
+  renderTodayUnsafe();
+  if(card&&!card.innerHTML.trim()){
+   card.innerHTML='<div class="empty">🌷 課程已更新，但目前沒有可顯示的動作。請稍候重新整理。</div>';
+  }
+ }catch(err){
+  console.error('今日課程載入失敗：',err);
+  if(card){
+   const eligible=(Array.isArray(moves)?moves:[]).filter(m=>getStatus(m.id)!=='已學會').slice(0,3);
+   card.innerHTML=eligible.length?eligible.map((m,i)=>'<div class="lesson"><div class="time">'+['3 分','5 分','5 分'][i]+'</div><div style="flex:1"><strong>'+escapeHtml(m.name)+' <span class="tag">課程安排</span></strong><p>'+escapeHtml(m.desc)+'</p><button class="btn" onclick="openMove(\''+m.id+'\')">看步驟／影片</button></div></div>').join('<hr style="border:0;border-top:1px solid var(--line);margin:13px 0">'):'<div class="empty">🌷 目前沒有未標記為「已學會」的動作。到「動作搜尋」或「學習紀錄」選擇想複習的動作即可。</div>';
+  }
+  const heading=document.getElementById('lessonHeading');if(heading)heading.textContent='今日課程';
+ }
+}
+
 function toggleToday(id,yes){todayDone=yes?[...new Set([...todayDone,id])]:todayDone.filter(x=>x!==id);save('balletToday',todayDone);renderToday();renderStats()}
 function getNextWeekendDates(){const now=getLocalDate();const out=[];for(let offset=0;offset<=7;offset++){const d=new Date(now);d.setDate(now.getDate()+offset);if([0,6].includes(d.getDay()))out.push(d);if(out.length===2)break;}return out;}
 function fmtDate(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
