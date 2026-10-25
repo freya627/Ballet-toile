@@ -11,7 +11,7 @@ header{padding:28px 18px 22px;text-align:center;background:rgba(255,253,249,.78)
 .eyebrow{letter-spacing:3px;color:var(--rose);font-size:12px;font-weight:700}.brand{font-family:Georgia,serif;font-size:clamp(26px,5vw,40px);margin:8px 0 5px;color:var(--brown)}.subtitle{font-size:14px;color:var(--muted)}
 nav{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;padding:14px 12px;position:sticky;top:0;background:rgba(251,244,233,.94);backdrop-filter:blur(8px);z-index:5;border-bottom:1px solid var(--line)}
 nav button,.btn{border:1px solid var(--line);border-radius:999px;padding:10px 15px;background:var(--white);color:var(--brown);font-weight:700;cursor:pointer}nav button.active,.btn.primary{background:var(--rose);color:white;border-color:var(--rose)}button:hover{filter:brightness(.98)}
-main{max-width:1050px;margin:auto;padding:20px 16px 50px}.panel{display:none}.panel.active{display:block}.hero{background:linear-gradient(120deg,#fffaf4,#f5dce2);border:1px solid var(--line);border-radius:24px;padding:22px;margin-bottom:18px}.hero h2{margin:0 0 7px;font-size:23px}.hero p{margin:0;color:var(--muted);line-height:1.7}
+main{max-width:1050px;margin:auto;padding:20px 16px 50px}.panel{display:none}.panel.active,.panel.pinned{display:block}.hero{background:linear-gradient(120deg,#fffaf4,#f5dce2);border:1px solid var(--line);border-radius:24px;padding:22px;margin-bottom:18px}.hero h2{margin:0 0 7px;font-size:23px}.hero p{margin:0;color:var(--muted);line-height:1.7}
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:16px 0}.stat,.card{background:var(--white);border:1px solid var(--line);border-radius:18px;padding:16px}.stat strong{display:block;font-size:24px;color:var(--rose)}.stat span{font-size:12px;color:var(--muted)}
 .section-title{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:20px 0 12px}.section-title h2{font-size:20px;margin:0}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
 .card h3{margin:0 0 6px;font-size:17px}.card p{color:var(--muted);font-size:14px;line-height:1.65;margin:7px 0}.tag{display:inline-block;font-size:11px;background:var(--pink2);color:#97586b;padding:4px 9px;border-radius:999px;margin:0 4px 5px 0}.difficulty{background:#f4e8d8;color:#826449}.searchrow{display:flex;gap:9px;flex-wrap:wrap;margin:12px 0}.searchrow input,.searchrow select,.field input,.field select{flex:1;min-width:160px;padding:12px 13px;border:1px solid var(--line);border-radius:12px;background:var(--white);font:inherit;color:var(--dark)}
@@ -65,7 +65,7 @@ body.mobile-mode main{padding:14px 12px 32px}body.mobile-mode header{padding:20p
   <button data-tab="rewards">🎀 我的收藏</button>
 </nav>
 <main>
-<section id="home" class="panel active">
+<section id="home" class="panel pinned active">
   <div class="hero"><h2>今天也向夢想靠近一點 ✨</h2><p>照自己的節奏練習，動作穩定比做得快更重要。開始前先確認周圍有足夠空間，並以不痛、不勉強為原則。</p></div>
 
   
@@ -83,7 +83,7 @@ body.mobile-mode main{padding:14px 12px 32px}body.mobile-mode header{padding:20p
   <div class="card" id="todayLessons"></div>
   <div class="card" style="margin-top:12px"><h3>🎵 音樂與拍數小提示</h3><p>可選節奏清楚、速度舒適的古典芭蕾音樂。初學時每個動作先用慢速數拍；沒有音樂也可以自己均勻地數「1、2、3、4」。不要為了跟上音樂而急著做動作。</p><p class="small">本程式不會自動播放音樂；可用你已熟悉且適合練習的音樂。</p></div>
 </section>
-<section id="points" class="panel">
+<section id="points" class="panel pinned">
   <div class="hero"><h2>夢想集點卡 🎁</h2><p>週末完成練習任務就能累積追夢點數。平日是休息日，不安排練習，也不會扣點。</p></div>
   <div class="stats"><div class="stat"><strong id="pointCountCard">0</strong><span>目前追夢點數 ⭐</span></div></div>
   <div class="section-title"><h2>⭐ 週末追夢集點</h2><span class="small">每項每個週末最多一次</span></div>
@@ -126,7 +126,7 @@ body.mobile-mode main{padding:14px 12px 32px}body.mobile-mode header{padding:20p
     <p class="small" style="margin-top:10px">這是外部網站，會在新分頁開啟；辭典是術語參考，進階動作仍請由芭蕾老師指導。</p>
   </div>
 </section>
-<section id="calendar" class="panel">
+<section id="calendar" class="panel pinned">
   <div class="hero"><h2>月曆安排 📅</h2><p>把國定假日、颱風假、家庭活動、作業或其他行程記在這裡。你可以選日期、寫原因並取消當天課程；被取消的課程不會要求補練，也不會扣點。提醒：國定假日或颱風假需要你自行標註，本程式不會自動判定政府公告。</p></div>
   <div class="card">
     <div class="section-title"><button class="btn" id="prevMonth">← 上個月</button><h2 id="calendarMonthTitle">月曆</h2><button class="btn" id="nextMonth">下個月 →</button></div>
