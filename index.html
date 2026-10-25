@@ -398,13 +398,26 @@ function openRewardCategory(index){
 }
 function backToRewardCategories(){activeRewardCategory='';document.getElementById('rewardCategoryCircles').style.display='';document.getElementById('rewardCategoryView').style.display='none';}
 function restoreLostRewardsOnce(){
- const marker='balletRecovery20261025_cake_coverup_5pts';
- if(load(marker,false))return;
+ const marker='balletRecovery20261025_cake_coverup_5pts_v2';
  pointData.redeemed=Array.isArray(pointData.redeemed)?pointData.redeemed:[];
- const recover=[{id:'catalog_24_0',name:'奶茶粉奶油蛋糕'},{id:'catalog_6_0',name:'奶茶粉柔雲罩衫'}];
- recover.forEach(x=>{if(!pointData.redeemed.some(r=>r.id===x.id||((/奶油蛋糕|蛋糕/.test(r.name||''))&&x.name.includes('蛋糕'))||((/柔雲罩衫|罩衫/.test(r.name||''))&&x.name.includes('罩衫')))){const item=rewardItems.find(t=>t.id===x.id);if(item)pointData.redeemed.push({id:item.id,name:item.name,cost:item.cost,date:'2026-10-25',recovered:true});}});
- pointData.total=Math.max(0,Number(pointData.total)||0)+5;
- save('balletPoints',pointData);save(marker,true);
+ const recover=[{id:'catalog_24_0',name:'奶茶粉奶油蛋糕',match:/蛋糕/},{id:'catalog_6_0',name:'奶茶粉柔雲罩衫',match:/罩衫/}];
+ let changed=false;
+ recover.forEach(x=>{
+  const already=pointData.redeemed.some(r=>r.id===x.id||x.match.test(String(r.name||'')));
+  if(!already){
+   const item=rewardItems.find(t=>t.id===x.id);
+   pointData.redeemed.push({id:x.id,name:item?item.name:x.name,cost:item?item.cost:0,date:'2026-10-25',recovered:true});
+   changed=true;
+  }
+ });
+ const oldMarker=load('balletRecovery20261025_cake_coverup_5pts',false);
+ if(!load(marker,false)){
+  // Only grant the five points if the first recovery script never did so.
+  if(!oldMarker){pointData.total=Math.max(0,Number(pointData.total)||0)+5;pointData.lifetimeTotal=Math.max(0,Number(pointData.lifetimeTotal)||0)+5;}
+  save(marker,true);
+  save('balletPoints',pointData);
+  save(marker,true);
+ }else if(changed){save('balletPoints',pointData);}
 }
 function renderOwnedCollection(){
  const redeemed=Array.isArray(pointData.redeemed)?pointData.redeemed:[];
