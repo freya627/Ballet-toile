@@ -374,18 +374,42 @@ function rewardPhotoQuery(t){
  if(/星光|夢想|特別收藏/.test(s))return 'pink,glitter,decor';
  return 'ballet,dancer';
 }
-function rewardPhotoUrl(t){
+function rewardImageCache(){try{return JSON.parse(localStorage.getItem('balletRewardImageCache')||'{}')}catch(e){return {}}}
+function rewardPhotoQuery(t){
  const s=(t.name+' '+t.kind).toLowerCase();
- // 使用 Openclipart 上的手繪／向量插畫素材，不使用 AI 生成圖。
- // Openclipart 素材以公眾領域方式分享；各類商品依主題選擇插畫。
- if(/舞鞋|軟鞋|鞋/.test(s))return 'https://openclipart.org/image/800px/297940';
- if(/皇冠|髮箍|髮飾|髮梳|耳飾|手環|珍珠|獎牌|獎章/.test(s))return 'https://openclipart.org/image/800px/3427';
- if(/玫瑰|花束|花園|櫻花|花瓣/.test(s))return 'https://openclipart.org/image/800px/291439';
- if(/緞帶|蝴蝶結|髮夾|髮帶/.test(s))return 'https://openclipart.org/image/800px/310133';
- if(/音樂盒|音樂|日記本|明信片|剪影卡|星空|星夜|流星|月亮|星星|背景|舞台|旅行|巴黎/.test(s))return 'https://openclipart.org/image/800px/355106';
- if(/天鵝|兔|動物/.test(s))return 'https://openclipart.org/image/800px/241388';
- if(/舞裙|紗裙|裙|腿套|罩衫|上衣|練習|舞者|芭蕾/.test(s))return 'https://openclipart.org/image/800px/241388';
- return 'https://openclipart.org/image/800px/310133';
+ if(/舞鞋|軟鞋|鞋/.test(s))return 'ballet shoes illustration';
+ if(/舞裙|紗裙|裙/.test(s))return 'ballet tutu illustration';
+ if(/皇冠|髮箍|髮飾|髮梳|蝴蝶結|髮夾|髮帶/.test(s))return 'tiara ribbon hair accessories clipart';
+ if(/玫瑰|花束|花園|櫻花|花瓣/.test(s))return 'rose flower garden clipart';
+ if(/音樂盒|音樂/.test(s))return 'music box musical notes clipart';
+ if(/日記本|明信片|剪影卡/.test(s))return 'journal postcard stationery clipart';
+ if(/天鵝/.test(s))return 'swan clipart';
+ if(/兔/.test(s))return 'rabbit clipart';
+ if(/蛋糕|馬卡龍|甜點/.test(s))return 'cake macaron dessert clipart';
+ if(/星空|星夜|流星|月亮|星星|背景/.test(s))return 'moon stars night sky clipart';
+ if(/獎牌|獎章/.test(s))return 'medal trophy clipart';
+ if(/耳飾|手環|珍珠/.test(s))return 'pearl jewelry clipart';
+ if(/腿套|罩衫|上衣|練習/.test(s))return 'ballet warmup clothes clipart';
+ if(/舞台/.test(s))return 'theater stage curtain clipart';
+ if(/旅行|巴黎/.test(s))return 'Paris postcard clipart';
+ return 'ballet dancer illustration clipart';
+}
+function loadRewardIllustrations(container,items){
+ if(!container)return;
+ const cache=rewardImageCache();
+ items.forEach(t=>{
+  const img=container.querySelector('img[data-reward-id="'+t.id+'"]');if(!img)return;
+  if(cache[t.id]){img.src=cache[t.id];return;}
+  const callback='clipartCallback'+Math.random().toString(36).slice(2),script=document.createElement('script');
+  let hash=0;for(let i=0;i<t.id.length;i++)hash=(hash*31+t.id.charCodeAt(i))>>>0;
+  window[callback]=function(data){
+   try{const results=data&&data.payload||[];if(results.length){const item=results[hash%results.length],url=item&&item.svg&&item.svg.png_thumb;if(url){img.src=url;cache[t.id]=url;localStorage.setItem('balletRewardImageCache',JSON.stringify(cache));}else img.style.display='none';}else img.style.display='none';}catch(e){img.style.display='none'}
+   delete window[callback];script.remove();
+  };
+  script.onerror=function(){img.style.display='none';delete window[callback];script.remove()};
+  script.src='https://openclipart.org/search/json/?query='+encodeURIComponent(rewardPhotoQuery(t))+'&amount=25&page='+(hash%4+1)+'&callback='+callback;
+  document.head.appendChild(script);
+ });
 }
 function renderRewards(resetPage=false){
  if(resetPage)rewardPage=0;
@@ -406,13 +430,14 @@ function renderRewards(resetPage=false){
  document.getElementById('rewardCatalogCount').textContent='找到 '+filtered.length+' 種收藏 · 全部共有 '+rewardItems.length+' 種';
  const pages=Math.max(1,Math.ceil(filtered.length/rewardPageSize));rewardPage=Math.min(rewardPage,pages-1);
  const shown=filtered.slice(rewardPage*rewardPageSize,(rewardPage+1)*rewardPageSize);
- document.getElementById('rewardItems').innerHTML=shown.map(t=>{const has=owned.has(t.id);return '<article class="card"><div class="reward-photo" style="background:'+t.paint+'"><img src="'+rewardPhotoUrl(t)+'" alt="'+escapeHtml(t.name)+'實物照片" loading="lazy" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'grid\'"><span class="reward-photo-fallback" style="display:none">'+t.icon+'</span></div><span class="tag">'+escapeHtml(t.kind)+'</span><h3>'+escapeHtml(t.name)+'</h3><p>'+escapeHtml(t.desc)+'</p><p><strong style="color:var(--rose)">'+t.cost+' 點</strong></p><button class="btn '+(!has&&balance>=t.cost?'primary':'')+'" '+(has||balance<t.cost?'disabled':'')+' onclick="redeemReward(\''+t.id+'\')">'+(has?'已收藏 ✓':balance>=t.cost?'兌換收藏':'還差 '+(t.cost-balance)+' 點')+'</button></article>'}).join('')||'<div class="empty">沒有找到符合條件的收藏，試試別的關鍵字吧。🌷</div>';
+ document.getElementById('rewardItems').innerHTML=shown.map(t=>{const has=owned.has(t.id);return '<article class="card"><div class="reward-photo" style="background:'+t.paint+'"><img data-reward-id="'+t.id+'" alt="'+escapeHtml(t.name)+'實物照片" loading="lazy" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'grid\'"><span class="reward-photo-fallback" style="display:none">'+t.icon+'</span></div><span class="tag">'+escapeHtml(t.kind)+'</span><h3>'+escapeHtml(t.name)+'</h3><p>'+escapeHtml(t.desc)+'</p><p><strong style="color:var(--rose)">'+t.cost+' 點</strong></p><button class="btn '+(!has&&balance>=t.cost?'primary':'')+'" '+(has||balance<t.cost?'disabled':'')+' onclick="redeemReward(\''+t.id+'\')">'+(has?'已收藏 ✓':balance>=t.cost?'兌換收藏':'還差 '+(t.cost-balance)+' 點')+'</button></article>'}).join('')||'<div class="empty">沒有找到符合條件的收藏，試試別的關鍵字吧。🌷</div>';
+ loadRewardIllustrations(document.getElementById('rewardItems'),shown);
  document.getElementById('rewardPageLabel').textContent='第 '+(rewardPage+1)+' / '+pages+' 頁';
  document.getElementById('rewardPrev').disabled=rewardPage===0;
  document.getElementById('rewardNext').disabled=rewardPage>=pages-1;
  const wardrobe=document.getElementById('rewardWardrobe');
  const ownedItems=rewardItems.filter(t=>owned.has(t.id));
- wardrobe.innerHTML=ownedItems.length?ownedItems.map(t=>'<article class="card"><div class="reward-photo" style="background:'+t.paint+'"><img src="'+rewardPhotoUrl(t)+'" alt="'+escapeHtml(t.name)+'照片" loading="lazy" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'grid\'"><span class="reward-photo-fallback" style="display:none">'+t.icon+'</span></div><span class="tag">'+escapeHtml(t.kind)+'</span><h3>'+escapeHtml(t.name)+'</h3><p>'+escapeHtml(t.desc)+'</p><p class="small">已收藏 ✓ · 已加入夢想衣櫥</p></article>').join(''):'<div class="empty">還沒有兌換收藏。到「夢想集點卡」挑選喜歡的禮品吧！✨</div>';
+ wardrobe.innerHTML=ownedItems.length?ownedItems.map(t=>'<article class="card"><div class="reward-photo" style="background:'+t.paint+'"><img data-reward-id="'+t.id+'" alt="'+escapeHtml(t.name)+'照片" loading="lazy" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'grid\'"><span class="reward-photo-fallback" style="display:none">'+t.icon+'</span></div><span class="tag">'+escapeHtml(t.kind)+'</span><h3>'+escapeHtml(t.name)+'</h3><p>'+escapeHtml(t.desc)+'</p><p class="small">已收藏 ✓ · 已加入夢想衣櫥</p></article>').join(''):'<div class="empty">還沒有兌換收藏。到「夢想集點卡」挑選喜歡的禮品吧！✨</div>';
  document.getElementById('rewardHistory').innerHTML=redeemed.length?redeemed.slice().reverse().map(x=>'<div class="calendar-event"><strong>'+escapeHtml(x.name)+'</strong><p class="small">'+escapeHtml(x.date)+' · 使用 '+x.cost+' 點</p></div>').join(''):'<p class="small">還沒有兌換紀錄。</p>';
 }
 function redeemReward(id){
