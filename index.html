@@ -438,6 +438,7 @@ function renderRewards(resetPage=false){
  const wardrobe=document.getElementById('rewardWardrobe');
  const ownedItems=rewardItems.filter(t=>owned.has(t.id));
  wardrobe.innerHTML=ownedItems.length?ownedItems.map(t=>'<article class="card"><div class="reward-photo" style="background:'+t.paint+'"><img data-reward-id="'+t.id+'" alt="'+escapeHtml(t.name)+'照片" loading="lazy" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'grid\'"><span class="reward-photo-fallback" style="display:none">'+t.icon+'</span></div><span class="tag">'+escapeHtml(t.kind)+'</span><h3>'+escapeHtml(t.name)+'</h3><p>'+escapeHtml(t.desc)+'</p><p class="small">已收藏 ✓ · 已加入夢想衣櫥</p></article>').join(''):'<div class="empty">還沒有兌換收藏。到「夢想集點卡」挑選喜歡的禮品吧！✨</div>';
+ loadRewardIllustrations(wardrobe,ownedItems);
  document.getElementById('rewardHistory').innerHTML=redeemed.length?redeemed.slice().reverse().map(x=>'<div class="calendar-event"><strong>'+escapeHtml(x.name)+'</strong><p class="small">'+escapeHtml(x.date)+' · 使用 '+x.cost+' 點</p></div>').join(''):'<p class="small">還沒有兌換紀錄。</p>';
 }
 function redeemReward(id){
