@@ -60,7 +60,8 @@ body.mobile-mode main{padding:14px 12px 32px}body.mobile-mode header{padding:20p
   <button data-tab="records">學習紀錄</button>
   <button data-tab="calendar">月曆安排 📅</button>
   <button data-tab="rest">休息區 🎧</button>
-  <button data-tab="points">🎁 夢想集點卡</button>
+  <button data-tab="points">⭐ 夢想集點卡</button>
+  <button data-tab="shop">🛍️ 芭蕾商店</button>
   <button data-tab="rewards">🎀 我的收藏</button>
 </nav>
 <main>
@@ -94,6 +95,11 @@ body.mobile-mode main{padding:14px 12px 32px}body.mobile-mode header{padding:20p
   </div>
   <div class="section-title"><h2>👑 成就稱號</h2><span class="small">達標自動解鎖</span></div>
   <div id="rewardTitles" class="grid"></div>
+
+</section>
+<section id="shop" class="panel">
+  <div class="hero"><h2>芭蕾商店 🛍️</h2><p>用週末努力累積的追夢點數，挑選喜歡的虛擬禮品吧！兌換後會自動放進「我的收藏」。</p></div>
+  <div class="stats"><div class="stat"><strong id="shopBalance">0</strong><span>可用追夢點數 ⭐</span></div></div>
   <div class="section-title"><h2>🎀 300 種虛擬收藏</h2><span class="small">低點數也能常常兌換</span></div>
   <div class="searchrow"><input id="rewardSearch" placeholder="搜尋收藏，例如花束、皇冠、舞裙…"><select id="rewardCategory" aria-label="收藏分類"><option value="">全部分類（300 種）</option></select><select id="rewardSort" aria-label="收藏排序"><option value="cheap">點數由低到高</option><option value="name">依名稱排序</option><option value="all">原始收藏順序</option></select></div>
   <p id="rewardCatalogCount" class="small">共 300 種虛擬收藏</p>
@@ -101,7 +107,7 @@ body.mobile-mode main{padding:14px 12px 32px}body.mobile-mode header{padding:20p
   <div class="row" style="justify-content:center;align-items:center;gap:12px;margin-top:14px"><button class="btn" id="rewardPrev" type="button">上一頁</button><span id="rewardPageLabel" class="small">第 1 頁</span><button class="btn" id="rewardNext" type="button">下一頁</button></div>
 </section>
 <section id="rewards" class="panel">
-  <div class="hero"><h2>我的收藏 🎀</h2><p>這是你的專屬收藏頁面，只展示已經兌換的禮品。兌換紀錄也會保留在這裡；想換新禮品，請到「夢想集點卡」。</p></div>
+  <div class="hero"><h2>我的收藏 🎀</h2><p>這是你的專屬收藏頁面，只展示已經兌換的禮品。兌換紀錄也會保留在這裡；想兌換新禮品，請到「芭蕾商店」。</p></div>
   <div class="section-title"><h2>🌷 已收藏的禮品</h2><span class="small">已兌換的虛擬收藏</span></div>
   <div id="rewardWardrobe" class="grid"><div class="empty">還沒有收藏，挑一個喜歡的虛擬小物開始吧！✨</div></div>
   <div class="section-title"><h2>🌟 已兌換紀錄</h2></div>
@@ -378,6 +384,7 @@ function renderRewards(resetPage=false){
  const balance=Math.max(0,pointData.total||0),earned=Math.max(balance,pointData.lifetimeTotal||0),redeemed=pointData.redeemed||[];
  const owned=new Set(redeemed.map(x=>x.id));
  document.getElementById('rewardBalance').textContent=balance;
+ document.getElementById('shopBalance').textContent=balance;
  document.getElementById('rewardLifetime').textContent=earned;
  const unlocked=rewardTitles.filter(t=>earned>=t.threshold);
  document.getElementById('rewardTitleCount').textContent=unlocked.length;
