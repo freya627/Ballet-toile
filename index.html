@@ -61,7 +61,7 @@ body.mobile-mode main{padding:14px 12px 32px}body.mobile-mode header{padding:20p
   <button data-tab="calendar">月曆安排 📅</button>
   <button data-tab="rest">休息區 🎧</button>
   <button data-tab="points">🎁 夢想集點卡</button>
-  <button data-tab="rewards">🎁 我的芭蕾藏寶箱</button>
+  <button data-tab="rewards">🎀 我的收藏</button>
 </nav>
 <main>
 <section id="home" class="panel active">
@@ -101,8 +101,8 @@ body.mobile-mode main{padding:14px 12px 32px}body.mobile-mode header{padding:20p
   <div class="row" style="justify-content:center;align-items:center;gap:12px;margin-top:14px"><button class="btn" id="rewardPrev" type="button">上一頁</button><span id="rewardPageLabel" class="small">第 1 頁</span><button class="btn" id="rewardNext" type="button">下一頁</button></div>
 </section>
 <section id="rewards" class="panel">
-  <div class="hero"><h2>我的芭蕾藏寶箱 🎁</h2><p>這裡只放你已經兌換的收藏品。想用點數兌換新收藏，請到「夢想集點卡」。</p></div>
-  <div class="section-title"><h2>👗 我的夢想衣櫥</h2><span class="small">已兌換的虛擬收藏</span></div>
+  <div class="hero"><h2>我的收藏 🎀</h2><p>這是你的專屬收藏頁面，只展示已經兌換的禮品。兌換紀錄也會保留在這裡；想換新禮品，請到「夢想集點卡」。</p></div>
+  <div class="section-title"><h2>🌷 已收藏的禮品</h2><span class="small">已兌換的虛擬收藏</span></div>
   <div id="rewardWardrobe" class="grid"><div class="empty">還沒有收藏，挑一個喜歡的虛擬小物開始吧！✨</div></div>
   <div class="section-title"><h2>🌟 已兌換紀錄</h2></div>
   <div class="card" id="rewardHistory"><p class="small">還沒有兌換紀錄。</p></div>
@@ -397,7 +397,7 @@ function renderRewards(resetPage=false){
  document.getElementById('rewardNext').disabled=rewardPage>=pages-1;
  const wardrobe=document.getElementById('rewardWardrobe');
  const ownedItems=rewardItems.filter(t=>owned.has(t.id));
- wardrobe.innerHTML=ownedItems.length?ownedItems.map(t=>'<article class="card" style="background:'+t.paint+';text-align:center"><div style="font-size:54px;padding:8px">'+t.icon+'</div><span class="tag">'+escapeHtml(t.kind)+'</span><h3>'+escapeHtml(t.name)+'</h3><p>'+escapeHtml(t.desc)+'</p><p class="small">已加入夢想衣櫥 ✨</p></article>').join(''):'<div class="empty">還沒有收藏，挑一個喜歡的虛擬小物開始吧！✨</div>';
+ wardrobe.innerHTML=ownedItems.length?ownedItems.map(t=>'<article class="card"><div class="reward-photo" style="background:'+t.paint+'"><img src="'+rewardPhotoUrl(t)+'" alt="'+escapeHtml(t.name)+'照片" loading="lazy" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'grid\'"><span class="reward-photo-fallback" style="display:none">'+t.icon+'</span></div><span class="tag">'+escapeHtml(t.kind)+'</span><h3>'+escapeHtml(t.name)+'</h3><p>'+escapeHtml(t.desc)+'</p><p class="small">已收藏 ✓ · 已加入夢想衣櫥</p></article>').join(''):'<div class="empty">還沒有兌換收藏。到「夢想集點卡」挑選喜歡的禮品吧！✨</div>';
  document.getElementById('rewardHistory').innerHTML=redeemed.length?redeemed.slice().reverse().map(x=>'<div class="calendar-event"><strong>'+escapeHtml(x.name)+'</strong><p class="small">'+escapeHtml(x.date)+' · 使用 '+x.cost+' 點</p></div>').join(''):'<p class="small">還沒有兌換紀錄。</p>';
 }
 function redeemReward(id){
