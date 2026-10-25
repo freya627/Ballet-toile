@@ -343,7 +343,7 @@ const rewardPalettes=[
  {name:'蜜桃橘',paint:'linear-gradient(135deg,#fff4e9,#f4c7a8)'},{name:'珍珠白',paint:'linear-gradient(135deg,#ffffff,#ece5eb)'},
  {name:'莓果紅',paint:'linear-gradient(135deg,#fff0f3,#e7a1ad)'},{name:'星夜藍紫',paint:'linear-gradient(135deg,#eeeaff,#b7addf)'}
 ];
-const rewardItems=rewardLegacyItems.concat(rewardThemes.flatMap((theme,i)=>rewardPalettes.map((palette,j)=>({
+try{localStorage.removeItem('balletRewardImageCache')}catch(e){}\nconst rewardItems=rewardLegacyItems.concat(rewardThemes.flatMap((theme,i)=>rewardPalettes.map((palette,j)=>({
  id:'catalog_'+i+'_'+j,
  name:palette.name+theme[1],
  cost:5+((i*3+j*2)%8)*5,
@@ -354,25 +354,16 @@ const rewardItems=rewardLegacyItems.concat(rewardThemes.flatMap((theme,i)=>rewar
 let rewardPage=0;
 const rewardPageSize=30;
 function setRewardPage(delta){rewardPage=Math.max(0,rewardPage+delta);renderRewards()}
-function rewardImageCache(){try{return JSON.parse(localStorage.getItem('balletRewardImageCache')||'{}')}catch(e){return {}}}
-function rewardPhotoQuery(t){
+function rewardPhotoUrl(t){
  const s=(t.name+' '+t.kind).toLowerCase();
- if(/舞鞋|軟鞋|鞋/.test(s))return 'ballet shoes';
- if(/舞裙|紗裙|裙/.test(s))return 'ballet tutu';
- if(/皇冠|髮箍|髮飾|髮梳|蝴蝶結|髮夾|髮帶/.test(s))return 'tiara ribbon';
- if(/玫瑰|花束|花園|櫻花|花瓣/.test(s))return 'rose flower';
- if(/音樂盒|音樂/.test(s))return 'music box';
- if(/日記本|明信片|剪影卡/.test(s))return 'postcard journal';
- if(/天鵝/.test(s))return 'swan';
- if(/兔/.test(s))return 'rabbit';
- if(/蛋糕|馬卡龍|甜點/.test(s))return 'macaron cake';
- if(/星空|星夜|流星|月亮|星星|背景/.test(s))return 'moon stars';
- if(/獎牌|獎章/.test(s))return 'medal';
- if(/耳飾|手環|珍珠/.test(s))return 'pearl jewelry';
- if(/腿套|罩衫|上衣|練習/.test(s))return 'ballet clothes';
- if(/舞台/.test(s))return 'theater curtain';
- if(/旅行|巴黎/.test(s))return 'Paris Eiffel Tower';
- return 'ballet dancer';
+ // Stable, direct Openclipart image files; no live search/API needed.
+ if(/舞鞋|軟鞋|鞋/.test(s))return 'https://openclipart.org/image/800px/297940';
+ if(/舞裙|紗裙|裙|芭蕾|舞者|舞台/.test(s))return 'https://openclipart.org/image/800px/307194';
+ if(/皇冠|髮箍|髮飾|髮梳|蝴蝶結|髮夾|髮帶/.test(s))return 'https://openclipart.org/image/800px/314458';
+ if(/玫瑰|花束|花園|櫻花|花瓣/.test(s))return 'https://openclipart.org/image/800px/307194';
+ if(/音樂盒|音樂|日記本|明信片|剪影卡/.test(s))return 'https://openclipart.org/image/800px/307194';
+ if(/天鵝|兔|蛋糕|馬卡龍|甜點|星空|星夜|流星|月亮|星星|背景|獎牌|獎章|耳飾|手環|珍珠|腿套|罩衫|上衣|練習|旅行|巴黎/.test(s))return 'https://openclipart.org/image/800px/307194';
+ return 'https://openclipart.org/image/800px/307194';
 }
 function showRewardFallback(img){
  if(!img)return;
@@ -382,31 +373,11 @@ function showRewardFallback(img){
 }
 function loadRewardIllustrations(container,items){
  if(!container)return;
- const cache=rewardImageCache();
  items.forEach(t=>{
   const img=container.querySelector('img[data-reward-id="'+t.id+'"]');if(!img)return;
-  if(cache[t.id]){img.onload=()=>{img.style.display='block';if(img.nextElementSibling)img.nextElementSibling.style.display='none'};img.onerror=()=>showRewardFallback(img);img.src=cache[t.id];return;}
-  const callback='clipartCallback'+Math.random().toString(36).slice(2),script=document.createElement('script');
-  let hash=0;for(let i=0;i<t.id.length;i++)hash=(hash*31+t.id.charCodeAt(i))>>>0;
-  let settled=false;
-  window[callback]=function(data){
-   settled=true;
-   try{
-    const results=data&&data.payload||[];
-    const candidates=results.map(x=>x&&x.svg&&x.svg.png_thumb).filter(Boolean);
-    if(candidates.length){
-     const url=candidates[hash%candidates.length];
-     img.onload=()=>{img.style.display='block';if(img.nextElementSibling)img.nextElementSibling.style.display='none'};
-     img.onerror=()=>showRewardFallback(img);
-     img.src=url;cache[t.id]=url;localStorage.setItem('balletRewardImageCache',JSON.stringify(cache));
-    }else showRewardFallback(img);
-   }catch(e){showRewardFallback(img)}
-   delete window[callback];script.remove();
-  };
-  script.onerror=function(){showRewardFallback(img);delete window[callback];script.remove()};
-  script.src='https://openclipart.org/search/json/?query='+encodeURIComponent(rewardPhotoQuery(t))+'&amount=25&page=1&callback='+callback;
-  document.head.appendChild(script);
-  setTimeout(()=>{if(!settled){showRewardFallback(img);delete window[callback];script.remove()}},12000);
+  img.onload=()=>{img.style.display='block';if(img.nextElementSibling)img.nextElementSibling.style.display='none'};
+  img.onerror=()=>showRewardFallback(img);
+  img.src=rewardPhotoUrl(t);
  });
 }
 function renderRewards(resetPage=false){
