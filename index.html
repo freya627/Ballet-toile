@@ -304,14 +304,26 @@ function saveCalendarEntry(){const key=document.getElementById('calendarDate').v
 function clearCalendarEntry(){const key=document.getElementById('calendarDate').value;if(!key)return;delete calendarEvents[key];save('balletCalendarEvents',calendarEvents);selectedCalendarDate=key;document.getElementById('calendarType').value='none';document.getElementById('calendarNote').value='';document.getElementById('cancelCalendarLesson').checked=isWeekendKey(key);document.getElementById('scheduleMakeupLesson').checked=false;document.getElementById('makeupLessonDate').value='';document.getElementById('calendarSaveStatus').textContent='已清除此日期事項。';renderCalendar();renderToday();renderPoints();}
 function renderCalendarEventList(){const el=document.getElementById('calendarEventList');if(!el)return;const entries=Object.entries(calendarEvents).sort((a,b)=>a[0].localeCompare(b[0]));el.innerHTML=entries.length?entries.map(([key,e])=>`<div class="calendar-event"><strong>${escapeHtml(key)} · ${calendarTypeLabel(e.type)}</strong>${e.cancel?' <span class="tag">課程已取消</span>':''}${e.makeupDate?` <span class="tag">加強訓練：${escapeHtml(e.makeupDate)}</span>`:''}<p>${escapeHtml(e.note||'（沒有補充說明）')}</p><button class="btn" onclick="selectCalendarDate('${key}')">編輯</button></div>`).join(''):'<p class="small">目前沒有標註的日期。點上方月曆日期即可新增。</p>'}
 function renderPoints(){
- const isWeekend=[0,6].includes(dayIndex()); const cancelledToday=isLessonCancelled(dateKey());
+ const isWeekend=[0,6].includes(dayIndex()),cancelledToday=isLessonCancelled(dateKey());
+ const makeupToday=Object.values(calendarEvents).some(e=>e&&e.makeupDate===dateKey());
+ const canEarn=(isWeekend||makeupToday)&&!cancelledToday;
  const tasks=[{id:'warmup',label:'完成安全暖身',pts:1},{id:'newskill',label:'認真練習技巧',pts:2},{id:'music',label:'配合音樂練習小組合',pts:1},{id:'journal',label:'記錄今天的成果',pts:1}];
- const key=weekendKey(); const claimed=pointData.claims[key]||[];
+ const key=makeupToday?dateKey():weekendKey(),claimed=pointData.claims[key]||[];
  document.getElementById('pointCount').textContent=pointData.total;document.getElementById('pointCountCard').textContent=pointData.total;
- const done=tasks.filter(t=>claimed.includes(t.id)).length; const earned=tasks.filter(t=>claimed.includes(t.id)).reduce((sum,t)=>sum+t.pts,0); const maxPts=tasks.reduce((sum,t)=>sum+t.pts,0);
- document.getElementById('pointsTasks').innerHTML=`<div class="stamp-card"><div class="stamp-card-top"><div><span class="stamp-eyebrow">BALLET ÉTOILE · WEEKEND</span><h3>週末追夢集點卡</h3><p>${cancelledToday?'今日課程取消，安心休息。':isWeekend?'每完成一項任務，就蓋下一枚星星印章！':'現在是平日休息時間，週末再來集點吧。'}</p></div><div class="stamp-card-seal">É<br><small>ÉTOILE</small></div></div><div class="stamp-progress"><div><strong>${done} / ${tasks.length}</strong><span>枚星星印章</span></div><div><strong>${earned} / ${maxPts}</strong><span>本週末可得點數</span></div></div><div class="stamp-track">${tasks.map((t,i)=>`<label class="stamp-task ${claimed.includes(t.id)?'stamped':''} ${!isWeekend||cancelledToday?'locked':''}"><input type="checkbox" ${claimed.includes(t.id)?'checked':''} ${!isWeekend||cancelledToday||claimed.includes(t.id)?'disabled':''} onchange="claimPoint('${t.id}',${t.pts},this.checked)"><span class="stamp-circle"><span class="stamp-star">${claimed.includes(t.id)?'★':'☆'}</span><small>+${t.pts} 點</small></span><span class="stamp-task-label">${t.label}</span></label>`).join('')}</div><div class="stamp-card-bottom"><span>✦ 一步一步，讓夢想閃耀 ✦</span><span>${done===tasks.length?'COLLECTION COMPLETE':'KEEP DREAMING'}</span></div></div><p class="small stamp-note">集點只在週六、週日開放；不因休息或漏做任務扣點。每項每週末只計一次。</p>`;
+ const done=tasks.filter(t=>claimed.includes(t.id)).length,earned=tasks.filter(t=>claimed.includes(t.id)).reduce((sum,t)=>sum+t.pts,0),maxPts=tasks.reduce((sum,t)=>sum+t.pts,0);
+ const status=cancelledToday?'今日課程已取消，不能集點。':makeupToday?'今天是月曆安排的加課日，完成任務即可集點！':isWeekend?'每完成一項任務，就蓋下一枚星星印章！':'現在是平日休息時間，週末或加課日再來集點吧。';
+ document.getElementById('pointsTasks').innerHTML=`<div class="stamp-card"><div class="stamp-card-top"><div><span class="stamp-eyebrow">BALLET ÉTOILE · WEEKEND</span><h3>${makeupToday?'加課追夢集點卡':'週末追夢集點卡'}</h3><p>${status}</p></div><div class="stamp-card-seal">É<br><small>ÉTOILE</small></div></div><div class="stamp-progress"><div><strong>${done} / ${tasks.length}</strong><span>枚星星印章</span></div><div><strong>${earned} / ${maxPts}</strong><span>今天可得點數</span></div></div><div class="stamp-track">${tasks.map(t=>`<label class="stamp-task ${claimed.includes(t.id)?'stamped':''} ${!canEarn?'locked':''}"><input type="checkbox" ${claimed.includes(t.id)?'checked':''} ${!canEarn||claimed.includes(t.id)?'disabled':''} onchange="claimPoint('${t.id}',${t.pts},this.checked)"><span class="stamp-circle"><span class="stamp-star">${claimed.includes(t.id)?'★':'☆'}</span><small>+${t.pts} 點</small></span><span class="stamp-task-label">${t.label}</span></label>`).join('')}</div><div class="stamp-card-bottom"><span>✦ 一步一步，讓夢想閃耀 ✦</span><span>${done===tasks.length?'COLLECTION COMPLETE':'KEEP DREAMING'}</span></div></div><p class="small stamp-note">週末及月曆加課日可集點；取消課程日不能集點。每項任務每天只計一次。</p>`;
 }
-function claimPoint(id,pts,yes){if(![0,6].includes(dayIndex())||isLessonCancelled(dateKey()))return;const key=weekendKey();pointData.claims[key]=pointData.claims[key]||[];const arr=pointData.claims[key];if(yes&&!arr.includes(id)){arr.push(id);pointData.total+=pts;pointData.lifetimeTotal=(pointData.lifetimeTotal||0)+pts}else if(!yes&&arr.includes(id)){pointData.claims[key]=arr.filter(x=>x!==id);pointData.total=Math.max(0,pointData.total-pts);pointData.lifetimeTotal=Math.max(0,(pointData.lifetimeTotal||0)-pts)}save('balletPoints',pointData);renderPoints();renderRewards()}
+function claimPoint(id,pts,yes){
+ const isWeekend=[0,6].includes(dayIndex()),makeupToday=Object.values(calendarEvents).some(e=>e&&e.makeupDate===dateKey());
+ if((!isWeekend&&!makeupToday)||isLessonCancelled(dateKey())){renderPoints();return;}
+ const key=makeupToday?dateKey():weekendKey();
+ pointData.claims[key]=pointData.claims[key]||[];
+ const arr=pointData.claims[key];
+ if(yes&&!arr.includes(id)){arr.push(id);pointData.total=(Number(pointData.total)||0)+pts;pointData.lifetimeTotal=(Number(pointData.lifetimeTotal)||0)+pts;}
+ else if(!yes&&arr.includes(id)){pointData.claims[key]=arr.filter(x=>x!==id);pointData.total=Math.max(0,(Number(pointData.total)||0)-pts);pointData.lifetimeTotal=Math.max(0,(Number(pointData.lifetimeTotal)||0)-pts);}
+ save('balletPoints',pointData);renderPoints();renderRewards();
+}
 const rewardTitles=[
  {id:'newstar',name:'芭蕾小新星',threshold:5,desc:'踏出追夢的第一步 ✨'},
  {id:'graceful',name:'優雅練習生',threshold:20,desc:'持續累積基本功與耐心 🌷'},
@@ -402,26 +414,27 @@ function openRewardCategory(index){
 }
 function backToRewardCategories(){activeRewardCategory='';document.getElementById('rewardCategoryCircles').style.display='';document.getElementById('rewardCategoryView').style.display='none';}
 function restoreLostRewardsOnce(){
- const marker='balletRecovery20261025_cake_coverup_5pts_v2';
+ const marker='balletRecovery20261025_final_v3';
  pointData.redeemed=Array.isArray(pointData.redeemed)?pointData.redeemed:[];
- const recover=[{id:'catalog_24_0',name:'奶茶粉奶油蛋糕',match:/蛋糕/},{id:'catalog_6_0',name:'奶茶粉柔雲罩衫',match:/罩衫/}];
+ const recover=[
+  {id:'catalog_24_0',name:'奶茶粉奶油蛋糕',match:/蛋糕/},
+  {id:'catalog_6_0',name:'奶茶粉柔雲罩衫',match:/罩衫/}
+ ];
  let changed=false;
  recover.forEach(x=>{
-  const already=pointData.redeemed.some(r=>r.id===x.id||x.match.test(String(r.name||'')));
-  if(!already){
+  const existing=pointData.redeemed.some(r=>r.id===x.id||x.match.test(String(r.name||'')));
+  if(!existing){
    const item=rewardItems.find(t=>t.id===x.id);
    pointData.redeemed.push({id:x.id,name:item?item.name:x.name,cost:item?item.cost:0,date:'2026-10-25',recovered:true});
    changed=true;
   }
  });
- const oldMarker=load('balletRecovery20261025_cake_coverup_5pts',false);
- if(!load(marker,false)){
-  // Only grant the five points if the first recovery script never did so.
-  if(!oldMarker){pointData.total=Math.max(0,Number(pointData.total)||0)+5;pointData.lifetimeTotal=Math.max(0,Number(pointData.lifetimeTotal)||0)+5;}
-  save(marker,true);
-  save('balletPoints',pointData);
-  save(marker,true);
- }else if(changed){save('balletPoints',pointData);}
+ // Keep the explicitly requested balance and lifetime total, without subtracting any higher values.
+ const total=Math.max(5,Number(pointData.total)||0);
+ const lifetime=Math.max(15,Number(pointData.lifetimeTotal)||0,total);
+ if(pointData.total!==total||pointData.lifetimeTotal!==lifetime)changed=true;
+ pointData.total=total;pointData.lifetimeTotal=lifetime;
+ if(changed||!load(marker,false)){save('balletPoints',pointData);save(marker,true);}
 }
 function renderOwnedCollection(){
  const redeemed=Array.isArray(pointData.redeemed)?pointData.redeemed:[];
