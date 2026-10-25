@@ -343,7 +343,8 @@ const rewardPalettes=[
  {name:'蜜桃橘',paint:'linear-gradient(135deg,#fff4e9,#f4c7a8)'},{name:'珍珠白',paint:'linear-gradient(135deg,#ffffff,#ece5eb)'},
  {name:'莓果紅',paint:'linear-gradient(135deg,#fff0f3,#e7a1ad)'},{name:'星夜藍紫',paint:'linear-gradient(135deg,#eeeaff,#b7addf)'}
 ];
-try{localStorage.removeItem('balletRewardImageCache')}catch(e){}\nconst rewardItems=rewardLegacyItems.concat(rewardThemes.flatMap((theme,i)=>rewardPalettes.map((palette,j)=>({
+try{localStorage.removeItem('balletRewardImageCache')}catch(e){}
+const rewardItems=rewardLegacyItems.concat(rewardThemes.flatMap((theme,i)=>rewardPalettes.map((palette,j)=>({
  id:'catalog_'+i+'_'+j,
  name:palette.name+theme[1],
  cost:5+((i*3+j*2)%8)*5,
