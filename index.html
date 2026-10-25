@@ -397,6 +397,22 @@ function openRewardCategory(index){
  rewardPage=0;renderRewards(true);
 }
 function backToRewardCategories(){activeRewardCategory='';document.getElementById('rewardCategoryCircles').style.display='';document.getElementById('rewardCategoryView').style.display='none';}
+function restoreLostRewardsOnce(){
+ const marker='balletRecovery20261025_cake_coverup_5pts';
+ if(load(marker,false))return;
+ pointData.redeemed=Array.isArray(pointData.redeemed)?pointData.redeemed:[];
+ const recover=[{id:'catalog_24_0',name:'奶茶粉奶油蛋糕'},{id:'catalog_6_0',name:'奶茶粉柔雲罩衫'}];
+ recover.forEach(x=>{if(!pointData.redeemed.some(r=>r.id===x.id||((/奶油蛋糕|蛋糕/.test(r.name||''))&&x.name.includes('蛋糕'))||((/柔雲罩衫|罩衫/.test(r.name||''))&&x.name.includes('罩衫')))){const item=rewardItems.find(t=>t.id===x.id);if(item)pointData.redeemed.push({id:item.id,name:item.name,cost:item.cost,date:'2026-10-25',recovered:true});}});
+ pointData.total=Math.max(0,Number(pointData.total)||0)+5;
+ save('balletPoints',pointData);save(marker,true);
+}
+function renderOwnedCollection(){
+ const redeemed=Array.isArray(pointData.redeemed)?pointData.redeemed:[];
+ const wardrobe=document.getElementById('rewardWardrobe'),history=document.getElementById('rewardHistory');
+ if(wardrobe)wardrobe.innerHTML=redeemed.length?redeemed.slice().reverse().map(r=>{const t=rewardItems.find(x=>x.id===r.id)||{name:r.name||'已收藏禮品',icon:'🎀',kind:'收藏',paint:'linear-gradient(135deg,#fff5f1,#e8bdca)',desc:'已保留的收藏紀錄。'};return '<article class="card"><div class="reward-photo" style="background:'+t.paint+'"><img data-reward-id="'+t.id+'" alt="" loading="lazy" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'grid\'"><span class="reward-photo-fallback" style="display:none">'+t.icon+'</span></div><span class="tag">'+escapeHtml(t.kind)+'</span><h3>'+escapeHtml(r.name||t.name)+'</h3><p>'+escapeHtml(t.desc||'已保留的收藏紀錄。')+'</p><span class="tag">已收藏 ✓</span>'+(r.recovered?'<p class="small">資料恢復紀錄</p>':'')+'</article>'}).join(''):'<div class="empty">還沒有收藏，挑一個喜歡的虛擬小物開始吧！✨</div>';
+ if(history)history.innerHTML=redeemed.length?'<ul>'+redeemed.slice().reverse().map(r=>'<li>'+escapeHtml(r.name||rewardItems.find(x=>x.id===r.id)?.name||'已收藏禮品')+' · '+escapeHtml(r.date||'日期未記錄')+(r.recovered?' · 已恢復':'')+'</li>').join('')+'</ul>':'<p class="small">還沒有兌換紀錄。</p>';
+ if(wardrobe)loadRewardIllustrations(wardrobe,redeemed.map(r=>rewardItems.find(x=>x.id===r.id)).filter(Boolean));
+}
 function renderRewards(resetPage=false){
  if(resetPage)rewardPage=0;
  const balance=Math.max(0,pointData.total||0),earned=Math.max(balance,pointData.lifetimeTotal||0),redeemed=pointData.redeemed||[];
@@ -413,6 +429,7 @@ function renderRewards(resetPage=false){
  document.getElementById('rewardPrev').disabled=rewardPage===0;document.getElementById('rewardNext').disabled=rewardPage>=pages-1;
  document.getElementById('rewardItems').innerHTML=shown.map(t=>{const has=owned.has(t.id);return '<article class="card"><div class="reward-photo" style="background:'+t.paint+'"><img data-reward-id="'+t.id+'" alt="" loading="lazy" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'grid\'"><span class="reward-photo-fallback" style="display:none">'+t.icon+'</span></div><span class="tag">'+escapeHtml(t.kind)+'</span><h3>'+escapeHtml(t.name)+'</h3><p>'+escapeHtml(t.desc)+'</p><p><strong style="color:var(--rose)">'+t.cost+' 點</strong></p><button class="btn '+(!has&&balance>=t.cost?'primary':'')+'" '+(has||balance<t.cost?'disabled':'')+' onclick="redeemReward(\''+t.id+'\')">'+(has?'已收藏 ✓':balance>=t.cost?'兌換收藏':'還差 '+(t.cost-balance)+' 點')+'</button></article>'}).join('')||'<div class="empty">這個分類目前沒有商品。🌷</div>';
  loadRewardIllustrations(document.getElementById('rewardItems'),shown);
+ renderOwnedCollection();
 }
 function redeemReward(id){
  const item=rewardItems.find(x=>x.id===id);if(!item)return;
@@ -462,6 +479,7 @@ document.getElementById('rewardNext').addEventListener('click',()=>setRewardPage
 document.getElementById('closeDetail').addEventListener('click',closeMove);document.getElementById('detail').addEventListener('click',e=>{if(e.target.id==='detail')closeMove()});
 document.getElementById('resetToday').addEventListener('click',()=>{if(![0,6].includes(dayIndex())||isLessonCancelled(dateKey()))return;if(!confirm('要重新今天所有課程的集點嗎？這會取消本週末已蓋的所有星星印章，並扣回相應點數，之後可以重新集點。'))return;const key=weekendKey();const tasks=[{id:'warmup',pts:1},{id:'newskill',pts:2},{id:'music',pts:1},{id:'journal',pts:1}];const claimed=pointData.claims[key]||[];const removed=tasks.filter(t=>claimed.includes(t.id)).reduce((sum,t)=>sum+t.pts,0);pointData.total=Math.max(0,pointData.total-removed);pointData.lifetimeTotal=Math.max(0,(pointData.lifetimeTotal||0)-removed);pointData.claims[key]=[];todayDone=[];save('balletToday',todayDone);save('balletPoints',pointData);renderToday();renderStats();renderPoints();renderRewards()});
 document.getElementById('saveNote').addEventListener('click',()=>{const date=document.getElementById('practiceDate').value,text=document.getElementById('practiceNote').value.trim();if(!date||!text){document.getElementById('noteStatus').textContent='請填寫日期和筆記內容。';return}notes=notes.filter(n=>n.date!==date);notes.push({date,text});save('balletNotes',notes);document.getElementById('practiceNote').value='';document.getElementById('noteStatus').textContent='已儲存！';renderNotes()});
+restoreLostRewardsOnce();
 renderAll();
 renderRewardCategoryCircles();
 renderRewards();
