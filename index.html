@@ -60,6 +60,33 @@ body.mobile-mode main{padding:14px 12px 32px}body.mobile-mode header{padding:20p
 .atlas-glossary-more a{color:var(--accent,#9d6678);font-weight:700;text-decoration:underline;text-underline-offset:3px;line-height:1.7}
 @media(max-width:640px){.atlas-topics{grid-template-columns:1fr}.atlas-topic-toggle{min-height:52px}.atlas-move{gap:9px;padding:10px}.atlas-move-symbol{width:42px;height:42px;font-size:23px}}
 
+
+/* Six-chapter ballet glossary accordion */
+.atlas-accordion{display:grid;gap:11px}
+.atlas-chapter{border:1px solid #ead8dc;border-radius:14px;overflow:hidden;background:#fffdfb;box-shadow:0 3px 12px #79505b0a}
+.atlas-chapter-toggle{display:flex;align-items:center;gap:12px;width:100%;min-height:58px;padding:14px 16px;border:0;background:linear-gradient(115deg,#f8e9ed,#fff5f0);color:#634750;text-align:left;cursor:pointer}
+.atlas-chapter-title{flex:1;font-weight:750;line-height:1.5}
+.atlas-chapter-plus{display:grid;place-items:center;flex:none;width:28px;height:28px;border-radius:9px;background:#fffaf8;border:1px solid #e6cbd2;color:#986779;font-size:20px}
+.atlas-chapter-content{padding:16px;background:#fffaf8;border-top:1px solid #ead8dc}
+.atlas-chapter-content[hidden]{display:none}
+.atlas-chapter-intro{margin:0 0 16px;line-height:1.8;color:#79666a}
+.atlas-subgroup{margin-top:16px}
+.atlas-subgroup>h3{margin:0 0 10px;padding:9px 12px;border-left:3px solid #c994a5;background:#f7ecef;color:#78515f;font-size:16px;line-height:1.5}
+.atlas-term-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.atlas-term{min-width:0;padding:13px;border:1px solid #eee0e0;border-radius:12px;background:#fff;box-shadow:0 2px 7px #79505b08}
+.atlas-term-heading{display:flex;align-items:flex-start;gap:8px}
+.atlas-term-heading h4{flex:1;min-width:0;margin:0;color:#654551;font-size:15px;line-height:1.5;overflow-wrap:anywhere}
+.atlas-term-heading h4 span{font-weight:500;color:#9a7c83;font-size:13px}
+.atlas-audio{flex:none;width:36px;height:36px;border:1px solid #e4c6d0;border-radius:10px;background:#fbecf1;cursor:pointer;font-size:17px}
+.atlas-audio:hover,.atlas-audio:focus-visible{background:#f3dce5;outline:2px solid #c994a5;outline-offset:2px}
+.atlas-meaning{margin:10px 0 12px;line-height:1.75;color:#5e5051;font-size:14px}
+.atlas-image-placeholder{display:flex;align-items:center;gap:10px;margin:0;padding:8px 10px;border:1px dashed #e2cbd1;border-radius:9px;background:#fffaf9;color:#9a7d83}
+.atlas-image-icon{display:grid;place-items:center;flex:none;width:38px;height:38px;border-radius:8px;background:#f7e7ec;font-size:21px}
+.atlas-image-placeholder figcaption{font-size:12px;line-height:1.5}
+.atlas-glossary-more{margin:24px 0 8px;padding:18px 8px 8px;border-top:1px solid var(--line);text-align:center}
+.atlas-glossary-more a{color:#956478;font-weight:750;text-decoration:underline;text-underline-offset:3px;line-height:1.8}
+@media(max-width:700px){.atlas-term-list{grid-template-columns:1fr}.atlas-chapter-toggle{padding:12px;min-height:54px}.atlas-chapter-content{padding:11px}.atlas-term{padding:11px}}
+
 </style>
 </head>
 <body>
@@ -538,15 +565,91 @@ function fmtDate(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart
 function setupLessonDateSelect(){const sel=document.getElementById('lessonDateSelect');if(!sel)return;const previous=sel.value;const dates=getNextWeekendDates();sel.innerHTML=dates.map(d=>`<option value="${fmtDate(d)}">${d.getDay()===6?'星期六':'星期日'}（${d.getMonth()+1}/${d.getDate()}）${fmtDate(d)===dateKey()?'・今天':''}</option>`).join('');if(dates.some(d=>fmtDate(d)===previous))sel.value=previous;else if(dates.length)sel.value=fmtDate(dates[0]);}
 function addMoveToLesson(id){const date=document.getElementById('lessonDateSelect').value;if(!date)return;lessonAdds[date]=lessonAdds[date]||[];if(!lessonAdds[date].includes(id)){lessonAdds[date].push(id);save('balletLessonAdds',lessonAdds);document.getElementById('lessonAddStatus').textContent=`已把「${moves.find(m=>m.id===id)?.name}」加入 ${date} 的週末課程！`;renderSearch();if(date===dateKey())renderToday();}else{document.getElementById('lessonAddStatus').textContent='這個動作已經在所選課程裡了。';}}
 function renderSearch(){setupLessonDateSelect();const q=document.getElementById('searchInput').value.toLowerCase().trim(),level=document.getElementById('difficultyFilter').value,status=document.getElementById('statusFilter').value;const list=moves.filter(m=>(!level||m.level===level)&&(!status||getStatus(m.id)===status)&&(!q||[m.name,m.en,m.category,m.desc,m.level].join(' ').toLowerCase().includes(q)));const terms=q&&!level&&!status?glossaryTerms.filter(t=>(t.name+' '+t.zh).toLowerCase().includes(q)):[];const moveHtml=list.map(moveCard).join('');const termHtml=terms.map(t=>'<article class="card"><div><span class="tag">芭蕾術語</span><span class="tag difficulty">辭典</span></div><h3>'+escapeHtml(t.name)+'</h3><p>'+escapeHtml(t.zh)+'</p><p class="small">🎵 先理解術語，再循序學習動作；進階技巧請由老師指導。</p></article>').join('');const combined=moveHtml+termHtml;document.getElementById('searchResults').innerHTML=combined||'<div class="empty">找不到符合條件的動作或術語。可以試試法文、英文或中文名稱。</div>'}
+const atlasChapters=[
+{title:'一、基礎身體方位與腳位（Positions & Directions）',intro:'芭蕾的根本在於身體面對的角度與腳步的精準度，這也是所有複雜動作的起點。',groups:[
+{title:'腳的五個基本位置（Les Positions des Pieds）',items:[
+['Première position','First position','第一位置。雙腳腳跟緊貼，腳尖向外打開成一直線（Turn-out）。'],
+['Seconde position','Second position','第二位置。雙腳沿第一位置向兩側分開，間距約為一腳半長。'],
+['Troisième position','Third position','第三位置。一腳腳跟貼在另一腳的腳弓處。'],
+['Quatrième position','Fourth position','第四位置。一腳在另一腳前方，兩腳平行前後分開，間距約一腳長。'],
+['Cinquième position','Fifth position','第五位置。一腳在前，前腳腳跟緊貼後腳腳尖，雙腳完全重疊鎖緊。']]},
+{title:'身體面對的八個方位（Cecchetti 系統方向）',items:[
+['Croisé devant','Crossed front','交叉向前。身體面向斜角，對觀眾而言前腳與後腳呈交叉視角，工作腳向前伸出。'],
+['À la quatrième devant','Fourth position front','正面向前。身體正對觀眾，工作腳向前伸出。'],
+['Écarté devant','Ecarté front','分開向前。身體面向斜角，工作腳沿斜線向旁伸出，頭轉向工作腳方向。'],
+['Effacé devant','Effacé front','敞開向前。身體面向斜角，雙腿不交叉，工作腳向前伸出。'],
+['À la seconde','To the second','正面向旁。身體正對觀眾，工作腳向旁（二位方向）伸出。'],
+['Épaulé','Épaulé','著肩式。身體面向斜角，背部微轉向觀眾，前手與工作腳同向延伸。'],
+['Croisé derrière','Crossed back','交叉向後。身體面向斜角，工作腳向後伸出，雙腿呈交叉視覺。'],
+['À la quatrième derrière','Fourth position back','正面體後。身體正對觀眾，工作腳向正後方伸出。']]}]},
+{title:'二、把桿基礎訓練術語（Barre Exercises）',intro:'把桿訓練是每一堂芭蕾舞課的開頭，用於建立肌肉記憶、重心與外開度。',groups:[
+{title:'1. 蹲與延伸系列（Pliés & Tendus）',items:[
+['Demi-plié','Half bend','半蹲。膝蓋向腳尖方向彎曲，腳跟不離地，保持骨盆垂直。'],
+['Grand-plié','Full bend','深蹲。膝蓋極度彎曲至大腿與地面平行（二位時腳跟不離地，一、四、五位時腳跟需微離地後壓回）。'],
+['Battement tendu','Battement tendu','擦地延伸。工作腳腳掌緊貼地面向外推擦，直至腳尖點地，腳踝與腳背極度繃直。'],
+['Battement tendu pour le pied','Battement tendu for the foot','腳踝擦地訓練。在 Tendu 的基礎上，增加腳跟落地、再度繃直的踝關節訓練。'],
+['Battement dégagé (Glissé)','Battement dégagé (Glissé)','離開地面。工作腳快速擦地並衝出地面，停在離地約 45 度的高度，展現速度與力量。']]},
+{title:'2. 劃圓與速度系列（Ronds de Jambe & Battements）',items:[
+['Rond de jambe par terre','Rond de jambe on the ground','地面劃圓。工作腳尖在地上經由前、旁、後（En dehors）或後、旁、前（En dedans）劃出半圓形軌跡。'],
+['Battement frappé','Struck beat','打擊動作。工作腳自踝關節（Sur le cou-de-pied）有力地向外踢伸，腳尖迅速擊打地面或空中。'],
+['Petit battement sur le cou-de-pied','Small beat at the ankle','踝關節小打擊。工作腳在主力腳踝前、後快速交替轉換，訓練小腿與腳踝的敏捷度。'],
+['Battement fondu','Melted beat','融化與單腳蹲。主力腳彎曲（Plié）的同時，工作腳收至踝關節，隨後兩腿同時伸直。'],
+['Grand battement jeté','Large thrown beat','大踢腿。工作腳擦地並強力踢起至 90 度或更高，保持上半身穩定與軸心垂直。']]}]},
+{title:'三、中間組合與流動動作（Center Work & Adagio）',intro:'離開把桿後，舞者必須在沒有支撐的情況下控制平衡與線條。',groups:[
+{title:'1. 控制與姿勢（Adagio & Poses）',items:[
+['Développé','Developpé','展腿。工作腳沿主力腳經由踝、膝（Passé）緩慢向上延伸展開至空中（前、旁或後）。'],
+['Enveloppé','Enveloppé','收腿。與 Développé 相反，將空中直腿收回至主力腳膝蓋再落回地面。'],
+['Arabesque','Arabesque','阿拉貝斯克（迎風展翅）。單腳支撐，另一腳向正後方筆直延伸抬高，雙臂隨之形成優美的幾何線條。'],
+['Première arabesque','First arabesque','第一阿拉貝斯克。主力腳同側手向前延伸。'],
+['Deuxième arabesque','Second arabesque','第二阿拉貝斯克。工作腳同側手向前延伸。'],
+['Troisième arabesque','Third arabesque','第三阿拉貝斯克。雙手同時向前延伸，後手略高。'],
+['Attitude','Attitude','鶴立式。單腳支撐，另一腳向後或向前抬起，膝蓋彎曲約 90 度並保持高度外開。'],
+['Passé / Retiré','Passed / Withdrawn','經過／收腿。工作腳尖提至主力腳膝蓋內側或外側，是轉體與跳躍的核心過渡姿態。']]},
+{title:'2. 流動與連接步（Connecting Steps）',items:[
+['Chassé','Chassé','追步。一腳滑出，另一腳在空中迅速追趕並碰觸，形成前進的流動。'],
+['Glissade','Glissade','滑步。從五位 Plié 開始，工作腳向旁擦地跳起，另一腳隨之跟進，最後以五位 Plié 流暢收尾。'],
+['Pas de bourrée','Pas de bourrée','布雷步。由三步組成的連接步伐（通常為後、旁、前），用於微調位置或為大動作蓄力。'],
+['Tombé','Fallen','傾倒。身體重心轉移，順勢將工作腳向前、旁或後方跨出並落入 Plié。'],
+['Coupé','Cut','切步。一腳迅速切換至另一腳的位置，將原主力腳替換或抬起。']]}]},
+{title:'四、轉體術語（Tour / Pirouettes）',intro:'芭蕾的旋轉講求軸心的極致垂直與頭部的「留頭甩頭」（Spotting）。',groups:[
+{title:'旋轉與轉體方向',items:[
+['Pirouette','Pirouette','原地旋轉。單腳立腳尖（Relevé），另一腳呈 Retiré 姿態在原地自轉。'],
+['En dehors','Outward','向外轉。朝工作腳（提起的那隻腳）的方向旋轉。'],
+['En dedans','Inward','向內轉。朝主力腳（支撐的那隻腳）的方向旋轉。'],
+['Fouetté en tournant','Whipped turn','揮鞭轉。高難度旋轉，工作腳向旁揮腿（Fouetté）蓄力，隨即收回膝蓋帶動身體在單腳上連續旋轉。'],
+['Chaînés','Chains','鏈狀旋轉。雙腳交替以半腳尖（Demi-pointe）在一直線上如同鍊條般快速連續前進旋轉。'],
+['Piqué tour','Piqué turn','點轉。一腳筆直跨出並點立（Piqué），另一腳迅速收至腳踝或膝後進行旋轉。'],
+["Tour en l'air","Turn in the air","空中轉。男舞者常見高難度技巧，雙腳自五位起跳，在空中垂直自轉一圈或兩圈（Double）後落地。"]]}]},
+{title:'五、跳躍術語（Allegro）',intro:'跳躍依據輕重分為小跳（Petit allegro）與大跳（Grand allegro），考驗推地爆發力與空中的滯空感（Ballon）。',groups:[
+{title:'1. 雙腳起跳、雙腳落地',items:[
+['Sauté','Jump','基礎跳。自特定腳位（如一、二位）起跳，並在空中繃直腳尖，再落回原位。'],
+['Changement de pieds','Change of feet','換腳跳。自五位 Plié 起跳，在空中將雙腳前後位置對調，再落回五位。'],
+['Échappé sauté','Escaping jump','逃跑跳。自五位 Plié 起跳，在空中雙腳分開，落入二位或四位 Plié。'],
+['Soubresaut','Sudden spring','突跳。雙腳緊扣自五位垂直起跳，空中身體微向前傾，雙腿緊貼不換腳落地。']]},
+{title:'2. 單腳起跳、單腳落地或轉移',items:[
+['Jeté','Thrown','投擲跳。一腳擦地踢出起跳，在空中越過，由另一腳落地，原起跳腳收至踝後。'],
+['Assemblé','Assembled','組合跳。一腳踢出起跳，另一腳隨後在空中與之「匯合」，最終雙腳同時落回五位。'],
+['Sissonne','Sissonne','雙起單落跳。雙腳同時起跳，在空中展現姿態後，由單腳先落地，另一腳隨後收回。'],
+['Cabriole','Cabriole','擊腿跳。一腳踢向空中，另一腳起跳並在空中由下往上擊打該腿，隨後單腳落地。'],
+['Grand jeté','Grand jeté','大飛躍（大跨跳）。極具爆發力的動作，雙腿在空中前、後筆直完全撕開（一字馬），彷彿在空中飛翔。'],
+['Pas de chat','Step of the cat','貓步。兩腳依序屈膝提起（Passé）並在空中交替躍過，模仿貓咪輕盈躍動的姿態。']]}]},
+{title:'六、動作修飾、方向與速度指令（Modifiers & Qualifying Terms）',intro:'這些字眼通常與上述核心術語結合，用以精確指定動作的細節。',groups:[
+{title:'方向、高度與動作修飾',items:[
+['En avant','Forward','向前前進。'],
+['En arrière','Backward','向後後退。'],
+['De côté','Sideways','向旁移動。'],
+['En haut','Up / high','高位（通常指手臂五位）。'],
+['En bas','Down / low','低位（通常指手臂準備位）。'],
+['Sur les pointes','On pointe shoes','立腳尖（穿著硬鞋／Pointe shoes）。'],
+['Sur les demi-pointes','On demi-pointe','半腳尖（穿著軟鞋）。'],
+['En cloche','Like a bell','如鐘擺般。腿在前、後之間像鐘擺一樣連續擺動。'],
+['Passé','Passed','經過。指工作腳從一個位置移到另一個位置的「過程」。']]}]}
+];
 function renderLibrary(){
- const grouped=new Map();
- moves.forEach(m=>{if(!grouped.has(m.category))grouped.set(m.category,[]);grouped.get(m.category).push(m);});
- const topicSections=[...grouped.entries()].map(([topic,items],i)=>`<section class="atlas-topic"><button class="atlas-topic-toggle" type="button" aria-expanded="${i===0?'true':'false'}" aria-controls="atlas-topic-${i}" onclick="toggleAtlasTopic(${i})"><span class="atlas-topic-name">${escapeHtml(topic)}</span><span class="atlas-topic-count">${items.length} 個動作</span><span class="atlas-topic-plus" aria-hidden="true">${i===0?'−':'+'}</span></button><div class="atlas-topic-content" id="atlas-topic-${i}" ${i===0?'':'hidden'}><div class="atlas-move-list">${items.map(m=>`<article class="atlas-move"><div class="atlas-move-symbol" aria-hidden="true">${atlasSymbol(m.category)}</div><div class="atlas-move-copy"><div class="atlas-move-heading"><h3>${escapeHtml(m.name)}</h3><span class="tag difficulty">${escapeHtml(m.level)}</span></div><p class="atlas-move-en">${escapeHtml(m.en)}</p><p>${escapeHtml(m.desc)}</p><p class="small">⏱ ${escapeHtml(m.time)}　🎵 ${escapeHtml(m.beats)}</p><div class="atlas-move-actions"><button class="btn" type="button" onclick="speakFrenchTerm(${JSON.stringify(m.en||m.name).replace(/"/g,'&quot;')})">🔊 法文發音</button><button class="btn primary" type="button" onclick="openMove('${m.id}')">查看教學</button></div></div></article>`).join('')}</div></div></section>`).join('');
- const glossarySection=`<div class="hero" style="margin-top:22px"><h2>📚 芭蕾術語小辭典</h2><p>用主題快速找到動作；點選主題框即可展開或收合內容。法文發音按鈕會朗讀動作名稱。</p></div><div class="atlas-topics">${topicSections}</div><div class="atlas-glossary-more"><a href="https://www.balletglossary.com/term/" target="_blank" rel="noopener noreferrer">查看更多完整術語，請訪問《Ballet Glossary 芭蕾辭典》 ↗</a></div>`;
- document.getElementById('libraryGroups').innerHTML=glossarySection;
+ const sections=atlasChapters.map((chapter,i)=>`<section class="atlas-chapter"><button class="atlas-chapter-toggle" type="button" aria-expanded="false" aria-controls="atlas-chapter-content-${i}" onclick="toggleAtlasChapter(${i})"><span class="atlas-chapter-title">${escapeHtml(chapter.title)}</span><span class="atlas-chapter-plus" aria-hidden="true">+</span></button><div class="atlas-chapter-content" id="atlas-chapter-content-${i}" hidden><p class="atlas-chapter-intro">${escapeHtml(chapter.intro||'')}</p>${chapter.groups.map(group=>`<section class="atlas-subgroup"><h3>${escapeHtml(group.title)}</h3><div class="atlas-term-list">${group.items.map((item,j)=>`<article class="atlas-term"><div class="atlas-term-heading"><h4>${escapeHtml(item[0])} <span>(${escapeHtml(item[1])})</span></h4><button class="atlas-audio" type="button" aria-label="播放法文發音：${escapeHtml(item[0])}" title="播放法文發音" onclick="speakFrenchTerm(${JSON.stringify(item[0]).replace(/"/g,'&quot;')})">🔊</button></div><p class="atlas-meaning">${escapeHtml(item[2])}</p><figure class="atlas-image-placeholder"><div class="atlas-image-icon" aria-hidden="true">🩰</div><figcaption>動作示意圖位置｜${escapeHtml(item[0])}</figcaption></figure></article>`).join('')}</div></section>`).join('')}</div></section>`).join('');
+ document.getElementById('libraryGroups').innerHTML='<div class="atlas-accordion">'+sections+'</div><div class="atlas-glossary-more"><a href="https://www.balletglossary.com/term/" target="_blank" rel="noopener noreferrer">查看更多完整術語，請訪問《Ballet Glossary 芭蕾辭典》</a></div>';
 }
-function toggleAtlasTopic(index){const content=document.getElementById('atlas-topic-'+index);const button=document.querySelector('[aria-controls="atlas-topic-'+index+'"]');if(!content||!button)return;const opening=content.hidden;content.hidden=!opening;button.setAttribute('aria-expanded',String(opening));const icon=button.querySelector('.atlas-topic-plus');if(icon)icon.textContent=opening?'−':'+';}
-function atlasSymbol(category){const symbols={'基本功':'🩰','腳部基本功':'🦶','腳部控制':'〰️','腿部控制':'🦢','跳躍':'🪽','手臂與姿態':'🩰','平衡':'⚖️','轉圈':'💫'};return symbols[category]||'✧';}
+function toggleAtlasChapter(index){const content=document.getElementById('atlas-chapter-content-'+index);const button=document.querySelector('[aria-controls="atlas-chapter-content-'+index+'"]');if(!content||!button)return;const opening=content.hidden;content.hidden=!opening;button.setAttribute('aria-expanded',String(opening));const icon=button.querySelector('.atlas-chapter-plus');if(icon)icon.textContent=opening?'−':'+';}
 function renderRecords(){document.getElementById('recordList').innerHTML=moves.map(m=>`<div class="checkline"><div style="flex:1"><strong>${m.name}</strong><div class="small">${m.level} · ${m.category}</div></div><select aria-label="${m.name}學習狀態" onchange="setStatus('${m.id}',this.value)"><option ${getStatus(m.id)==='未學習'?'selected':''}>未學習</option><option ${getStatus(m.id)==='練習中'?'selected':''}>練習中</option><option ${getStatus(m.id)==='已學會'?'selected':''}>已學會</option></select></div>`).join('');const d=getLocalDate();document.getElementById('practiceDate').value=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;renderNotes()}
 function renderStats(){document.getElementById('learnedCount').textContent=moves.filter(m=>getStatus(m.id)==='已學會').length;document.getElementById('practiceCount').textContent=moves.filter(m=>getStatus(m.id)==='練習中').length;const pct=Math.round(moves.filter(m=>getStatus(m.id)==='已學會').length/moves.length*100);document.getElementById('progressText').textContent=pct+'%';document.getElementById('progressBar').style.width=pct+'%'}
 function renderNotes(){document.getElementById('savedNotes').innerHTML=notes.slice().reverse().map(n=>`<div style="border-top:1px solid var(--line);margin-top:12px;padding-top:12px"><strong>${escapeHtml(n.date)}</strong><p style="white-space:pre-wrap">${escapeHtml(n.text)}</p><button class="btn" onclick="deleteNote('${n.date}')">刪除此筆記</button></div>`).join('')||'<p class="small">還沒有練習筆記。</p>'}
