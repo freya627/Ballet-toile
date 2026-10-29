@@ -37,6 +37,29 @@ body.mobile-mode main{padding:14px 12px 32px}body.mobile-mode header{padding:20p
 /* Safety net: never leave the today's lesson card visually blank. */
 #todayLessons:empty{min-height:64px;padding:18px;box-sizing:border-box}
 #todayLessons:empty::after{content:'課程內容正在載入，或今天沒有可安排的新動作。請稍候重新整理；如果仍是空白，告訴我。';display:block;color:var(--muted,#786b68);font-size:14px;line-height:1.6}
+
+/* Compact, expandable movement atlas */
+.atlas-topics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;align-items:start}
+.atlas-topic{min-width:0;border:1px solid var(--line);border-radius:13px;background:var(--card,#fff);overflow:hidden}
+.atlas-topic-toggle{display:flex;align-items:center;gap:10px;width:100%;min-height:56px;padding:12px 14px;border:0;background:linear-gradient(120deg,#fff8f4,#fff0f3);color:var(--text,#513f40);text-align:left;cursor:pointer}
+.atlas-topic-name{font-weight:750;flex:1}
+.atlas-topic-count{font-size:12px;color:var(--muted,#8c7778);white-space:nowrap}
+.atlas-topic-plus{display:grid;place-items:center;flex:none;width:25px;height:25px;border-radius:8px;background:#f2dce2;color:#895b69;font-size:19px;line-height:1}
+.atlas-topic-content{padding:10px;background:#fffaf8;border-top:1px solid var(--line)}
+.atlas-topic-content[hidden]{display:none}
+.atlas-move-list{display:grid;gap:9px}
+.atlas-move{display:flex;gap:12px;padding:12px;border:1px solid #f0e3e0;border-radius:11px;background:#fff;min-width:0}
+.atlas-move-symbol{display:grid;place-items:center;flex:none;width:52px;height:52px;border-radius:12px;background:#fbecf0;font-size:27px}
+.atlas-move-copy{flex:1;min-width:0}
+.atlas-move-heading{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.atlas-move-heading h3{margin:0;font-size:16px}
+.atlas-move-en{margin:3px 0 7px!important;color:#a06d7c;font-size:13px;font-style:italic}
+.atlas-move-copy p{margin:6px 0;line-height:1.55}
+.atlas-move-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:9px}
+.atlas-glossary-more{margin:24px 0 10px;padding:16px 4px 8px;border-top:1px solid var(--line);text-align:center}
+.atlas-glossary-more a{color:var(--accent,#9d6678);font-weight:700;text-decoration:underline;text-underline-offset:3px;line-height:1.7}
+@media(max-width:640px){.atlas-topics{grid-template-columns:1fr}.atlas-topic-toggle{min-height:52px}.atlas-move{gap:9px;padding:10px}.atlas-move-symbol{width:42px;height:42px;font-size:23px}}
+
 </style>
 </head>
 <body>
@@ -516,11 +539,14 @@ function setupLessonDateSelect(){const sel=document.getElementById('lessonDateSe
 function addMoveToLesson(id){const date=document.getElementById('lessonDateSelect').value;if(!date)return;lessonAdds[date]=lessonAdds[date]||[];if(!lessonAdds[date].includes(id)){lessonAdds[date].push(id);save('balletLessonAdds',lessonAdds);document.getElementById('lessonAddStatus').textContent=`已把「${moves.find(m=>m.id===id)?.name}」加入 ${date} 的週末課程！`;renderSearch();if(date===dateKey())renderToday();}else{document.getElementById('lessonAddStatus').textContent='這個動作已經在所選課程裡了。';}}
 function renderSearch(){setupLessonDateSelect();const q=document.getElementById('searchInput').value.toLowerCase().trim(),level=document.getElementById('difficultyFilter').value,status=document.getElementById('statusFilter').value;const list=moves.filter(m=>(!level||m.level===level)&&(!status||getStatus(m.id)===status)&&(!q||[m.name,m.en,m.category,m.desc,m.level].join(' ').toLowerCase().includes(q)));const terms=q&&!level&&!status?glossaryTerms.filter(t=>(t.name+' '+t.zh).toLowerCase().includes(q)):[];const moveHtml=list.map(moveCard).join('');const termHtml=terms.map(t=>'<article class="card"><div><span class="tag">芭蕾術語</span><span class="tag difficulty">辭典</span></div><h3>'+escapeHtml(t.name)+'</h3><p>'+escapeHtml(t.zh)+'</p><p class="small">🎵 先理解術語，再循序學習動作；進階技巧請由老師指導。</p></article>').join('');const combined=moveHtml+termHtml;document.getElementById('searchResults').innerHTML=combined||'<div class="empty">找不到符合條件的動作或術語。可以試試法文、英文或中文名稱。</div>'}
 function renderLibrary(){
- const levels=['入門','基礎','進階概念'];
- const moveSections=levels.map(l=>`<div class="section-title"><h2>${l}</h2><span class="small">${moves.filter(m=>m.level===l).length} 個動作</span></div><div class="grid">${moves.filter(m=>m.level===l).map(moveCard).join('')}</div>`).join('');
- const glossarySection=`<div class="hero" style="margin-top:22px"><h2>📚 芭蕾術語小辭典</h2><p>星芭蕾內建術語先列在下方；完整 1,094 詞條則在這個內嵌辭典中直接瀏覽，不必離開星芭蕾另外找網址。完整辭典由 Ballet Glossary 維護，內容會依原站更新。</p></div><div class="grid">${glossaryTerms.map(t=>`<article class="card"><div><span class="tag">芭蕾術語</span></div><h3>${escapeHtml(t.name)}</h3><p>${escapeHtml(t.zh)}</p><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px"><button class="btn" onclick="speakFrenchTerm(${JSON.stringify(t.name).replace(/"/g,"&quot;")})">🔊 法文發音</button><a class="btn" href="${glossaryVideoUrl(t.name)}" target="_blank" rel="noopener noreferrer">🎬 解說影片</a></div></article>`).join('')}</div><div class="card" style="margin-top:18px;padding:0;overflow:hidden"><div style="padding:16px 18px;border-bottom:1px solid var(--line)"><h3 style="margin:0">🌐 完整芭蕾辭典 · 1,094 個詞條</h3><p class="small" style="margin:6px 0 0">可在下方直接瀏覽原站的完整詞條、中文解釋及其他資料。</p></div><iframe title="Ballet Glossary 完整芭蕾術語辭典" src="https://www.balletglossary.com/term/" loading="lazy" style="display:block;width:100%;height:900px;border:0;background:#fff" referrerpolicy="strict-origin-when-cross-origin"></iframe><p class="small" style="padding:0 18px 16px">若原站不允許嵌入，請使用下方按鈕開啟完整辭典。</p><div style="padding:0 18px 18px"><a class="btn primary" href="https://www.balletglossary.com/term/" target="_blank" rel="noopener noreferrer">開啟完整 1,094 詞條 ↗</a></div></div>`;
- document.getElementById('libraryGroups').innerHTML=moveSections+glossarySection;
+ const grouped=new Map();
+ moves.forEach(m=>{if(!grouped.has(m.category))grouped.set(m.category,[]);grouped.get(m.category).push(m);});
+ const topicSections=[...grouped.entries()].map(([topic,items],i)=>`<section class="atlas-topic"><button class="atlas-topic-toggle" type="button" aria-expanded="${i===0?'true':'false'}" aria-controls="atlas-topic-${i}" onclick="toggleAtlasTopic(${i})"><span class="atlas-topic-name">${escapeHtml(topic)}</span><span class="atlas-topic-count">${items.length} 個動作</span><span class="atlas-topic-plus" aria-hidden="true">${i===0?'−':'+'}</span></button><div class="atlas-topic-content" id="atlas-topic-${i}" ${i===0?'':'hidden'}><div class="atlas-move-list">${items.map(m=>`<article class="atlas-move"><div class="atlas-move-symbol" aria-hidden="true">${atlasSymbol(m.category)}</div><div class="atlas-move-copy"><div class="atlas-move-heading"><h3>${escapeHtml(m.name)}</h3><span class="tag difficulty">${escapeHtml(m.level)}</span></div><p class="atlas-move-en">${escapeHtml(m.en)}</p><p>${escapeHtml(m.desc)}</p><p class="small">⏱ ${escapeHtml(m.time)}　🎵 ${escapeHtml(m.beats)}</p><div class="atlas-move-actions"><button class="btn" type="button" onclick="speakFrenchTerm(${JSON.stringify(m.en||m.name).replace(/"/g,'&quot;')})">🔊 法文發音</button><button class="btn primary" type="button" onclick="openMove('${m.id}')">查看教學</button></div></div></article>`).join('')}</div></div></section>`).join('');
+ const glossarySection=`<div class="hero" style="margin-top:22px"><h2>📚 芭蕾術語小辭典</h2><p>用主題快速找到動作；點選主題框即可展開或收合內容。法文發音按鈕會朗讀動作名稱。</p></div><div class="atlas-topics">${topicSections}</div><div class="atlas-glossary-more"><a href="https://www.balletglossary.com/term/" target="_blank" rel="noopener noreferrer">查看更多完整術語，請訪問《Ballet Glossary 芭蕾辭典》 ↗</a></div>`;
+ document.getElementById('libraryGroups').innerHTML=glossarySection;
 }
+function toggleAtlasTopic(index){const content=document.getElementById('atlas-topic-'+index);const button=document.querySelector('[aria-controls="atlas-topic-'+index+'"]');if(!content||!button)return;const opening=content.hidden;content.hidden=!opening;button.setAttribute('aria-expanded',String(opening));const icon=button.querySelector('.atlas-topic-plus');if(icon)icon.textContent=opening?'−':'+';}
+function atlasSymbol(category){const symbols={'基本功':'🩰','腳部基本功':'🦶','腳部控制':'〰️','腿部控制':'🦢','跳躍':'🪽','手臂與姿態':'🩰','平衡':'⚖️','轉圈':'💫'};return symbols[category]||'✧';}
 function renderRecords(){document.getElementById('recordList').innerHTML=moves.map(m=>`<div class="checkline"><div style="flex:1"><strong>${m.name}</strong><div class="small">${m.level} · ${m.category}</div></div><select aria-label="${m.name}學習狀態" onchange="setStatus('${m.id}',this.value)"><option ${getStatus(m.id)==='未學習'?'selected':''}>未學習</option><option ${getStatus(m.id)==='練習中'?'selected':''}>練習中</option><option ${getStatus(m.id)==='已學會'?'selected':''}>已學會</option></select></div>`).join('');const d=getLocalDate();document.getElementById('practiceDate').value=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;renderNotes()}
 function renderStats(){document.getElementById('learnedCount').textContent=moves.filter(m=>getStatus(m.id)==='已學會').length;document.getElementById('practiceCount').textContent=moves.filter(m=>getStatus(m.id)==='練習中').length;const pct=Math.round(moves.filter(m=>getStatus(m.id)==='已學會').length/moves.length*100);document.getElementById('progressText').textContent=pct+'%';document.getElementById('progressBar').style.width=pct+'%'}
 function renderNotes(){document.getElementById('savedNotes').innerHTML=notes.slice().reverse().map(n=>`<div style="border-top:1px solid var(--line);margin-top:12px;padding-top:12px"><strong>${escapeHtml(n.date)}</strong><p style="white-space:pre-wrap">${escapeHtml(n.text)}</p><button class="btn" onclick="deleteNote('${n.date}')">刪除此筆記</button></div>`).join('')||'<p class="small">還沒有練習筆記。</p>'}
