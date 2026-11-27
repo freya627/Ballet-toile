@@ -518,6 +518,7 @@ function renderToday(){
   if(card&&!card.innerHTML.trim()){
    card.innerHTML='<div class="empty">🌷 課程已更新，但目前沒有可顯示的動作。請稍候重新整理。</div>';
   }
+  renderStats();
  }catch(err){
   console.error('今日課程載入失敗：',err);
   if(card){
@@ -525,6 +526,7 @@ function renderToday(){
    card.innerHTML=eligible.length?eligible.map((m,i)=>'<div class="lesson"><div class="time">'+['3 分','5 分','5 分'][i]+'</div><div style="flex:1"><strong>'+escapeHtml(m.name)+' <span class="tag">課程安排</span></strong><p>'+escapeHtml(m.desc)+'</p><button class="btn" onclick="openMove(\''+m.id+'\')">看步驟／影片</button></div></div>').join('<hr style="border:0;border-top:1px solid var(--line);margin:13px 0">'):'<div class="empty">🌷 目前沒有未標記為「已學會」的動作。到「動作搜尋」或「學習紀錄」選擇想複習的動作即可。</div>';
   }
   const heading=document.getElementById('lessonHeading');if(heading)heading.textContent='今日課程';
+  renderStats();
  }
 }
 
@@ -543,7 +545,7 @@ function atlasDifficulty(entry){
  if(['allegro','duo','petit-allegro','grand-allegro','supplement-pointe','supplement-batterie','supplement-partnering'].includes(cat))return '困難';
  return '中等';
 }
-function setAtlasStatus(term,status){atlasLearningState[term]=status;save('balletAtlasLearningState',atlasLearningState);renderAtlas();renderToday();}
+function setAtlasStatus(term,status){atlasLearningState[term]=status;save('balletAtlasLearningState',atlasLearningState);renderAtlas();renderToday();renderStats();}
 function renderAtlas(){
  const q=(document.getElementById('atlasSearch')?.value||'').trim().toLocaleLowerCase();
  const selected=document.getElementById('atlasGroup')?.value||'';
@@ -566,7 +568,19 @@ function addAtlasTermToToday(index){
 function runSearchAndShowResults(){renderSearch();const results=document.getElementById('searchResults');if(results)results.scrollIntoView({behavior:'smooth',block:'start'});}
 function renderSearch(){setupLessonDateSelect();const q=document.getElementById('searchInput').value.toLowerCase().trim(),level=document.getElementById('difficultyFilter').value,status=document.getElementById('statusFilter').value;const list=moves.filter(m=>(!level||m.level===level)&&(!status||getStatus(m.id)===status)&&(!q||[m.name,m.en,m.category,m.desc,m.level].join(' ').toLowerCase().includes(q)));const terms=q&&!level&&!status?glossaryTerms.filter(t=>(t.name+' '+t.zh).toLowerCase().includes(q)):[];const moveHtml=list.map(moveCard).join('');const termHtml=terms.map(t=>'<article class="card"><div><span class="tag">芭蕾術語</span><span class="tag difficulty">辭典</span></div><h3>'+escapeHtml(t.name)+'</h3><p>'+escapeHtml(t.zh)+'</p><p class="small">🎵 先理解術語，再循序學習動作；進階技巧請由老師指導。</p></article>').join('');const combined=moveHtml+termHtml;document.getElementById('searchResults').innerHTML=combined||'<div class="empty">找不到符合條件的動作或術語。可以試試法文、英文或中文名稱。</div>'}
 function renderRecords(){document.getElementById('recordList').innerHTML=moves.map(m=>`<div class="checkline"><div style="flex:1"><strong>${m.name}</strong><div class="small">${m.level} · ${m.category}</div></div><select aria-label="${m.name}學習狀態" onchange="setStatus('${m.id}',this.value)"><option ${getStatus(m.id)==='未學習'?'selected':''}>未學習</option><option ${getStatus(m.id)==='練習中'?'selected':''}>練習中</option><option ${getStatus(m.id)==='已學會'?'selected':''}>已學會</option></select></div>`).join('');const d=getLocalDate();document.getElementById('practiceDate').value=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;renderNotes()}
-function renderStats(){document.getElementById('learnedCount').textContent=moves.filter(m=>getStatus(m.id)==='已學會').length;document.getElementById('practiceCount').textContent=moves.filter(m=>getStatus(m.id)==='練習中').length;const pct=Math.round(moves.filter(m=>getStatus(m.id)==='已學會').length/moves.length*100);document.getElementById('progressText').textContent=pct+'%';document.getElementById('progressBar').style.width=pct+'%'}
+function renderStats(){
+ document.getElementById('learnedCount').textContent=moves.filter(m=>getStatus(m.id)==='已學會').length;
+ document.getElementById('practiceCount').textContent=moves.filter(m=>getStatus(m.id)==='練習中').length;
+ const card=document.getElementById('todayLessons');
+ const moveIds=card?[...card.querySelectorAll('[data-move-id]')].map(el=>el.getAttribute('data-move-id')):[];
+ const atlasTerms=card?[...card.querySelectorAll('[data-atlas-term]')].map(el=>el.getAttribute('data-atlas-term')):[];
+ const statuses=[...moveIds.map(id=>getStatus(id)),...atlasTerms.map(term=>atlasLearningState[term]||'未學習')];
+ const marked=statuses.filter(status=>status==='練習中'||status==='已學會').length;
+ const progressByCount=[0,10,35,45,85,100];
+ const pct=progressByCount[Math.min(marked,5)]||0;
+ document.getElementById('progressText').textContent=pct+'%（已標記 '+marked+'/'+statuses.length+' 個）';
+ document.getElementById('progressBar').style.width=pct+'%';
+}
 function renderNotes(){document.getElementById('savedNotes').innerHTML=notes.slice().reverse().map(n=>`<div style="border-top:1px solid var(--line);margin-top:12px;padding-top:12px"><strong>${escapeHtml(n.date)}</strong><p style="white-space:pre-wrap">${escapeHtml(n.text)}</p><button class="btn" onclick="deleteNote('${n.date}')">刪除此筆記</button></div>`).join('')||'<p class="small">還沒有練習筆記。</p>'}
 function deleteNote(date){notes=notes.filter(n=>n.date!==date);save('balletNotes',notes);renderNotes()}
 function renderAll(){renderToday();renderSearch();renderRecords();renderStats();renderCalendar();selectCalendarDate(selectedCalendarDate)}
