@@ -139,8 +139,8 @@ body.mobile-mode main{padding:14px 12px 32px}body.mobile-mode header{padding:20p
   <div id="searchResults" class="grid"></div>
 </section>
 <section id="atlas" class="panel">
-  <div class="hero atlas-hero"><div class="eyebrow">BALLET ÉTOILE · MOVEMENT ATLAS</div><h2>芭蕾動作圖鑑 🩰</h2><p>從基本腳位、把桿練習到中間組合與舞步術語，慢慢認識芭蕾的語言。點選卡片可查看動作說明與安全提醒。</p></div>
-  <div class="atlas-tools"><input id="atlasSearch" type="search" placeholder="搜尋法文、英文或中文名稱…"><select id="atlasGroup"><option value="">全部分類</option><option value="moves">動作教學</option><option value="terms">芭蕾術語</option></select></div>
+  <div class="hero atlas-hero"><div class="eyebrow">BALLET ÉTOILE · MOVEMENT ATLAS</div><h2>芭蕾動作圖鑑 🩰</h2><p>依照動作部位與動作方式細分。這裡是分類索引，只整理動作名稱，不放法文翻譯或教學步驟。</p></div>
+  <div class="atlas-tools"><input id="atlasSearch" type="search" placeholder="搜尋中文動作名稱或分類…"><select id="atlasGroup"><option value="">全部動作分類</option><option>腳位與交叉</option><option>腳尖擦地與地面路線</option><option>腳掌與踮腳</option><option>屈膝與腿部彎曲</option><option>腿部伸展與控制</option><option>手臂與上身姿態</option><option>跳躍</option></select></div>
   <div class="atlas-count" id="atlasCount"></div>
   <div id="atlasContent"></div>
 </section>
@@ -510,17 +510,29 @@ function fmtDate(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart
 function setupLessonDateSelect(){const sel=document.getElementById('lessonDateSelect');if(!sel)return;const previous=sel.value;const dates=getNextWeekendDates();sel.innerHTML=dates.map(d=>`<option value="${fmtDate(d)}">${d.getDay()===6?'星期六':'星期日'}（${d.getMonth()+1}/${d.getDate()}）${fmtDate(d)===dateKey()?'・今天':''}</option>`).join('');if(dates.some(d=>fmtDate(d)===previous))sel.value=previous;else if(dates.length)sel.value=fmtDate(dates[0]);}
 function addMoveToLesson(id){const date=document.getElementById('lessonDateSelect').value;if(!date)return;lessonAdds[date]=lessonAdds[date]||[];if(!lessonAdds[date].includes(id)){lessonAdds[date].push(id);save('balletLessonAdds',lessonAdds);document.getElementById('lessonAddStatus').textContent=`已把「${moves.find(m=>m.id===id)?.name}」加入 ${date} 的週末課程！`;renderSearch();if(date===dateKey())renderToday();}else{document.getElementById('lessonAddStatus').textContent='這個動作已經在所選課程裡了。';}}
 
+const atlasMoveInfo={
+ positions:{category:'腳位與交叉',label:'五個基本腳位'},
+ tendu:{category:'腳尖擦地與地面路線',label:'擦地'},
+ rond:{category:'腳尖擦地與地面路線',label:'地面畫圓'},
+ degage:{category:'腳尖擦地與地面路線',label:'離地擦出'},
+ releve:{category:'腳掌與踮腳',label:'踮腳'},
+ plie:{category:'屈膝與腿部彎曲',label:'屈膝'},
+ passe:{category:'屈膝與腿部彎曲',label:'經過屈膝位'},
+ developpe:{category:'腿部伸展與控制',label:'控制抬腿'},
+ grandbattement:{category:'腿部伸展與控制',label:'大幅度抬腿概念'},
+ portdebras:{category:'手臂與上身姿態',label:'手臂運行'},
+ saute:{category:'跳躍',label:'小跳概念'}
+};
 function renderAtlas(){
  const q=(document.getElementById('atlasSearch')?.value||'').trim().toLowerCase();
- const group=document.getElementById('atlasGroup')?.value||'';
- const filteredMoves=moves.filter(m=>!q||[m.name,m.en,m.category,m.desc,m.level].join(' ').toLowerCase().includes(q));
- const filteredTerms=glossaryTerms.filter(t=>!q||(t.name+' '+t.zh).toLowerCase().includes(q));
- const showMoves=group!=='terms',showTerms=group!=='moves';
- let html='';
- if(showMoves){html+='<div class="atlas-group"><h3>🩰 動作教學 · '+filteredMoves.length+' 個</h3><div class="atlas-grid">'+filteredMoves.map(m=>'<article class="atlas-card"><span class="tag">'+escapeHtml(m.category)+'</span><span class="tag difficulty">'+escapeHtml(m.level)+'</span><h4>'+escapeHtml(m.name)+'</h4><div class="atlas-en">'+escapeHtml(m.en)+'</div><p>'+escapeHtml(m.desc)+'</p><button class="btn primary" onclick="openMove(\''+m.id+'\')">查看教學</button></article>').join('')+'</div></div>';}
- if(showTerms){html+='<div class="atlas-group"><h3>📖 芭蕾法文術語 · '+filteredTerms.length+' 個</h3><div class="atlas-grid">'+filteredTerms.map(t=>'<article class="atlas-card"><div class="atlas-en">BALLET VOCABULARY</div><h4>'+escapeHtml(t.name)+'</h4><p>'+escapeHtml(t.zh)+'</p><button class="btn" onclick="speakFrenchTerm(\''+t.name.replace(/\\/g,'\\\\').replace(/'/g,"\\'")+'\')">🔊 法文朗讀</button></article>').join('')+'</div></div>';}
- document.getElementById('atlasContent').innerHTML=html||'<div class="atlas-empty">找不到符合的圖鑑內容，試試其他關鍵字吧。</div>';
- document.getElementById('atlasCount').textContent='目前顯示 '+((showMoves?filteredMoves.length:0)+(showTerms?filteredTerms.length:0))+' 項內容';
+ const selected=document.getElementById('atlasGroup')?.value||'';
+ const categories=['腳位與交叉','腳尖擦地與地面路線','腳掌與踮腳','屈膝與腿部彎曲','腿部伸展與控制','手臂與上身姿態','跳躍'];
+ const entries=moves.map(m=>({move:m,...(atlasMoveInfo[m.id]||{category:'其他動作',label:m.name})}));
+ const filtered=entries.filter(x=>(!selected||x.category===selected)&&(!q||(x.label+' '+x.category).toLowerCase().includes(q)));
+ const groups=categories.filter(c=>!selected||c===selected).map(c=>({name:c,items:filtered.filter(x=>x.category===c)})).filter(g=>g.items.length);
+ let html=groups.map(g=>'<div class="atlas-group"><h3>'+escapeHtml(g.name)+' · '+g.items.length+' 個</h3><div class="atlas-grid">'+g.items.map(x=>'<article class="atlas-card"><h4>'+escapeHtml(x.label)+'</h4></article>').join('')+'</div></div>').join('');
+ document.getElementById('atlasContent').innerHTML=html||'<div class="atlas-empty">這個分類目前沒有符合的動作。</div>';
+ document.getElementById('atlasCount').textContent='目前顯示 '+filtered.length+' 個動作，共 '+categories.length+' 種分類';
 }
 
 function runSearchAndShowResults(){renderSearch();const results=document.getElementById('searchResults');if(results)results.scrollIntoView({behavior:'smooth',block:'start'});}
