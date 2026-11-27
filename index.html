@@ -38,7 +38,25 @@ body.mobile-mode main{padding:14px 12px 32px}body.mobile-mode header{padding:20p
 #todayLessons:empty{min-height:64px;padding:18px;box-sizing:border-box}
 #todayLessons:empty::after{content:'課程內容正在載入，或今天沒有可安排的新動作。請稍候重新整理；如果仍是空白，告訴我。';display:block;color:var(--muted,#786b68);font-size:14px;line-height:1.6}
 
-/* Compact, expandable movement atlas */
+ 
+/* V520 movement atlas */
+.atlas-hero{background:linear-gradient(125deg,#fffaf7,#f7e4e9 58%,#fff8f1);border:1px solid #ead4dc}
+.atlas-hero .eyebrow{letter-spacing:3px;color:#bd7890;font-size:11px}
+.atlas-hero h2{font-family:"Noto Serif TC",serif;color:#92566f;letter-spacing:2px}
+.atlas-tools{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0}
+.atlas-tools input,.atlas-tools select{flex:1;min-width:180px;padding:13px 15px;border:1px solid #ead3d9;border-radius:12px;background:#fffdfc;color:#704f5e;font:inherit}
+.atlas-count{color:#a17b87;font-size:12px;margin:4px 2px 14px}
+.atlas-group{margin:20px 0 10px}
+.atlas-group h3{font-family:"Noto Serif TC",serif;color:#92566f;border-bottom:1px solid #ecd9de;padding:0 0 9px;letter-spacing:1px}
+.atlas-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.atlas-card{background:rgba(255,253,251,.96);border:1px solid #ecd9de;border-radius:14px;padding:15px;box-shadow:0 5px 18px rgba(154,103,122,.07)}
+.atlas-card h4{margin:8px 0 4px;color:#89576d;font-size:17px}
+.atlas-card .atlas-en{font:italic 13px Georgia,serif;color:#b1788d}
+.atlas-card p{color:#927783;font-size:13px;line-height:1.7;margin:8px 0}
+.atlas-card .btn{margin-top:6px}
+.atlas-empty{padding:28px;text-align:center;color:#a17b87;background:#fffafb;border:1px dashed #e7cbd3;border-radius:14px}
+@media(max-width:560px){.atlas-grid{grid-template-columns:1fr}.atlas-tools{display:grid;grid-template-columns:1fr}}
+
 </style>
 </head>
 <body>
@@ -60,6 +78,7 @@ body.mobile-mode main{padding:14px 12px 32px}body.mobile-mode header{padding:20p
 <nav>
   <button class="active" data-tab="home">今日課程</button>
   <button data-tab="search">動作查詢</button>
+  <button data-tab="atlas">🩰 動作圖鑑</button>
   <button data-tab="records">學習紀錄</button>
   <button data-tab="calendar">月曆安排 📅</button>
   <button data-tab="rest">休息區 🎧</button>
@@ -118,6 +137,12 @@ body.mobile-mode main{padding:14px 12px 32px}body.mobile-mode header{padding:20p
   <div class="searchrow"><input id="searchInput" placeholder="輸入動作，例如 Tendu、腳位、Rond de jambe…"><select id="difficultyFilter"><option value="">所有難度</option><option>入門</option><option>基礎</option><option>進階概念</option></select><select id="statusFilter" aria-label="學習狀態篩選"><option value="">所有學習狀態</option><option value="未學習">尚未學習</option><option value="練習中">練習中</option><option value="已學會">已經學過／已學會</option></select></div>
   <div class="card" style="margin-bottom:14px"><h3>➕ 把動作加入週末課程</h3><p>在下方動作卡片按「加入課程」，就會加入選定日期的課程；平日仍然是休息日，不會因此安排平日練習。</p><div class="searchrow"><label for="lessonDateSelect" style="align-self:center;color:var(--muted)">加入哪一天：</label><select id="lessonDateSelect" aria-label="選擇週末課程日期"></select></div><div id="lessonAddStatus" class="small" aria-live="polite"></div></div>
   <div id="searchResults" class="grid"></div>
+</section>
+<section id="atlas" class="panel">
+  <div class="hero atlas-hero"><div class="eyebrow">BALLET ÉTOILE · MOVEMENT ATLAS</div><h2>芭蕾動作圖鑑 🩰</h2><p>從基本腳位、把桿練習到中間組合與舞步術語，慢慢認識芭蕾的語言。點選卡片可查看動作說明與安全提醒。</p></div>
+  <div class="atlas-tools"><input id="atlasSearch" type="search" placeholder="搜尋法文、英文或中文名稱…"><select id="atlasGroup"><option value="">全部分類</option><option value="moves">動作教學</option><option value="terms">芭蕾術語</option></select></div>
+  <div class="atlas-count" id="atlasCount"></div>
+  <div id="atlasContent"></div>
 </section>
 <section id="records" class="panel">
   <div class="hero"><h2>我的學習紀錄 📖</h2><p>把每個動作標記成「尚未學習」、「練習中」或「已學會」。紀錄會保存在這個瀏覽器的本機儲存空間。</p></div>
@@ -457,6 +482,20 @@ function getNextWeekendDates(){const now=getLocalDate();const out=[];for(let off
 function fmtDate(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
 function setupLessonDateSelect(){const sel=document.getElementById('lessonDateSelect');if(!sel)return;const previous=sel.value;const dates=getNextWeekendDates();sel.innerHTML=dates.map(d=>`<option value="${fmtDate(d)}">${d.getDay()===6?'星期六':'星期日'}（${d.getMonth()+1}/${d.getDate()}）${fmtDate(d)===dateKey()?'・今天':''}</option>`).join('');if(dates.some(d=>fmtDate(d)===previous))sel.value=previous;else if(dates.length)sel.value=fmtDate(dates[0]);}
 function addMoveToLesson(id){const date=document.getElementById('lessonDateSelect').value;if(!date)return;lessonAdds[date]=lessonAdds[date]||[];if(!lessonAdds[date].includes(id)){lessonAdds[date].push(id);save('balletLessonAdds',lessonAdds);document.getElementById('lessonAddStatus').textContent=`已把「${moves.find(m=>m.id===id)?.name}」加入 ${date} 的週末課程！`;renderSearch();if(date===dateKey())renderToday();}else{document.getElementById('lessonAddStatus').textContent='這個動作已經在所選課程裡了。';}}
+
+function renderAtlas(){
+ const q=(document.getElementById('atlasSearch')?.value||'').trim().toLowerCase();
+ const group=document.getElementById('atlasGroup')?.value||'';
+ const filteredMoves=moves.filter(m=>!q||[m.name,m.en,m.category,m.desc,m.level].join(' ').toLowerCase().includes(q));
+ const filteredTerms=glossaryTerms.filter(t=>!q||(t.name+' '+t.zh).toLowerCase().includes(q));
+ const showMoves=group!=='terms',showTerms=group!=='moves';
+ let html='';
+ if(showMoves){html+='<div class="atlas-group"><h3>🩰 動作教學 · '+filteredMoves.length+' 個</h3><div class="atlas-grid">'+filteredMoves.map(m=>'<article class="atlas-card"><span class="tag">'+escapeHtml(m.category)+'</span><span class="tag difficulty">'+escapeHtml(m.level)+'</span><h4>'+escapeHtml(m.name)+'</h4><div class="atlas-en">'+escapeHtml(m.en)+'</div><p>'+escapeHtml(m.desc)+'</p><button class="btn primary" onclick="openMove(\''+m.id+'\')">查看教學</button></article>').join('')+'</div></div>';}
+ if(showTerms){html+='<div class="atlas-group"><h3>📖 芭蕾法文術語 · '+filteredTerms.length+' 個</h3><div class="atlas-grid">'+filteredTerms.map(t=>'<article class="atlas-card"><div class="atlas-en">BALLET VOCABULARY</div><h4>'+escapeHtml(t.name)+'</h4><p>'+escapeHtml(t.zh)+'</p><button class="btn" onclick="speakFrenchTerm(\''+t.name.replace(/\\/g,'\\\\').replace(/'/g,"\\'")+'\')">🔊 法文朗讀</button></article>').join('')+'</div></div>';}
+ document.getElementById('atlasContent').innerHTML=html||'<div class="atlas-empty">找不到符合的圖鑑內容，試試其他關鍵字吧。</div>';
+ document.getElementById('atlasCount').textContent='目前顯示 '+((showMoves?filteredMoves.length:0)+(showTerms?filteredTerms.length:0))+' 項內容';
+}
+
 function renderSearch(){setupLessonDateSelect();const q=document.getElementById('searchInput').value.toLowerCase().trim(),level=document.getElementById('difficultyFilter').value,status=document.getElementById('statusFilter').value;const list=moves.filter(m=>(!level||m.level===level)&&(!status||getStatus(m.id)===status)&&(!q||[m.name,m.en,m.category,m.desc,m.level].join(' ').toLowerCase().includes(q)));const terms=q&&!level&&!status?glossaryTerms.filter(t=>(t.name+' '+t.zh).toLowerCase().includes(q)):[];const moveHtml=list.map(moveCard).join('');const termHtml=terms.map(t=>'<article class="card"><div><span class="tag">芭蕾術語</span><span class="tag difficulty">辭典</span></div><h3>'+escapeHtml(t.name)+'</h3><p>'+escapeHtml(t.zh)+'</p><p class="small">🎵 先理解術語，再循序學習動作；進階技巧請由老師指導。</p></article>').join('');const combined=moveHtml+termHtml;document.getElementById('searchResults').innerHTML=combined||'<div class="empty">找不到符合條件的動作或術語。可以試試法文、英文或中文名稱。</div>'}
 function renderRecords(){document.getElementById('recordList').innerHTML=moves.map(m=>`<div class="checkline"><div style="flex:1"><strong>${m.name}</strong><div class="small">${m.level} · ${m.category}</div></div><select aria-label="${m.name}學習狀態" onchange="setStatus('${m.id}',this.value)"><option ${getStatus(m.id)==='未學習'?'selected':''}>未學習</option><option ${getStatus(m.id)==='練習中'?'selected':''}>練習中</option><option ${getStatus(m.id)==='已學會'?'selected':''}>已學會</option></select></div>`).join('');const d=getLocalDate();document.getElementById('practiceDate').value=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;renderNotes()}
 function renderStats(){document.getElementById('learnedCount').textContent=moves.filter(m=>getStatus(m.id)==='已學會').length;document.getElementById('practiceCount').textContent=moves.filter(m=>getStatus(m.id)==='練習中').length;const pct=Math.round(moves.filter(m=>getStatus(m.id)==='已學會').length/moves.length*100);document.getElementById('progressText').textContent=pct+'%';document.getElementById('progressBar').style.width=pct+'%'}
@@ -464,8 +503,9 @@ function renderNotes(){document.getElementById('savedNotes').innerHTML=notes.sli
 function deleteNote(date){notes=notes.filter(n=>n.date!==date);save('balletNotes',notes);renderNotes()}
 function renderAll(){renderToday();renderSearch();renderRecords();renderStats();renderCalendar();selectCalendarDate(selectedCalendarDate)}
 function refreshCalendarAfterLayout(){const grid=document.getElementById('calendarGrid');if(!grid)return;grid.style.display='grid';renderCalendar();requestAnimationFrame(()=>{const currentGrid=document.getElementById('calendarGrid');if(!currentGrid)return;currentGrid.style.display='grid';if(currentGrid.children.length!==49)renderCalendar();currentGrid.getBoundingClientRect();});}
-function openTab(id){document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('active',x.dataset.tab===id));document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active',p.id===id));if(id==='calendar'){refreshCalendarAfterLayout();}window.scrollTo({top:0,behavior:'smooth'});}
+function openTab(id){document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('active',x.dataset.tab===id));document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active',p.id===id));if(id==='calendar'){refreshCalendarAfterLayout();}if(id==='atlas'){renderAtlas();}window.scrollTo({top:0,behavior:'smooth'});}
 document.querySelectorAll('nav button').forEach(b=>b.addEventListener('click',()=>openTab(b.dataset.tab)));
+document.getElementById('atlasSearch').addEventListener('input',renderAtlas);document.getElementById('atlasGroup').addEventListener('change',renderAtlas);
 function setDeviceMode(mode){document.body.classList.toggle('mobile-mode',mode==='mobile');try{localStorage.setItem('balletDeviceMode',mode)}catch(e){}document.getElementById('deviceChooser').classList.remove('open')}
 function openDeviceChooser(){document.getElementById('deviceChooser').classList.add('open')}
 document.querySelectorAll('[data-device]').forEach(b=>b.addEventListener('click',()=>setDeviceMode(b.dataset.device)));
