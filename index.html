@@ -100,15 +100,15 @@ body.mobile-mode main{padding:14px 12px 32px}body.mobile-mode header{padding:20p
     <div class="stat"><strong id="practiceCount">0</strong><span>練習中</span></div>
     <div class="stat"><strong id="pointCount">0</strong><span>追夢點數 ⭐</span></div>
   </div>
-  <div class="card" id="practiceDateSettings" style="margin:0 0 14px;background:#fffafb;border-color:#e8cbd3"><h3>📅 選擇要查看的練習日期</h3><p>可以選日期，也可以調整星期；選好後，今日課程會依照這個日期重新顯示。</p><div class="searchrow" style="align-items:end"><div class="field" style="flex:1;margin:0"><label for="todayDatePicker">日期</label><input id="todayDatePicker" type="date"></div><div class="field" style="flex:1;margin:0"><label for="todayWeekdayPicker">星期</label><select id="todayWeekdayPicker"><option value="0">星期日</option><option value="1">星期一</option><option value="2">星期二</option><option value="3">星期三</option><option value="4">星期四</option><option value="5">星期五</option><option value="6">星期六</option></select></div></div><p class="small" id="datePickerStatus" aria-live="polite"></p></div><div class="hero" id="weekPlan"><h2>本週練習安排</h2><p>平日不安排芭蕾；只在週六、週日練習。</p></div>
+  <div class="card" id="practiceDateSettings" style="margin:0 0 14px;background:#fffafb;border-color:#e8cbd3"><h3>📅 選擇要查看的練習日期</h3><p>可以選日期，也可以調整星期；選好後，今日課程會依照這個日期重新顯示。</p><div class="searchrow" style="align-items:end"><div class="field" style="flex:1;margin:0"><label for="todayDatePicker">日期</label><input id="todayDatePicker" type="date"></div><div class="field" style="flex:1;margin:0"><label for="todayWeekdayPicker">星期</label><select id="todayWeekdayPicker"><option value="0">星期日</option><option value="1">星期一</option><option value="2">星期二</option><option value="3">星期三</option><option value="4">星期四</option><option value="5">星期五</option><option value="6">星期六</option></select></div></div><p class="small" id="datePickerStatus" aria-live="polite"></p></div><div class="hero" id="weekPlan"><h2>本週練習安排</h2><p>平日安排舒展、呼吸與週末複習；週六、週日安排技巧課程。</p></div>
   <div class="section-title"><h2 id="lessonHeading">今日課程</h2><div class="row" style="gap:8px;flex-wrap:wrap"><button class="btn" id="resetLessonPlan" type="button">🎲 重新安排今日課程</button><button class="btn" id="resetToday">重新今日所有課程集點</button></div></div><p id="todayDateStatus" class="small"></p>
   <div class="card" id="todayLessons"></div>
   <div class="card" style="margin-top:12px"><h3>🎵 音樂與拍數小提示</h3><p>可選節奏清楚、速度舒適的古典芭蕾音樂。初學時每個動作先用慢速數拍；沒有音樂也可以自己均勻地數「1、2、3、4」。不要為了跟上音樂而急著做動作。</p><p class="small">本程式不會自動播放音樂；可用你已熟悉且適合練習的音樂。</p></div>
 </section>
 <section id="points" class="panel">
-  <div class="hero"><h2>夢想集點卡 🎁</h2><p>週末完成練習任務就能累積追夢點數。平日是休息日，不安排練習，也不會扣點。</p></div>
+  <div class="hero"><h2>夢想集點卡 🎁</h2><p>平日以舒展、呼吸與複習為主，週末安排技巧學習；每天完成課程任務都能累積追夢點數。</p></div>
   <div class="stats"><div class="stat"><strong id="pointCountCard">0</strong><span>目前追夢點數 ⭐</span></div></div>
-  <div class="section-title"><h2>⭐ 週末追夢集點</h2><span class="small">每項每個週末最多一次</span></div>
+  <div class="section-title"><h2>⭐ 每日追夢集點</h2><span class="small">每項每天最多一次</span></div>
   <div class="card" id="pointsTasks"></div>
   <div class="stats">
     <div class="stat"><strong id="rewardBalance">0</strong><span>可用點數 ⭐</span></div>
@@ -135,7 +135,7 @@ body.mobile-mode main{padding:14px 12px 32px}body.mobile-mode header{padding:20p
 <section id="search" class="panel">
   <div class="section-title"><h2>動作快速查詢 🔎</h2></div>
   <div class="searchrow"><input id="searchInput" placeholder="輸入動作，例如 Tendu、腳位、Rond de jambe…"><button class="btn primary" id="searchSubmit" type="button">🔎 查詢</button><select id="difficultyFilter"><option value="">所有難度</option><option>入門</option><option>基礎</option><option>進階概念</option></select><select id="statusFilter" aria-label="學習狀態篩選"><option value="">所有學習狀態</option><option value="未學習">尚未學習</option><option value="練習中">練習中</option><option value="已學會">已經學過／已學會</option></select></div>
-  <div class="card" style="margin-bottom:14px"><h3>➕ 把動作加入週末課程</h3><p>在下方動作卡片按「加入課程」，就會加入選定日期的課程；平日仍然是休息日，不會因此安排平日練習。</p><div class="searchrow"><label for="lessonDateSelect" style="align-self:center;color:var(--muted)">加入哪一天：</label><select id="lessonDateSelect" aria-label="選擇週末課程日期"></select></div><div id="lessonAddStatus" class="small" aria-live="polite"></div></div>
+  <div class="card" style="margin-bottom:14px"><h3>➕ 把動作加入課程</h3><p>在下方動作卡片按「加入課程」，就會加入選定日期的課程；平日仍然是休息日，不會因此安排平日練習。</p><div class="searchrow"><label for="lessonDateSelect" style="align-self:center;color:var(--muted)">加入哪一天：</label><select id="lessonDateSelect" aria-label="選擇週末課程日期"></select></div><div id="lessonAddStatus" class="small" aria-live="polite"></div></div>
   <div id="searchResults" class="grid"></div>
 </section>
 <section id="atlas" class="panel">
@@ -322,24 +322,24 @@ function todayLessonActionsAllLearned(){
 function renderPoints(){
  const isWeekend=[0,6].includes(dayIndex()),cancelledToday=isLessonCancelled(dateKey());
  const makeupToday=Object.values(calendarEvents).some(e=>e&&e.makeupDate===dateKey());
- const canEarn=(isWeekend||makeupToday)&&!cancelledToday;
- const key=makeupToday?dateKey():weekendKey();
+ const isWeekday=!isWeekend&&!makeupToday;
+ const canEarn=!cancelledToday;
+ const key=dateKey();
  pointData.claims[key]=pointData.claims[key]||[];
  const masteryId='allLearned-'+dateKey();
  const masteryReady=canEarn&&todayLessonActionsAllLearned()&&!pointData.claims[key].includes(masteryId);
  if(masteryReady){pointData.claims[key].push(masteryId);pointData.total=(Number(pointData.total)||0)+2;pointData.lifetimeTotal=(Number(pointData.lifetimeTotal)||0)+2;save('balletPoints',pointData);}
  const claimed=pointData.claims[key]||[];
- const tasks=[{id:'warmup',label:'完成安全暖身',pts:1},{id:'newskill',label:'認真練習技巧',pts:2},{id:'music',label:'配合音樂練習小組合',pts:1},{id:'journal',label:'記錄今天的成果',pts:1},{id:masteryId,label:'今日課程全部標記為已學會',pts:2,auto:true}];
+ const tasks=isWeekday?[{id:'weekday-stretch',label:'完成舒服的舒展／拉筋',pts:1},{id:'weekday-breath',label:'完成呼吸練習',pts:1},{id:'weekday-review',label:'複習上週六、日的練習動作',pts:2},{id:'weekday-note',label:'記錄今天的練習心得',pts:1}]:[{id:'warmup',label:'完成安全暖身',pts:1},{id:'newskill',label:'認真練習技巧',pts:2},{id:'music',label:'配合音樂練習小組合',pts:1},{id:'journal',label:'記錄今天的成果',pts:1},{id:masteryId,label:'今日課程全部標記為已學會',pts:2,auto:true}];
  document.getElementById('pointCount').textContent=pointData.total;document.getElementById('pointCountCard').textContent=pointData.total;
  const done=tasks.filter(t=>claimed.includes(t.id)).length,earned=tasks.filter(t=>claimed.includes(t.id)).reduce((sum,t)=>sum+t.pts,0),maxPts=tasks.reduce((sum,t)=>sum+t.pts,0);
- const status=cancelledToday?'今日課程已取消，不能集點。':makeupToday?'今天是月曆安排的加課日，完成任務即可集點！':isWeekend?'每完成一項任務，就蓋下一枚星星印章！':'現在是平日休息時間，週末或加課日再來集點吧。';
- document.getElementById('pointsTasks').innerHTML=`<div class="stamp-card"><div class="stamp-card-top"><div><span class="stamp-eyebrow">BALLET ÉTOILE · WEEKEND</span><h3>${makeupToday?'加課追夢集點卡':'週末追夢集點卡'}</h3><p>${status}</p></div><div class="stamp-card-seal">É<br><small>ÉTOILE</small></div></div><div class="stamp-progress"><div><strong>${done} / ${tasks.length}</strong><span>枚星星印章</span></div><div><strong>${earned} / ${maxPts}</strong><span>今天可得點數</span></div></div><div class="stamp-track">${tasks.map(t=>`<label class="stamp-task ${claimed.includes(t.id)?'stamped':''} ${!canEarn||t.auto?'locked':''}"><input type="checkbox" ${claimed.includes(t.id)?'checked':''} ${!canEarn||claimed.includes(t.id)||t.auto?'disabled':''} ${t.auto?'title="當天課程全部動作都標記為已學會時，自動蓋章"':''} onchange="claimPoint('${t.id}',${t.pts},this.checked)"><span class="stamp-circle"><span class="stamp-star">${claimed.includes(t.id)?'★':'☆'}</span><small>+${t.pts} 點</small></span><span class="stamp-task-label">${t.label}${t.auto&&!claimed.includes(t.id)?'<br><span class=small>全部學會後自動蓋章</span>':''}</span></label>`).join('')}</div><div class="stamp-card-bottom"><span>✦ 一步一步，讓夢想閃耀 ✦</span><span>${done===tasks.length?'COLLECTION COMPLETE':'KEEP DREAMING'}</span></div></div><p class="small stamp-note">週末及月曆加課日可集點；取消課程日不能集點。每項任務每天只計一次。</p>`;
+ const status=cancelledToday?'今日課程已取消，不能集點。':isWeekday?'平日輕練習也能集點！完成舒展、呼吸與週末複習任務即可。':makeupToday?'今天是月曆安排的加課日，完成任務即可集點！':'每完成一項任務，就蓋下一枚星星印章！';
+ document.getElementById('pointsTasks').innerHTML=`<div class="stamp-card"><div class="stamp-card-top"><div><span class="stamp-eyebrow">BALLET ÉTOILE · DAILY</span><h3>${isWeekday?'平日輕練習集點卡':makeupToday?'加課追夢集點卡':'週末追夢集點卡'}</h3><p>${status}</p></div><div class="stamp-card-seal">É<br><small>ÉTOILE</small></div></div><div class="stamp-progress"><div><strong>${done} / ${tasks.length}</strong><span>枚星星印章</span></div><div><strong>${earned} / ${maxPts}</strong><span>今天可得點數</span></div></div><div class="stamp-track">${tasks.map(t=>`<label class="stamp-task ${claimed.includes(t.id)?'stamped':''} ${!canEarn||t.auto?'locked':''}"><input type="checkbox" ${claimed.includes(t.id)?'checked':''} ${!canEarn||claimed.includes(t.id)||t.auto?'disabled':''} ${t.auto?'title="當天課程全部動作都標記為已學會時，自動蓋章"':''} onchange="claimPoint('${t.id}',${t.pts},this.checked)"><span class="stamp-circle"><span class="stamp-star">${claimed.includes(t.id)?'★':'☆'}</span><small>+${t.pts} 點</small></span><span class="stamp-task-label">${t.label}${t.auto&&!claimed.includes(t.id)?'<br><span class=small>全部學會後自動蓋章</span>':''}</span></label>`).join('')}</div><div class="stamp-card-bottom"><span>✦ 一步一步，讓夢想閃耀 ✦</span><span>${done===tasks.length?'COLLECTION COMPLETE':'KEEP DREAMING'}</span></div></div><p class="small stamp-note">平日、週末及月曆加課日都可集點；取消課程日不能集點。每項任務每天只計一次。</p>`;
 }
 function claimPoint(id,pts,yes){
  if(String(id).startsWith('allLearned-'))return;
- const isWeekend=[0,6].includes(dayIndex()),makeupToday=Object.values(calendarEvents).some(e=>e&&e.makeupDate===dateKey());
- if((!isWeekend&&!makeupToday)||isLessonCancelled(dateKey())){renderPoints();return;}
- const key=makeupToday?dateKey():weekendKey();
+ if(isLessonCancelled(dateKey())){renderPoints();return;}
+ const key=dateKey();
  pointData.claims[key]=pointData.claims[key]||[];
  const arr=pointData.claims[key];
  if(yes&&!arr.includes(id)){arr.push(id);pointData.total=(Number(pointData.total)||0)+pts;pointData.lifetimeTotal=(Number(pointData.lifetimeTotal)||0)+pts;}
@@ -495,7 +495,22 @@ function redeemReward(id){
 function renderTodayUnsafe(){
  const day=dayIndex(), isWeekend=[0,6].includes(day); const plan=document.getElementById('weekPlan'); const dayNameAll=['星期日','星期一','星期二','星期三','星期四','星期五','星期六'][day];const makeupToday=Object.entries(calendarEvents).filter(([source,e])=>e.makeupDate===dateKey());const inspiration=document.getElementById('practiceInspiration');const showInspiration=!isLessonCancelled(dateKey())&&(isWeekend||makeupToday.length>0);inspiration.style.display=showInspiration?'grid':'none';if(showInspiration){const cards=['每一次專心練習，都在替夢想添上一顆星。','不必一次做到完美；穩定、耐心，就是今天的進步。','把注意力放回呼吸、音樂和自己的節奏。妳正在累積實力。','今天練習一小步，也是在向夢想靠近一小步。'];document.getElementById('encouragementText').textContent=cards[(new Date(dateKey()+'T12:00:00').getDate()+day)%cards.length];}
  if(isLessonCancelled(dateKey())){const ev=calendarEventFor(dateKey());plan.innerHTML=`<h2>${dayNameAll}・今日課程已取消 🌷</h2><p>${escapeHtml(ev?.note||calendarTypeLabel(ev?.type))}。今天安心處理其他事情，不需要補課，也不會扣點。可以到「月曆安排」修改或清除標註。</p>`;document.getElementById('lessonHeading').textContent='今日課程｜已取消';document.getElementById('todayLessons').innerHTML='<div class="empty">📅 這一天已在月曆標註為取消課程。休息不扣點，也不用補練。</div>';document.getElementById('resetToday').style.display='none';}
- else if(!isWeekend&&!makeupToday.length){const dayName=dayNameAll;plan.innerHTML=`<h2>今天是${dayName}・平日休息日 🌷</h2><p>今天不安排芭蕾練習，也不需要看影片或做任務。下一次練習是週六。平日太忙了，就安心處理學校和自己的事吧！${makeupToday.length?'（月曆裡有補課／加課標記；依妳的規則，平日仍不安排練習。）':''}</p>`;document.getElementById('lessonHeading').textContent='今日課程｜今天沒有課程';document.getElementById('todayLessons').innerHTML='<div class="empty">🩰 平日完全不安排芭蕾。沒有練習任務、不扣點！週六見。</div>';document.getElementById('resetToday').style.display='none';}
+ else if(!isWeekend&&!makeupToday.length){
+ const dayName=dayNameAll;
+ const previousSaturday=new Date(getLocalDate());previousSaturday.setDate(previousSaturday.getDate()-(day===0?1:day+1));
+ const previousSunday=new Date(previousSaturday);previousSunday.setDate(previousSaturday.getDate()+1);
+ const satKey=dateKeyFromDate(previousSaturday),sunKey=dateKeyFromDate(previousSunday);
+ const history=load('balletLessonHistory',{});
+ const priorIds=[...new Set([...(history[satKey]||[]),...(lessonAdds[satKey]||[]),...(history[sunKey]||[]),...(lessonAdds[sunKey]||[])])].filter(id=>moves.some(m=>m.id===id));
+ const reviewHtml=priorIds.length?priorIds.map(id=>{const m=moves.find(x=>x.id===id);return '<div class="lesson" data-move-id="'+id+'"><div class="time">複習</div><div style="flex:1"><strong>'+escapeHtml(m.name)+'</strong><p>'+escapeHtml(m.desc)+'</p><button class="btn" onclick="openMove(\''+id+'\')">查看步驟</button></div></div>';}).join('<hr style="border:0;border-top:1px solid var(--line);margin:10px 0">'):'<p class="small">上週末沒有找到已保存的動作清單；可以到動作查詢加入想複習的內容。</p>';
+ plan.innerHTML='<h2>'+dayName+'・平日輕練習 🌷</h2><p>平日也有課程！今天以舒展、呼吸與複習為主，不設定固定動作數量，也不安排新高難度技巧。全程舒服、不勉強即可。</p>';
+ document.getElementById('lessonHeading').textContent='平日課程｜舒展・呼吸・週末複習';
+ document.getElementById('resetToday').style.display='';
+ document.getElementById('todayLessons').innerHTML=
+ '<div class="lesson"><div class="time">舒展</div><div style="flex:1"><strong>溫和拉筋與活動</strong><p>選擇舒服的全身舒展，保持自然呼吸，不壓腿、不彈震、不追求角度。</p></div></div>'+
+ '<hr style="border:0;border-top:1px solid var(--line);margin:10px 0"><div class="lesson"><div class="time">呼吸</div><div style="flex:1"><strong>呼吸與身體感受</strong><p>自然吸氣、慢慢吐氣，放鬆肩膀與下顎，不憋氣。</p></div></div>'+
+ '<hr style="border:0;border-top:1px solid var(--line);margin:10px 0"><h3>🩰 複習上週六、日的全部練習動作</h3>'+reviewHtml;
+}
  else {const dayName=dayNameAll;const isBoostDay=makeupToday.length>0;plan.innerHTML=`<h2>${dayName}・${isBoostDay?'加強訓練日 💪':'週末練習日 🩰'}</h2><p>${isBoostDay?'這是妳在月曆主動安排的加強訓練。':' '+(day===6?'技巧複習＋新技巧學習。':'複習技巧＋配合音樂練習小組合。')} ${isBoostDay?'📅 今天是妳安排的加強訓練日！':''}建議 15–20 分鐘，依身體狀況調整。</p>`;document.getElementById('lessonHeading').textContent=isBoostDay?'今日課程｜加強訓練':(day===6?'週六課程｜技巧學習':'週日課程｜組合練習');document.getElementById('resetToday').style.display='';const savedPlans=load('balletLessonHistory',{});const defaultIds=isBoostDay&&!isWeekend?['plie','tendu','releve']:(day===6?['plie','releve','developpe']:['tendu','rond','saute']);const rawIds=savedPlans[dateKey()]||defaultIds;const baseIds=rawIds.filter(id=>moves.some(m=>m.id===id));const extraIds=(lessonAdds[dateKey()]||[]).filter(id=>moves.some(m=>m.id===id));let planIds=[...new Set([...baseIds,...extraIds.filter(id=>!baseIds.includes(id))])];if(!planIds.length){planIds=defaultIds.filter(id=>moves.some(m=>m.id===id));}document.getElementById('todayLessons').innerHTML=planIds.length?planIds.map((id,i)=>{const m=moves.find(x=>x.id===id);if(!m)return '';return `<div class="lesson" data-move-id="${id}"><div class="time">${i<3?['3 分','5 分','5 分'][i]:'加選'}</div><div style="flex:1"><strong>${m.name} <span class="tag">${i<3?(isBoostDay?'加強訓練':'課程安排'):'妳加入的動作'}</span></strong><p>${m.desc}</p><button class="btn" onclick="openMove('${id}')">看步驟／影片</button></div></div>${i<planIds.length-1?'<hr style="border:0;border-top:1px solid var(--line);margin:13px 0">':''}`}).join(''):'<div class="empty">🌷 今天原本安排的動作都已標記為「已學會」。若想複習，請到「學習紀錄」把想複習的動作改成「練習中」，再回到今日課程。</div>';}
  const atlasAdds=load('balletAtlasTodayAdds',{});
  const todaysAtlasAdds=Array.isArray(atlasAdds[dateKey()])?atlasAdds[dateKey()]:[];
