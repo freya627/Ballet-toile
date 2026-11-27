@@ -327,7 +327,7 @@ function renderPoints(){
  const key=dateKey();
  pointData.claims[key]=pointData.claims[key]||[];
  const masteryId='allLearned-'+dateKey();
- const masteryReady=canEarn&&todayLessonActionsAllLearned()&&!pointData.claims[key].includes(masteryId);
+ const masteryReady=canEarn&&!isWeekday&&todayLessonActionsAllLearned()&&!pointData.claims[key].includes(masteryId);
  if(masteryReady){pointData.claims[key].push(masteryId);pointData.total=(Number(pointData.total)||0)+2;pointData.lifetimeTotal=(Number(pointData.lifetimeTotal)||0)+2;save('balletPoints',pointData);}
  const claimed=pointData.claims[key]||[];
  const tasks=isWeekday?[{id:'weekday-stretch',label:'完成舒服的舒展／拉筋',pts:1},{id:'weekday-breath',label:'完成呼吸練習',pts:1},{id:'weekday-review',label:'複習上週六、日的練習動作',pts:2},{id:'weekday-note',label:'記錄今天的練習心得',pts:1}]:[{id:'warmup',label:'完成安全暖身',pts:1},{id:'newskill',label:'認真練習技巧',pts:2},{id:'music',label:'配合音樂練習小組合',pts:1},{id:'journal',label:'記錄今天的成果',pts:1},{id:masteryId,label:'今日課程全部標記為已學會',pts:2,auto:true}];
@@ -493,7 +493,7 @@ function redeemReward(id){
  save('balletPoints',pointData);renderPoints();renderRewards();
 }
 function renderTodayUnsafe(){
- const day=dayIndex(), isWeekend=[0,6].includes(day); const plan=document.getElementById('weekPlan'); const dayNameAll=['星期日','星期一','星期二','星期三','星期四','星期五','星期六'][day];const makeupToday=Object.entries(calendarEvents).filter(([source,e])=>e.makeupDate===dateKey());const inspiration=document.getElementById('practiceInspiration');const showInspiration=!isLessonCancelled(dateKey())&&(isWeekend||makeupToday.length>0);inspiration.style.display=showInspiration?'grid':'none';if(showInspiration){const cards=['每一次專心練習，都在替夢想添上一顆星。','不必一次做到完美；穩定、耐心，就是今天的進步。','把注意力放回呼吸、音樂和自己的節奏。妳正在累積實力。','今天練習一小步，也是在向夢想靠近一小步。'];document.getElementById('encouragementText').textContent=cards[(new Date(dateKey()+'T12:00:00').getDate()+day)%cards.length];}
+ const day=dayIndex(), isWeekend=[0,6].includes(day); const plan=document.getElementById('weekPlan'); const dayNameAll=['星期日','星期一','星期二','星期三','星期四','星期五','星期六'][day];const makeupToday=Object.entries(calendarEvents).filter(([source,e])=>e.makeupDate===dateKey());const inspiration=document.getElementById('practiceInspiration');const showInspiration=!isLessonCancelled(dateKey());inspiration.style.display=showInspiration?'grid':'none';if(showInspiration){const cards=['每一次專心練習，都在替夢想添上一顆星。','不必一次做到完美；穩定、耐心，就是今天的進步。','把注意力放回呼吸、音樂和自己的節奏。妳正在累積實力。','今天練習一小步，也是在向夢想靠近一小步。'];document.getElementById('encouragementText').textContent=cards[(new Date(dateKey()+'T12:00:00').getDate()+day)%cards.length];}
  if(isLessonCancelled(dateKey())){const ev=calendarEventFor(dateKey());plan.innerHTML=`<h2>${dayNameAll}・今日課程已取消 🌷</h2><p>${escapeHtml(ev?.note||calendarTypeLabel(ev?.type))}。今天安心處理其他事情，不需要補課，也不會扣點。可以到「月曆安排」修改或清除標註。</p>`;document.getElementById('lessonHeading').textContent='今日課程｜已取消';document.getElementById('todayLessons').innerHTML='<div class="empty">📅 這一天已在月曆標註為取消課程。休息不扣點，也不用補練。</div>';document.getElementById('resetToday').style.display='none';}
  else if(!isWeekend&&!makeupToday.length){
  const dayName=dayNameAll;
