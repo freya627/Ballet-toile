@@ -234,6 +234,7 @@ save('balletPoints',pointData);
 let lessonAdds=load('balletLessonAdds',{});
 let calendarEvents=load('balletCalendarEvents',{});
 let calendarCursor=new Date(new Date().getFullYear(),new Date().getMonth(),1);
+let selectedPracticeDate=null;
 let selectedCalendarDate=dateKey();
 // 依照小優已經學過的內容，先標記熟悉動作，避免當成新課重教。
 ['positions','tendu','rond','developpe','saute','plie','releve'].forEach(id=>{if(!state[id])state[id]='已學會'});
@@ -250,7 +251,6 @@ function moveCard(m){const addedDate=document.getElementById('lessonDateSelect')
 function openMove(id){const m=moves.find(x=>x.id===id);if(!m)return;document.getElementById('detailTitle').textContent=m.name+' · '+m.en;document.getElementById('detailBody').innerHTML=`<p>${m.desc}</p><span class="tag">${m.level}</span><span class="tag">${m.category}</span><p><strong>🎵 拍數：</strong>${m.beats}</p><p><strong>🩰 教學步驟</strong></p><ol class="step-list">${m.steps.map(x=>`<li>${x}</li>`).join('')}</ol><p><strong>🎬 影片與視覺參考</strong></p><p><a href="https://vimeo.com/662741669" target="_blank" rel="noopener noreferrer">Ballet Basics：基本腳位與多種舞步示範 ↗</a></p><p><a href="https://watch.ballet.org.uk/videos/ballet-with-lucy-lowndes-1-absolute-beginner" target="_blank" rel="noopener noreferrer">English National Ballet：初學課程示範 ↗</a></p><p><a href="https://brocheballet.com/videos/absolute-beginner-ballet-warmup-pli-tendu-rond-de-jambe/" target="_blank" rel="noopener noreferrer">Broche Ballet：Plié、Tendu、Rond de jambe ↗</a></p><p class="small">這些是外部教學資源，影片可能需要網路或帳號；目前不是嵌入式播放器。</p><p><strong>⚠️ 安全提醒</strong><br>${m.safety}</p><div class="field"><label>我的學習狀態</label><select id="modalStatus"><option ${getStatus(id)==='未學習'?'selected':''}>未學習</option><option ${getStatus(id)==='練習中'?'selected':''}>練習中</option><option ${getStatus(id)==='已學會'?'selected':''}>已學會</option></select></div><button class="btn primary" onclick="setStatus('${id}',document.getElementById('modalStatus').value);closeMove()">儲存學習狀態</button>`;document.getElementById('detail').classList.add('open')}
 function closeMove(){document.getElementById('detail').classList.remove('open')}
 function cycleStatus(id){const arr=['未學習','練習中','已學會'];setStatus(id,arr[(arr.indexOf(getStatus(id))+1)%arr.length])}
-let selectedPracticeDate=null;
 function getLocalDate(){if(selectedPracticeDate)return new Date(selectedPracticeDate.getFullYear(),selectedPracticeDate.getMonth(),selectedPracticeDate.getDate());const d=new Date();return new Date(d.getFullYear(),d.getMonth(),d.getDate())}
 function dayIndex(){return getLocalDate().getDay()} // Sunday=0, Saturday=6
 function dateKey(){const d=getLocalDate();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
