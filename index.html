@@ -310,9 +310,7 @@ function ensureDailyAtlasPlan(key){
  const plans=load('balletDailyAtlasPlans',{}),existing=Array.isArray(plans[key])?plans[key]:[];
  const status=e=>atlasLearningState[e.term]||'未學習';
  const find=term=>balletAtlas.entries.find(e=>e.term===term);
- const valid=existing.length===5&&status(find(existing[0])||{term:''})==='練習中'&&
-  atlasDifficulty(find(existing[1])||{cat:''})==='基礎'&&status(find(existing[1])||{term:''})==='未學習'&&
-  existing.slice(2).every(term=>atlasDifficulty(find(term)||{cat:''})==='進階'&&status(find(term)||{term:''})==='未學習');
+ const valid=existing.length===5&&existing.every(term=>!!find(term));
  if(valid)return {terms:existing,missing:''};
  const previous=new Set(Object.entries(plans).filter(([d])=>d!==key).slice(-3).flatMap(([,terms])=>Array.isArray(terms)?terms:[]));
  const choose=(pool,count,exclude=new Set())=>pool.filter(e=>!exclude.has(e.term)).sort(()=>Math.random()-.5).slice(0,count);
@@ -329,7 +327,7 @@ function ensureDailyAtlasPlan(key){
  const selected=[...practice,...basic,...advanced].map(e=>e.term);
  if(selected.length===5){plans[key]=selected;save('balletDailyAtlasPlans',plans);return {terms:selected,missing:''};}
  delete plans[key];save('balletDailyAtlasPlans',plans);
- return {terms:selected,missing:'目前符合條件的圖鑑項目不足：需要 1 個「練習中」、1 個「基礎／未學習」，以及 3 個「進階／未學習」。請先到動作圖鑑設定狀態；不會拿已學會的動作補數量。'};
+ return {terms:[],missing:'目前還不能排滿五個：需要 1 個已標示「練習中」的圖鑑項目、1 個「基礎／未學習」，以及 3 個「進階／未學習」。請先到動作圖鑑設定狀態；不會拿已學會的動作補數量。'};
 }
 function openAtlasEntry(term){
  const entry=balletAtlas.entries.find(e=>e.term===term);if(!entry)return;
@@ -642,8 +640,8 @@ function renderStats(){
  document.getElementById('practiceCount').textContent=moves.filter(m=>getStatus(m.id)==='練習中').length;
  const card=document.getElementById('todayLessons');
  const requiredItems=card?[...card.querySelectorAll('[data-required-course-item="true"]')]:[];
- const moveIds=requiredItems.length?[]:(card?[...new Set([...card.querySelectorAll('[data-move-id]')].map(el=>el.getAttribute('data-move-id')).filter(Boolean))]:[]);
- const atlasTerms=requiredItems.length?[...new Set(requiredItems.map(el=>el.getAttribute('data-atlas-term')).filter(Boolean))]:(card?[...new Set([...card.querySelectorAll('[data-atlas-term]')].map(el=>el.getAttribute('data-atlas-term')).filter(Boolean))]:[]);
+ const moveIds=[];
+ const atlasTerms=[...new Set(requiredItems.map(el=>el.getAttribute('data-atlas-term')).filter(Boolean))];
  const statuses=[...moveIds.map(id=>getStatus(id)),...atlasTerms.map(term=>atlasLearningState[term]||'未學習')];
  const completed=statuses.filter(status=>status==='已學會').length,total=statuses.length;
  const progressByCount=[0,10,35,45,85,100];
