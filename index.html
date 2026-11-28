@@ -370,7 +370,7 @@ function claimPoint(id,pts,yes){
  const key=dateKey();pointData.claims[key]=pointData.claims[key]||[];const arr=pointData.claims[key];
  if(yes&&!arr.includes(id)){arr.push(id);pointData.total=(Number(pointData.total)||0)+pts;pointData.lifetimeTotal=(Number(pointData.lifetimeTotal)||0)+pts;}
  else if(!yes&&arr.includes(id)){pointData.claims[key]=arr.filter(x=>x!==id);pointData.total=Math.max(0,(Number(pointData.total)||0)-pts);pointData.lifetimeTotal=Math.max(0,(pointData.lifetimeTotal||0)-pts);}
- if(!pointData.completedAt||typeof pointData.completedAt!=='object')pointData.completedAt={};const ids=dayIndex()===0||dayIndex()===6?['warmup','newskill','music','journal']:['weekday-stretch','weekday-breath','weekday-review','weekday-note'];if(ids.every(x=>(pointData.claims[key]||[]).includes(x))&&!pointData.completedAt[key])pointData.completedAt[key]=new Date().toISOString();if(ids.some(x=>!(pointData.claims[key]||[]).includes(x)))delete pointData.completedAt[key];save('balletPoints',pointData);renderPoints();renderRewards();
+ if(!pointData.completedAt||typeof pointData.completedAt!=='object')pointData.completedAt={};const makeupToday=Object.values(calendarEvents).some(e=>e&&e.makeupDate===key);const ids=dayIndex()===0||dayIndex()===6||makeupToday?['warmup','newskill','music','journal']:['weekday-stretch','weekday-breath','weekday-review','weekday-note'];if(ids.every(x=>(pointData.claims[key]||[]).includes(x))&&!pointData.completedAt[key])pointData.completedAt[key]=new Date().toISOString();if(ids.some(x=>!(pointData.claims[key]||[]).includes(x)))delete pointData.completedAt[key];save('balletPoints',pointData);renderPoints();renderRewards();
 }
 const rewardTitles=[
  {id:'newstar',name:'芭蕾小新星',threshold:5,desc:'踏出追夢的第一步 ✨'},
