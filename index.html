@@ -100,13 +100,39 @@ body.mobile-mode main{padding:14px 12px 32px}body.mobile-mode header{padding:20p
     <div class="stat"><strong id="practiceCount">0</strong><span>練習中</span></div>
     <div class="stat"><strong id="pointCount">0</strong><span>追夢點數 ⭐</span></div>
   </div>
-  <div class="card" id="practiceDateSettings" style="margin:0 0 14px;background:#fffafb;border-color:#e8cbd3"><h3>📅 選擇要查看的練習日期</h3><p>可以選日期，也可以調整星期；選好後，今日課程會依照這個日期重新顯示。</p><div class="searchrow" style="align-items:end"><div class="field" style="flex:1;margin:0"><label for="todayDatePicker">日期</label><input id="todayDatePicker" type="date"></div><div class="field" style="flex:1;margin:0"><label for="todayWeekdayPicker">星期</label><select id="todayWeekdayPicker"><option value="0">星期日</option><option value="1">星期一</option><option value="2">星期二</option><option value="3">星期三</option><option value="4">星期四</option><option value="5">星期五</option><option value="6">星期六</option></select></div></div><p class="small" id="datePickerStatus" aria-live="polite"></p></div><div class="hero" id="weekPlan"><h2>本週練習安排</h2><p>平日安排舒展、呼吸與週末複習；週六、週日安排技巧課程。</p></div>
+  <div class="card" id="practiceDateSettings" style="margin:0 0 14px;background:#fffafb;border-color:#e8cbd3"><h3>📅 選擇要查看的練習日期</h3><p>可以選日期，也可以調整星期；選好後，今日課程會依照這個日期重新顯示。</p><div class="searchrow" style="align-items:end"><div class="field" style="flex:1;margin:0"><label for="todayDatePicker">日期</label><input id="todayDatePicker" type="date"></div><div class="field" style="flex:1;margin:0"><label for="todayWeekdayPicker">星期</label><select id="todayWeekdayPicker"><option value="0">星期日</option><option value="1">星期一</option><option value="2">星期二</option><option value="3">星期三</option><option value="4">星期四</option><option value="5">星期五</option><option value="6">星期六</option></select></div></div><p class="small" id="datePickerStatus" aria-live="polite"></p></div><div class="hero" id="weekPlan"><h2>本週練習安排</h2><p>每天都有芭蕾課程；平日維持基本功並複習，週末安排技巧課程。</p></div>
   <div class="section-title"><h2 id="lessonHeading">今日課程</h2><div class="row" style="gap:8px;flex-wrap:wrap"><button class="btn" id="resetLessonPlan" type="button">🎲 重新安排今日課程</button><button class="btn" id="resetToday">重新今日所有課程集點</button></div></div><p id="todayDateStatus" class="small"></p>
   <div class="card" id="todayLessons"></div>
   <div class="card" style="margin-top:12px"><h3>🎵 音樂與拍數小提示</h3><p>可選節奏清楚、速度舒適的古典芭蕾音樂。初學時每個動作先用慢速數拍；沒有音樂也可以自己均勻地數「1、2、3、4」。不要為了跟上音樂而急著做動作。</p><p class="small">本程式不會自動播放音樂；可用你已熟悉且適合練習的音樂。</p></div>
 </section>
+<section id="calendar" class="panel">
+  <div class="hero"><h2>月曆安排 📅</h2><p>每天都有芭蕾課程。可以在月曆標記國定假日、學校放假、颱風假、個人行程，也能取消某一天課程或安排補課／加強訓練。</p></div>
+  <div class="card">
+    <div class="row" style="justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px">
+      <button class="btn" id="prevMonth" type="button">← 上個月</button>
+      <h3 id="calendarMonthTitle" style="margin:0">月曆</h3>
+      <button class="btn" id="nextMonth" type="button">下個月 →</button>
+    </div>
+    <div id="calendarGrid" class="calendar-grid" aria-label="練習月曆"></div>
+    <p class="small" style="margin-top:12px">🩰 預定課程　🎌 假日／放假　🌪️ 颱風假　📝 個人行程　➕ 補課／加課　🚫 已取消</p>
+  </div>
+  <div class="card" style="margin-top:14px">
+    <h3 id="calendarEditTitle">編輯日期</h3>
+    <p class="small" id="calendarDayKind">每天都有練習安排</p>
+    <div class="field"><label for="calendarDate">日期</label><input id="calendarDate" type="date"></div>
+    <div class="field"><label for="calendarType">日期類型</label><select id="calendarType"><option value="none">一般日期</option><option value="holiday">國定假日／學校放假</option><option value="typhoon">颱風假／停班停課</option><option value="personal">個人行程／有事</option><option value="other">其他備註</option></select></div>
+    <div class="field"><label for="calendarNote">備註</label><textarea id="calendarNote" placeholder="例如：家庭旅行、學校活動、放假……"></textarea></div>
+    <label class="checkline"><input id="cancelCalendarLesson" type="checkbox"> 取消這一天的芭蕾課程（取消日不集點）</label>
+    <label class="checkline"><input id="scheduleMakeupLesson" type="checkbox"> 安排補課／加強訓練</label>
+    <div class="field"><label for="makeupLessonDate">補課／加強訓練日期</label><input id="makeupLessonDate" type="date"></div>
+    <div class="row" style="gap:8px;flex-wrap:wrap"><button class="btn primary" id="saveCalendarEntry" type="button">儲存日期安排</button><button class="btn" id="clearCalendarEntry" type="button">清除此日期標註</button></div>
+    <p id="calendarSaveStatus" class="small" aria-live="polite"></p>
+  </div>
+  <div class="card" style="margin-top:14px"><h3>📌 已安排事項</h3><div id="calendarEventList"><p class="small">目前沒有標註的日期。</p></div></div>
+  <div class="card" style="margin-top:14px"><h3>💾 資料備份與還原</h3><p>日期安排、課程紀錄、學習狀態與追夢點數都保存在這個瀏覽器。建議定期下載備份。</p><div class="row" style="gap:8px;flex-wrap:wrap"><button class="btn primary" id="exportData" type="button">下載資料備份</button><button class="btn" id="importDataButton" type="button">匯入資料備份</button><input id="importDataFile" type="file" accept="application/json,.json" style="display:none"></div><p id="backupStatus" class="small" aria-live="polite"></p></div>
+</section>
 <section id="points" class="panel">
-  <div class="hero"><h2>夢想集點卡 🎁</h2><p>平日以舒展、呼吸與複習為主，週末安排技巧學習；每天完成課程任務都能累積追夢點數。</p></div>
+  <div class="hero"><h2>夢想集點卡 🎁</h2><p>每天都有課程：平日維持基本功並複習，週末安排技巧學習；完成任務都能累積追夢點數。</p></div>
   <div class="stats"><div class="stat"><strong id="pointCountCard">0</strong><span>目前追夢點數 ⭐</span></div></div>
   <div class="section-title"><h2>⭐ 每日追夢集點</h2><span class="small">每項每天最多一次</span></div>
   <div class="card" id="pointsTasks"></div>
@@ -135,7 +161,7 @@ body.mobile-mode main{padding:14px 12px 32px}body.mobile-mode header{padding:20p
 <section id="search" class="panel">
   <div class="section-title"><h2>動作快速查詢 🔎</h2></div>
   <div class="searchrow"><input id="searchInput" placeholder="輸入動作，例如 Tendu、腳位、Rond de jambe…"><button class="btn primary" id="searchSubmit" type="button">🔎 查詢</button><select id="difficultyFilter"><option value="">所有難度</option><option>入門</option><option>基礎</option><option>進階概念</option></select><select id="statusFilter" aria-label="學習狀態篩選"><option value="">所有學習狀態</option><option value="未學習">尚未學習</option><option value="練習中">練習中</option><option value="已學會">已經學過／已學會</option></select></div>
-  <div class="card" style="margin-bottom:14px"><h3>➕ 把動作加入課程</h3><p>在下方動作卡片按「加入課程」，就會加入選定日期的課程；平日課程以舒展、呼吸與週末複習為主。</p><div class="searchrow"><label for="lessonDateSelect" style="align-self:center;color:var(--muted)">加入哪一天：</label><select id="lessonDateSelect" aria-label="選擇週末課程日期"></select></div><div id="lessonAddStatus" class="small" aria-live="polite"></div></div>
+  <div class="card" style="margin-bottom:14px"><h3>➕ 把動作加入課程</h3><p>在下方動作卡片按「加入課程」，就會加入選定日期的課程；每天都有課程；平日以基本功維持和複習為主，週末安排技巧學習。</p><div class="searchrow"><label for="lessonDateSelect" style="align-self:center;color:var(--muted)">加入哪一天：</label><select id="lessonDateSelect" aria-label="選擇週末課程日期"></select></div><div id="lessonAddStatus" class="small" aria-live="polite"></div></div>
   <div id="searchResults" class="grid"></div>
 </section>
 <section id="atlas" class="panel">
@@ -309,7 +335,7 @@ function renderCalendar(){
  renderCalendarEventList();
 }
 function calendarTypeLabel(type){return ({holiday:'國定假日／學校放假',typhoon:'颱風假／停班停課',personal:'個人行程／有事',other:'其他備註'})[type]||'一般日期'}
-function selectCalendarDate(key){selectedCalendarDate=key;const d=dateFromKey(key);calendarCursor=new Date(d.getFullYear(),d.getMonth(),1);document.getElementById('calendarDate').value=key;const ev=calendarEventFor(key);document.getElementById('calendarEditTitle').textContent=`編輯 ${key}`;document.getElementById('calendarDayKind').textContent=isWeekendKey(key)?'週末預定練習日':'平日原本不安排芭蕾';document.getElementById('calendarType').value=ev?.type||'none';document.getElementById('calendarNote').value=ev?.note||'';document.getElementById('cancelCalendarLesson').checked=ev?!!ev.cancel:isWeekendKey(key);document.getElementById('scheduleMakeupLesson').checked=!!ev?.makeupDate;document.getElementById('makeupLessonDate').value=ev?.makeupDate||'';document.getElementById('calendarSaveStatus').textContent='';renderCalendar();}
+function selectCalendarDate(key){selectedCalendarDate=key;const d=dateFromKey(key);calendarCursor=new Date(d.getFullYear(),d.getMonth(),1);document.getElementById('calendarDate').value=key;const ev=calendarEventFor(key);document.getElementById('calendarEditTitle').textContent=`編輯 ${key}`;document.getElementById('calendarDayKind').textContent='每日都有芭蕾課程；可依行程選擇是否取消或安排補課。';document.getElementById('calendarType').value=ev?.type||'none';document.getElementById('calendarNote').value=ev?.note||'';document.getElementById('cancelCalendarLesson').checked=!!ev?.cancel;document.getElementById('scheduleMakeupLesson').checked=!!ev?.makeupDate;document.getElementById('makeupLessonDate').value=ev?.makeupDate||'';document.getElementById('calendarSaveStatus').textContent='';renderCalendar();}
 function saveCalendarEntry(){const key=document.getElementById('calendarDate').value;if(!key){document.getElementById('calendarSaveStatus').textContent='請先選日期。';return}const type=document.getElementById('calendarType').value,note=document.getElementById('calendarNote').value.trim(),cancel=document.getElementById('cancelCalendarLesson').checked,wantsMakeup=document.getElementById('scheduleMakeupLesson').checked,makeupDate=document.getElementById('makeupLessonDate').value;if(wantsMakeup&&!makeupDate){document.getElementById('calendarSaveStatus').textContent='請選擇補課／加課日期。';return}if(type==='none'&&!note&&!cancel&&!wantsMakeup){delete calendarEvents[key]}else{calendarEvents[key]={type:type==='none'?(note?'other':'none'):type,note,cancel,makeupDate:wantsMakeup?makeupDate:''};}selectedCalendarDate=key;const d=dateFromKey(key);calendarCursor=new Date(d.getFullYear(),d.getMonth(),1);const persisted=save('balletCalendarEvents',calendarEvents);document.getElementById('calendarSaveStatus').textContent=persisted?((isLessonCancelled(key)?'已儲存，原日期課程已取消；不扣點。 ':'已儲存日期安排！ ')+(wantsMakeup?`加強訓練已安排在 ${makeupDate}。`:'')+' 建議下載備份，避免瀏覽器資料遺失。'):'瀏覽器沒有成功儲存資料！請立即下載資料備份，並確認瀏覽器允許儲存網站資料。';renderCalendar();renderToday();renderPoints();}
 function clearCalendarEntry(){const key=document.getElementById('calendarDate').value;if(!key)return;delete calendarEvents[key];save('balletCalendarEvents',calendarEvents);selectedCalendarDate=key;document.getElementById('calendarType').value='none';document.getElementById('calendarNote').value='';document.getElementById('cancelCalendarLesson').checked=isWeekendKey(key);document.getElementById('scheduleMakeupLesson').checked=false;document.getElementById('makeupLessonDate').value='';document.getElementById('calendarSaveStatus').textContent='已清除此日期事項。';renderCalendar();renderToday();renderPoints();}
 function renderCalendarEventList(){const el=document.getElementById('calendarEventList');if(!el)return;const entries=Object.entries(calendarEvents).sort((a,b)=>a[0].localeCompare(b[0]));el.innerHTML=entries.length?entries.map(([key,e])=>`<div class="calendar-event"><strong>${escapeHtml(key)} · ${calendarTypeLabel(e.type)}</strong>${e.cancel?' <span class="tag">課程已取消</span>':''}${e.makeupDate?` <span class="tag">加強訓練：${escapeHtml(e.makeupDate)}</span>`:''}<p>${escapeHtml(e.note||'（沒有補充說明）')}</p><button class="btn" onclick="selectCalendarDate('${key}')">編輯</button></div>`).join(''):'<p class="small">目前沒有標註的日期。點上方月曆日期即可新增。</p>'}
@@ -502,12 +528,14 @@ function renderTodayUnsafe(){
  const satKey=dateKeyFromDate(previousSaturday),sunKey=dateKeyFromDate(previousSunday);
  const history=load('balletLessonHistory',{});
  const priorIds=[...new Set([...(history[satKey]||[]),...(lessonAdds[satKey]||[]),...(history[sunKey]||[]),...(lessonAdds[sunKey]||[])])].filter(id=>moves.some(m=>m.id===id));
- const reviewHtml=priorIds.length?priorIds.map(id=>{const m=moves.find(x=>x.id===id);return '<div class="lesson" data-move-id="'+id+'"><div class="time">複習</div><div style="flex:1"><strong>'+escapeHtml(m.name)+'</strong><p>'+escapeHtml(m.desc)+'</p><button class="btn" onclick="openMove(\''+id+'\')">查看步驟</button></div></div>';}).join('<hr style="border:0;border-top:1px solid var(--line);margin:10px 0">'):'<p class="small">上週末沒有找到已保存的動作清單；可以到動作查詢加入想複習的內容。</p>';
- plan.innerHTML='<h2>'+dayName+'・平日輕練習 🌷</h2><p>平日也有課程！今天以舒展、呼吸與複習為主，不設定固定動作數量，也不安排新高難度技巧。全程舒服、不勉強即可。</p>';
- document.getElementById('lessonHeading').textContent='平日課程｜舒展・呼吸・週末複習';
+ const reviewIds=priorIds.length?priorIds:['positions','tendu','plie','releve','portdebras'];
+ const reviewHtml=reviewIds.map(id=>{const m=moves.find(x=>x.id===id);return '<div class="lesson" data-move-id="'+id+'"><div class="time">複習</div><div style="flex:1"><strong>'+escapeHtml(m.name)+'</strong><p>'+escapeHtml(m.desc)+'</p><button class="btn" onclick="openMove(\''+id+'\')">查看步驟</button></div></div>';}).join('<hr style="border:0;border-top:1px solid var(--line);margin:10px 0">');
+ plan.innerHTML='<h2>'+dayName+'・每日基礎課程 🌷</h2><p>每天都有課程。平日不安排新動作，主要進行溫和舒展、呼吸、基本功維持，以及複習上週末練習過的全部動作。</p>';
+ document.getElementById('lessonHeading').textContent='今日課程｜舒展・基本功・週末複習';
  document.getElementById('resetToday').style.display='';
  document.getElementById('todayLessons').innerHTML=
- '<div class="lesson"><div class="time">舒展</div><div style="flex:1"><strong>溫和拉筋與活動</strong><p>選擇舒服的全身舒展，保持自然呼吸，不壓腿、不彈震、不追求角度。</p></div></div>'+
+ '<div class="lesson"><div class="time">暖身</div><div style="flex:1"><strong>身體暖身與關節活動</strong><p>先慢慢活動身體，確認周圍空間安全，沒有不舒服再開始。</p></div></div>'+
+ '<hr style="border:0;border-top:1px solid var(--line);margin:10px 0"><div class="lesson"><div class="time">舒展</div><div style="flex:1"><strong>溫和拉筋與活動</strong><p>選擇舒服的全身舒展，保持自然呼吸，不壓腿、不彈震、不追求角度。</p></div></div>'+
  '<hr style="border:0;border-top:1px solid var(--line);margin:10px 0"><div class="lesson"><div class="time">呼吸</div><div style="flex:1"><strong>呼吸與身體感受</strong><p>自然吸氣、慢慢吐氣，放鬆肩膀與下顎，不憋氣。</p></div></div>'+
  '<hr style="border:0;border-top:1px solid var(--line);margin:10px 0"><h3>🩰 複習上週六、日的全部練習動作</h3>'+reviewHtml;
 }
@@ -598,9 +626,9 @@ function renderStats(){
 }
 function renderNotes(){document.getElementById('savedNotes').innerHTML=notes.slice().reverse().map(n=>`<div style="border-top:1px solid var(--line);margin-top:12px;padding-top:12px"><strong>${escapeHtml(n.date)}</strong><p style="white-space:pre-wrap">${escapeHtml(n.text)}</p><button class="btn" onclick="deleteNote('${n.date}')">刪除此筆記</button></div>`).join('')||'<p class="small">還沒有練習筆記。</p>'}
 function deleteNote(date){notes=notes.filter(n=>n.date!==date);save('balletNotes',notes);renderNotes()}
-function renderAll(){renderToday();renderSearch();renderRecords();renderStats();renderCalendar();selectCalendarDate(selectedCalendarDate)}
+function renderAll(){renderToday();renderPoints();renderSearch();renderRecords();renderStats();renderCalendar();selectCalendarDate(selectedCalendarDate)}
 function refreshCalendarAfterLayout(){const grid=document.getElementById('calendarGrid');if(!grid)return;grid.style.display='grid';renderCalendar();requestAnimationFrame(()=>{const currentGrid=document.getElementById('calendarGrid');if(!currentGrid)return;currentGrid.style.display='grid';if(currentGrid.children.length!==49)renderCalendar();currentGrid.getBoundingClientRect();});}
-function openTab(id){document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('active',x.dataset.tab===id));document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active',p.id===id));if(id==='calendar'){refreshCalendarAfterLayout();}if(id==='atlas'){renderAtlas();}window.scrollTo({top:0,behavior:'smooth'});}
+function openTab(id){document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('active',x.dataset.tab===id));document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active',p.id===id));if(id==='calendar'){refreshCalendarAfterLayout();}if(id==='points'){renderPoints();renderRewards();}if(id==='atlas'){renderAtlas();}window.scrollTo({top:0,behavior:'smooth'});}
 document.querySelectorAll('nav button').forEach(b=>b.addEventListener('click',()=>openTab(b.dataset.tab)));
 document.getElementById('atlasSearch').addEventListener('input',renderAtlas);document.getElementById('atlasGroup').addEventListener('change',renderAtlas);
 function setDeviceMode(mode){document.body.classList.toggle('mobile-mode',mode==='mobile');try{localStorage.setItem('balletDeviceMode',mode)}catch(e){}document.getElementById('deviceChooser').classList.remove('open')}
