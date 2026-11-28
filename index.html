@@ -314,6 +314,10 @@ function ensureDailyAtlasPlan(key){
  if(valid)return {terms:existing,missing:''};
  const previous=new Set(Object.entries(plans).filter(([d])=>d!==key).slice(-3).flatMap(([,terms])=>Array.isArray(terms)?terms:[]));
  const choose=(pool,count,exclude=new Set())=>pool.filter(e=>!exclude.has(e.term)).sort(()=>Math.random()-.5).slice(0,count);
+ const legacyAtlasNames={positions:'Première position',tendu:'Battement tendu',releve:'Relevé',plie:'Plié',rond:'Rond de jambe à terre',developpe:'Développé',saute:'Sauté',passe:'Passé',degage:'Battement dégagé',portdebras:'Port de bras',grandbattement:'Grand battement'};
+ let mirrored=false;
+ moves.forEach(m=>{const term=legacyAtlasNames[m.id];if(term&&getStatus(m.id)==='練習中'&&!atlasLearningState[term]){atlasLearningState[term]='練習中';mirrored=true;}});
+ if(mirrored)save('balletAtlasLearningState',atlasLearningState);
  const practicePool=balletAtlas.entries.filter(e=>status(e)==='練習中');
  const basicPool=balletAtlas.entries.filter(e=>atlasDifficulty(e)==='基礎'&&status(e)==='未學習');
  const advancedPool=balletAtlas.entries.filter(e=>atlasDifficulty(e)==='進階'&&status(e)==='未學習');
