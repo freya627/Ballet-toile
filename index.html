@@ -305,26 +305,41 @@ function cycleStatus(id){const arr=['未學習','練習中','已學會'];setStat
 function getLocalDate(){if(selectedPracticeDate)return new Date(selectedPracticeDate.getFullYear(),selectedPracticeDate.getMonth(),selectedPracticeDate.getDate());const d=new Date();return new Date(d.getFullYear(),d.getMonth(),d.getDate())}
 function dayIndex(){return getLocalDate().getDay()} // Sunday=0, Saturday=6
 function dateKey(){const d=getLocalDate();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
-function ensureWeekendPlan(key){
- if(!isWeekendKey(key)||isLessonCancelled(key))return [];
- const used=load('balletLessonHistory',{}),existing=Array.isArray(used[key])?used[key]:[];
- const recent=new Set(Object.entries(used).filter(([d])=>d!==key).slice(-2).flatMap(([,ids])=>Array.isArray(ids)?ids:[]));
- const pick=(level,count,kept)=>{
-  const eligible=moves.filter(m=>m.level===level&&getStatus(m.id)!=='已學會');
-  const keep=kept.filter(id=>eligible.some(m=>m.id===id)).slice(0,count);
-  const usedIds=new Set(keep);
-  let pool=eligible.filter(m=>!usedIds.has(m.id)&&!recent.has(m.id));
-  if(pool.length<count-keep.length)pool=eligible.filter(m=>!usedIds.has(m.id));
-  pool=pool.slice().sort(()=>Math.random()-.5);
-  return [...keep,...pool.slice(0,count-keep.length).map(m=>m.id)];
- };
- const basic=pick('入門',3,existing.filter(id=>moves.find(m=>m.id===id)?.level==='入門'));
- const intermediate=pick('基礎',2,existing.filter(id=>moves.find(m=>m.id===id)?.level==='基礎'));
- const ids=[...basic,...intermediate];
- if(JSON.stringify(existing)!==JSON.stringify(ids)){used[key]=ids;save('balletLessonHistory',used);lessonAdds[key]=[];save('balletLessonAdds',lessonAdds);}
- return ids;
+function ensureDailyAtlasPlan(key){
+ if(isLessonCancelled(key))return {terms:[],missing:'這一天已取消課程。'};
+ const plans=load('balletDailyAtlasPlans',{}),existing=Array.isArray(plans[key])?plans[key]:[];
+ const status=e=>atlasLearningState[e.term]||'未學習';
+ const find=term=>balletAtlas.entries.find(e=>e.term===term);
+ const valid=existing.length===5&&status(find(existing[0])||{term:''})==='練習中'&&
+  atlasDifficulty(find(existing[1])||{cat:''})==='基礎'&&status(find(existing[1])||{term:''})==='未學習'&&
+  existing.slice(2).every(term=>atlasDifficulty(find(term)||{cat:''})==='進階'&&status(find(term)||{term:''})==='未學習');
+ if(valid)return {terms:existing,missing:''};
+ const previous=new Set(Object.entries(plans).filter(([d])=>d!==key).slice(-3).flatMap(([,terms])=>Array.isArray(terms)?terms:[]));
+ const choose=(pool,count,exclude=new Set())=>pool.filter(e=>!exclude.has(e.term)).sort(()=>Math.random()-.5).slice(0,count);
+ const practicePool=balletAtlas.entries.filter(e=>status(e)==='練習中');
+ const basicPool=balletAtlas.entries.filter(e=>atlasDifficulty(e)==='基礎'&&status(e)==='未學習');
+ const advancedPool=balletAtlas.entries.filter(e=>atlasDifficulty(e)==='進階'&&status(e)==='未學習');
+ const practice=choose(practicePool,1);
+ const used=new Set(practice.map(e=>e.term));
+ let basic=choose(basicPool.filter(e=>!previous.has(e.term)),1,used);
+ if(basic.length<1)basic=choose(basicPool,1,used);
+ basic.forEach(e=>used.add(e.term));
+ let advanced=choose(advancedPool.filter(e=>!previous.has(e.term)),3,used);
+ if(advanced.length<3)advanced=choose(advancedPool,3,used);
+ const selected=[...practice,...basic,...advanced].map(e=>e.term);
+ if(selected.length===5){plans[key]=selected;save('balletDailyAtlasPlans',plans);return {terms:selected,missing:''};}
+ delete plans[key];save('balletDailyAtlasPlans',plans);
+ return {terms:selected,missing:'目前符合條件的圖鑑項目不足：需要 1 個「練習中」、1 個「基礎／未學習」，以及 3 個「進階／未學習」。請先到動作圖鑑設定狀態；不會拿已學會的動作補數量。'};
 }
-function setPracticeDate(key){if(!key)return;const d=dateFromKey(key);if(Number.isNaN(d.getTime()))return;selectedPracticeDate=d;try{localStorage.setItem('balletSelectedPracticeDate',key)}catch(e){}if([0,6].includes(d.getDay()))ensureWeekendPlan(key);const a=document.getElementById('todayDatePicker'),w=document.getElementById('todayWeekdayPicker');if(a)a.value=key;if(w)w.value=String(d.getDay());const names=['星期日','星期一','星期二','星期三','星期四','星期五','星期六'];const status=document.getElementById('datePickerStatus');if(status)status.textContent='目前查看：'+key+'（'+names[d.getDay()]+'）';const todayStatus=document.getElementById('todayDateStatus');if(todayStatus)todayStatus.textContent='目前選擇日期：'+key;renderToday()}
+function openAtlasEntry(term){
+ const entry=balletAtlas.entries.find(e=>e.term===term);if(!entry)return;
+ const search=document.getElementById('atlasSearch'),group=document.getElementById('atlasGroup');
+ if(search)search.value=term;if(group)group.value=entry.cat;
+ openTab('atlas');renderAtlas();
+ const index=balletAtlas.entries.indexOf(entry),card=document.getElementById('atlas-entry-'+index);
+ if(card)card.scrollIntoView({behavior:'smooth',block:'center'});
+}
+function setPracticeDate(key){if(!key)return;const d=dateFromKey(key);if(Number.isNaN(d.getTime()))return;selectedPracticeDate=d;try{localStorage.setItem('balletSelectedPracticeDate',key)}catch(e){}ensureDailyAtlasPlan(key);const a=document.getElementById('todayDatePicker'),w=document.getElementById('todayWeekdayPicker');if(a)a.value=key;if(w)w.value=String(d.getDay());const names=['星期日','星期一','星期二','星期三','星期四','星期五','星期六'];const status=document.getElementById('datePickerStatus');if(status)status.textContent='目前查看：'+key+'（'+names[d.getDay()]+'）';const todayStatus=document.getElementById('todayDateStatus');if(todayStatus)todayStatus.textContent='目前選擇日期：'+key;renderToday()}
 function weekendKey(){const d=getLocalDate();const sat=new Date(d);sat.setDate(d.getDate()-(d.getDay()===0?1:d.getDay()===6?0:d.getDay()-6));return `${sat.getFullYear()}-${String(sat.getMonth()+1).padStart(2,'0')}-${String(sat.getDate()).padStart(2,'0')}`}
 function dateFromKey(key){const [y,m,d]=key.split('-').map(Number);return new Date(y,m-1,d)}
 function dateKeyFromDate(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
@@ -539,25 +554,18 @@ function redeemReward(id){
 function renderTodayUnsafe(){
  const day=dayIndex(), isWeekend=[0,6].includes(day); const plan=document.getElementById('weekPlan'); const dayNameAll=['星期日','星期一','星期二','星期三','星期四','星期五','星期六'][day];const makeupToday=Object.entries(calendarEvents).filter(([source,e])=>e.makeupDate===dateKey());const inspiration=document.getElementById('practiceInspiration');const showInspiration=!isLessonCancelled(dateKey());inspiration.style.display=showInspiration?'grid':'none';if(showInspiration){const cards=['每一次專心練習，都在替夢想添上一顆星。','不必一次做到完美；穩定、耐心，就是今天的進步。','把注意力放回呼吸、音樂和自己的節奏。妳正在累積實力。','今天練習一小步，也是在向夢想靠近一小步。'];document.getElementById('encouragementText').textContent=cards[(new Date(dateKey()+'T12:00:00').getDate()+day)%cards.length];}
  if(isLessonCancelled(dateKey())){const ev=calendarEventFor(dateKey());plan.innerHTML=`<h2>${dayNameAll}・今日課程已取消 🌷</h2><p>${escapeHtml(ev?.note||calendarTypeLabel(ev?.type))}。今天安心處理其他事情，不需要補課，也不會扣點。可以到「月曆安排」修改或清除標註。</p>`;document.getElementById('lessonHeading').textContent='今日課程｜已取消';document.getElementById('todayLessons').innerHTML='<div class="empty">📅 這一天已在月曆標註為取消課程。休息不扣點，也不用補練。</div>';document.getElementById('resetToday').style.display='none';}
- else if(!isWeekend&&!makeupToday.length){
- const dayName=dayNameAll;
- const previousSaturday=new Date(getLocalDate());previousSaturday.setDate(previousSaturday.getDate()-(day===0?1:day+1));
- const previousSunday=new Date(previousSaturday);previousSunday.setDate(previousSaturday.getDate()+1);
- const satKey=dateKeyFromDate(previousSaturday),sunKey=dateKeyFromDate(previousSunday);
- const history=load('balletLessonHistory',{});
- const priorIds=[...new Set([...(history[satKey]||[]),...(lessonAdds[satKey]||[]),...(history[sunKey]||[]),...(lessonAdds[sunKey]||[])])].filter(id=>moves.some(m=>m.id===id));
- const reviewIds=priorIds.length?priorIds:['positions','tendu','plie','releve','portdebras'];
- const reviewHtml=reviewIds.map(id=>{const m=moves.find(x=>x.id===id);return '<div class="lesson" data-move-id="'+id+'"><div class="time">複習</div><div style="flex:1"><strong>'+escapeHtml(m.name)+'</strong><p>'+escapeHtml(m.desc)+'</p><button class="btn" onclick="openMove(\''+id+'\')">查看步驟</button></div></div>';}).join('<hr style="border:0;border-top:1px solid var(--line);margin:10px 0">');
- plan.innerHTML='<h2>'+dayName+'・每日基礎課程 🌷</h2><p>每天都有課程。平日不安排新動作，主要進行溫和舒展、呼吸、基本功維持，以及複習上週末練習過的全部動作。</p>';
- document.getElementById('lessonHeading').textContent='今日課程｜舒展・基本功・週末複習';
+ else {
+ const isBoostDay=makeupToday.length>0;
+ const generated=ensureDailyAtlasPlan(dateKey());
+ const terms=generated.terms;
+ const dayTitle=isBoostDay?'加強訓練日 💪':isWeekend?'週末技巧課程 🩰':'平日基本功與複習 🌷';
+ plan.innerHTML='<h2>'+dayNameAll+'・'+dayTitle+'</h2><p>每天固定五個圖鑑學習項目：1 個練習中、1 個基礎新項目、3 個進階新項目。平日另以舒展、呼吸和週末複習維持基本功。進階術語先以認識概念為主，跳躍、旋轉、足尖及雙人托舉等實際技巧，請勿在沒有老師指導下自行嘗試。</p>';
+ document.getElementById('lessonHeading').textContent='今日課程｜五個圖鑑學習項目';
  document.getElementById('resetToday').style.display='';
- document.getElementById('todayLessons').innerHTML=
- '<div class="lesson"><div class="time">暖身</div><div style="flex:1"><strong>身體暖身與關節活動</strong><p>先慢慢活動身體，確認周圍空間安全，沒有不舒服再開始。</p></div></div>'+
- '<hr style="border:0;border-top:1px solid var(--line);margin:10px 0"><div class="lesson"><div class="time">舒展</div><div style="flex:1"><strong>溫和拉筋與活動</strong><p>選擇舒服的全身舒展，保持自然呼吸，不壓腿、不彈震、不追求角度。</p></div></div>'+
- '<hr style="border:0;border-top:1px solid var(--line);margin:10px 0"><div class="lesson"><div class="time">呼吸</div><div style="flex:1"><strong>呼吸與身體感受</strong><p>自然吸氣、慢慢吐氣，放鬆肩膀與下顎，不憋氣。</p></div></div>'+
- '<hr style="border:0;border-top:1px solid var(--line);margin:10px 0"><h3>🩰 複習上週六、日的全部練習動作</h3>'+reviewHtml;
+ const cards=terms.map((term,i)=>{const e=balletAtlas.entries.find(x=>x.term===term);if(!e)return '';const label=i===0?'練習中':i===1?'基礎・新項目':'進階・新項目';return '<div class="lesson" data-atlas-term="'+escapeHtml(term)+'" data-required-course-item="true"><div class="time">'+(i+1)+'/5</div><div style="flex:1"><strong>'+escapeHtml(e.term)+' · '+escapeHtml(e.zh)+' <span class="tag">'+label+'</span></strong><p>'+escapeHtml(e.desc)+'</p><p class="small">目前狀態：'+escapeHtml(atlasLearningState[term]||'未學習')+'</p><button class="btn primary" onclick="openAtlasEntry('+JSON.stringify(term).replace(/"/g,'&quot;')+')">前往圖鑑標記進度</button></div></div>';}).join('<hr style="border:0;border-top:1px solid var(--line);margin:13px 0">');
+ document.getElementById('todayLessons').innerHTML=cards+(generated.missing?'<div class="empty">'+escapeHtml(generated.missing)+'</div>':'');
+ if(!isWeekend&&!isBoostDay){document.getElementById('todayLessons').innerHTML+='<hr style="border:0;border-top:1px solid var(--line);margin:13px 0"><div class="lesson"><div class="time">平日</div><div style="flex:1"><strong>溫和舒展、呼吸與週末動作複習</strong><p>依身體感受進行舒服的活動與呼吸，不強壓、不彈震；複習週末學過的動作時，以安全、熟悉的基本功為主。</p></div></div>';}
 }
- else {const dayName=dayNameAll;const isBoostDay=makeupToday.length>0;plan.innerHTML=`<h2>${dayName}・${isBoostDay?'加強訓練日 💪':'週末練習日 🩰'}</h2><p>${isBoostDay?'這是妳在月曆主動安排的加強訓練。':' '+(day===6?'技巧複習＋新技巧學習。':'複習技巧＋配合音樂練習小組合。')} ${isBoostDay?'📅 今天是妳安排的加強訓練日！':''}建議 15–20 分鐘，依身體狀況調整。</p>`;document.getElementById('lessonHeading').textContent=isBoostDay?'今日課程｜加強訓練':(day===6?'週六課程｜技巧學習':'週日課程｜組合練習');document.getElementById('resetToday').style.display='';ensureWeekendPlan(dateKey());const savedPlans=load('balletLessonHistory',{});const defaultIds=isBoostDay&&!isWeekend?['plie','tendu','releve']:['positions','tendu','plie','rond','passe'];const rawIds=savedPlans[dateKey()]||defaultIds;const baseIds=rawIds.filter(id=>moves.some(m=>m.id===id)&&getStatus(id)!=='已學會');const extraIds=(lessonAdds[dateKey()]||[]).filter(id=>moves.some(m=>m.id===id)&&getStatus(id)!=='已學會');let planIds=[...new Set([...baseIds,...extraIds.filter(id=>!baseIds.includes(id))])];document.getElementById('todayLessons').innerHTML=planIds.length?planIds.map((id,i)=>{const m=moves.find(x=>x.id===id);if(!m)return '';return `<div class="lesson" data-move-id="${id}"><div class="time">${i<3?['3 分','5 分','5 分'][i]:'加選'}</div><div style="flex:1"><strong>${m.name} <span class="tag">${m.level==='入門'?'基礎':m.level==='基礎'?'中等':m.level}</span></strong><p>${m.desc}</p><button class="btn" onclick="openMove('${id}')">看步驟／影片</button></div></div>${i<planIds.length-1?'<hr style="border:0;border-top:1px solid var(--line);margin:13px 0">':''}`}).join(''):'<div class="empty">🌷 今天沒有符合條件的未學會動作；不會自動加入已學會的動作。可以到學習紀錄選擇仍在練習中的動作，或等待圖鑑新增合適項目。</div>';}
  const atlasAdds=load('balletAtlasTodayAdds',{});
  const todaysAtlasAdds=Array.isArray(atlasAdds[dateKey()])?atlasAdds[dateKey()]:[];
  if(todaysAtlasAdds.length){
@@ -613,7 +621,7 @@ function renderAtlas(){
  const cats=balletAtlas.categories.filter(c=>!selected||c.id===selected);
  const filtered=balletAtlas.entries.filter(e=>(!selected||e.cat===selected)&&(!q||[e.term,e.zh,e.desc,cats.find(c=>c.id===e.cat)?.name||''].join(' ').toLocaleLowerCase().includes(q)));
  const groups=cats.map(c=>({category:c,items:filtered.filter(e=>e.cat===c.id)})).filter(g=>g.items.length);
- document.getElementById('atlasContent').innerHTML=groups.map(g=>'<div class="atlas-group"><h3>'+escapeHtml(g.category.name)+' · '+g.items.length+'</h3><div class="atlas-grid">'+g.items.map(e=>'<article class="atlas-card"><div><span class="tag difficulty">'+atlasDifficulty(e)+'</span></div><div class="atlas-en">'+escapeHtml(e.term)+'</div><h4>'+escapeHtml(e.zh)+'</h4><p>'+escapeHtml(e.desc)+'</p><div class="field"><label>我的學習狀態</label><select aria-label="'+escapeHtml(e.term)+'學習狀態" onchange="setAtlasStatus('+JSON.stringify(e.term).replace(/"/g,'&quot;')+',this.value)"><option '+((atlasLearningState[e.term]||'未學習')==='未學習'?'selected':'')+'>未學習</option><option '+(atlasLearningState[e.term]==='練習中'?'selected':'')+'>練習中</option><option '+(atlasLearningState[e.term]==='已學會'?'selected':'')+'>已學會</option></select></div><button class="btn primary atlas-add-btn" onclick="addAtlasTermToToday('+balletAtlas.entries.indexOf(e)+')">＋加入今天課程</button></article>').join('')+'</div></div>').join('')||'<div class="atlas-empty">Aucun résultat · 找不到符合的術語。</div>';
+ document.getElementById('atlasContent').innerHTML=groups.map(g=>'<div class="atlas-group"><h3>'+escapeHtml(g.category.name)+' · '+g.items.length+'</h3><div class="atlas-grid">'+g.items.map(e=>'<article class="atlas-card" id="atlas-entry-'+balletAtlas.entries.indexOf(e)+'"><div><span class="tag difficulty">'+atlasDifficulty(e)+'</span></div><div class="atlas-en">'+escapeHtml(e.term)+'</div><h4>'+escapeHtml(e.zh)+'</h4><p>'+escapeHtml(e.desc)+'</p><div class="field"><label>我的學習狀態</label><select aria-label="'+escapeHtml(e.term)+'學習狀態" onchange="setAtlasStatus('+JSON.stringify(e.term).replace(/"/g,'&quot;')+',this.value)"><option '+((atlasLearningState[e.term]||'未學習')==='未學習'?'selected':'')+'>未學習</option><option '+(atlasLearningState[e.term]==='練習中'?'selected':'')+'>練習中</option><option '+(atlasLearningState[e.term]==='已學會'?'selected':'')+'>已學會</option></select></div><button class="btn primary atlas-add-btn" onclick="addAtlasTermToToday('+balletAtlas.entries.indexOf(e)+')">＋加入今天課程</button></article>').join('')+'</div></div>').join('')||'<div class="atlas-empty">Aucun résultat · 找不到符合的術語。</div>';
  document.getElementById('atlasCount').textContent='共收錄 '+balletAtlas.entries.length+' 個詞條 · 目前顯示 '+filtered.length+' 個';
 }
 
@@ -633,8 +641,9 @@ function renderStats(){
  document.getElementById('learnedCount').textContent=moves.filter(m=>getStatus(m.id)==='已學會').length;
  document.getElementById('practiceCount').textContent=moves.filter(m=>getStatus(m.id)==='練習中').length;
  const card=document.getElementById('todayLessons');
- const moveIds=card?[...new Set([...card.querySelectorAll('[data-move-id]')].map(el=>el.getAttribute('data-move-id')).filter(Boolean))]:[];
- const atlasTerms=card?[...new Set([...card.querySelectorAll('[data-atlas-term]')].map(el=>el.getAttribute('data-atlas-term')).filter(Boolean))]:[];
+ const requiredItems=card?[...card.querySelectorAll('[data-required-course-item="true"]')]:[];
+ const moveIds=requiredItems.length?[]:(card?[...new Set([...card.querySelectorAll('[data-move-id]')].map(el=>el.getAttribute('data-move-id')).filter(Boolean))]:[]);
+ const atlasTerms=requiredItems.length?[...new Set(requiredItems.map(el=>el.getAttribute('data-atlas-term')).filter(Boolean))]:(card?[...new Set([...card.querySelectorAll('[data-atlas-term]')].map(el=>el.getAttribute('data-atlas-term')).filter(Boolean))]:[]);
  const statuses=[...moveIds.map(id=>getStatus(id)),...atlasTerms.map(term=>atlasLearningState[term]||'未學習')];
  const completed=statuses.filter(status=>status==='已學會').length,total=statuses.length;
  const progressByCount=[0,10,35,45,85,100];
@@ -664,7 +673,7 @@ document.getElementById('rewardPrev').addEventListener('click',()=>setRewardPage
 let initialPracticeDate='';try{initialPracticeDate=localStorage.getItem('balletSelectedPracticeDate')||''}catch(e){}if(!/^\d{4}-\d{2}-\d{2}$/.test(initialPracticeDate))initialPracticeDate=dateKeyFromDate(new Date());setPracticeDate(initialPracticeDate);
 document.getElementById('todayDatePicker').addEventListener('change',e=>{if(e.target.value)setPracticeDate(e.target.value)});
 document.getElementById('todayWeekdayPicker').addEventListener('change',e=>{const d=getLocalDate();const delta=(Number(e.target.value)-d.getDay()+7)%7;d.setDate(d.getDate()+delta);setPracticeDate(dateKeyFromDate(d))});
-document.getElementById('resetLessonPlan').addEventListener('click',()=>{const key=dateKey();if(![0,6].includes(dayIndex())){document.getElementById('todayDateStatus').textContent='平日課程會自動顯示舒展、呼吸與週末複習，不需重新抽選。';return;}const used=load('balletLessonHistory',{});delete used[key];save('balletLessonHistory',used);const ids=ensureWeekendPlan(key);renderToday();document.getElementById('todayDateStatus').textContent='已重新安排 '+ids.length+'/5 個未標記為已學會的動作。';});
+document.getElementById('resetLessonPlan').addEventListener('click',()=>{const key=dateKey(),plans=load('balletDailyAtlasPlans',{});delete plans[key];save('balletDailyAtlasPlans',plans);const result=ensureDailyAtlasPlan(key);renderToday();document.getElementById('todayDateStatus').textContent=result.terms.length===5?'已重新安排五個圖鑑項目：1 個練習中、1 個基礎新項目、3 個進階新項目。':result.missing;});
 document.getElementById('rewardNext').addEventListener('click',()=>setRewardPage(1));
 document.getElementById('closeDetail').addEventListener('click',closeMove);document.getElementById('detail').addEventListener('click',e=>{if(e.target.id==='detail')closeMove()});
 document.getElementById('resetToday').addEventListener('click',()=>{if(isLessonCancelled(dateKey()))return;if(!confirm('要重新今天所有課程的集點嗎？這會取消所選日期已蓋的所有星星印章，並扣回相應點數，之後可以重新集點。'))return;const key=dateKey();const tasks=[{id:'warmup',pts:1},{id:'newskill',pts:2},{id:'music',pts:1},{id:'journal',pts:1},{id:'weekday-stretch',pts:1},{id:'weekday-breath',pts:1},{id:'weekday-review',pts:2},{id:'weekday-note',pts:1},{id:'allLearned',pts:2}];const claimed=pointData.claims[key]||[];const removed=tasks.filter(t=>t.id!=='allLearned'&&claimed.includes(t.id)).reduce((sum,t)=>sum+t.pts,0)+claimed.filter(id=>String(id).startsWith('allLearned-')).length*2;pointData.total=Math.max(0,pointData.total-removed);pointData.lifetimeTotal=Math.max(0,(pointData.lifetimeTotal||0)-removed);pointData.claims[key]=[];if(pointData.completedAt)delete pointData.completedAt[key];todayDone=[];save('balletToday',todayDone);save('balletPoints',pointData);renderToday();renderStats();renderPoints();renderRewards()});
